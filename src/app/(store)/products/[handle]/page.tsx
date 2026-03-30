@@ -6,17 +6,19 @@ import AddToQuoteButton from '@/components/store/AddToQuoteButton';
 import type { Metadata } from 'next';
 
 interface Props {
-  params: { handle: string };
+  params: Promise<{ handle: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = await getProductByHandle(params.handle);
+  const { handle } = await params;
+  const product = await getProductByHandle(handle);
   if (!product) return { title: 'Product Not Found' };
   return { title: product.title, description: product.description };
 }
 
 export default async function ProductPage({ params }: Props) {
-  const product = await getProductByHandle(params.handle);
+  const { handle } = await params;
+  const product = await getProductByHandle(handle);
   if (!product) notFound();
 
   const firstVariant = product.variants.nodes[0];

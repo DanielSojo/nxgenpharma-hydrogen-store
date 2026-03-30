@@ -108,6 +108,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     }
 
+    const customerId = createResult?.customerCreate?.customer?.id;
+
     // ── Step 2: Login to get access token ────────────────────────────────────
     const { data: tokenResult } = await shopifyClient.request(GET_ACCESS_TOKEN, {
       variables: {

@@ -4,20 +4,22 @@ import ProductCard from '@/components/store/ProductCard';
 import type { Metadata } from 'next';
 
 interface Props {
-  params: { handle: string };
+  params: Promise<{ handle: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  if (params.handle === 'all') redirect('/collections/all');
-  const collection = await getCollectionByHandle(params.handle);
+  const { handle } = await params;
+  if (handle === 'all') redirect('/collections/all');
+  const collection = await getCollectionByHandle(handle);
   if (!collection) return { title: 'Collection Not Found' };
   return { title: collection.title, description: collection.description };
 }
 
 export default async function CollectionPage({ params }: Props) {
-  if (params.handle === 'all') redirect('/collections/all');
+  const { handle } = await params;
+  if (handle === 'all') redirect('/collections/all');
 
-  const collection = await getCollectionByHandle(params.handle, 48);
+  const collection = await getCollectionByHandle(handle, 48);
   if (!collection) notFound();
 
   const products = collection.products.nodes;
