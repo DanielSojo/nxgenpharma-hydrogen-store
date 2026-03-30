@@ -28,22 +28,27 @@ export default auth((req) => {
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
   if (isPublic) return NextResponse.next();
 
-  const token = req.auth;
+  const user = req.auth?.user as
+    | {
+        approved?: boolean;
+        b2bStatus?: string | null;
+      }
+    | undefined;
 
   // Not logged in → redirect to login
-  if (!token) {
+  if (!req.auth?.user) {
     const loginUrl = new URL('/login', req.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Refused → redirect to /refused
-  if (token.b2bStatus === 'b2b-refused' && !pathname.startsWith('/refused')) {
+  if (user?.b2bStatus === 'b2b-refused' && !pathname.startsWith('/refused')) {
     return NextResponse.redirect(new URL('/refused', req.url));
   }
 
   // Not approved (pending or no status) → redirect to /pending
-  if (token.approved !== true && !pathname.startsWith('/pending')) {
+  if (user?.approved !== true && !pathname.startsWith('/pending')) {
     return NextResponse.redirect(new URL('/pending', req.url));
   }
 
