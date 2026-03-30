@@ -1,7 +1,7 @@
 'use client';
 
-import { Suspense, useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { Suspense, useEffect, useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -22,6 +22,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+  const { data: session, status } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,6 +31,28 @@ function LoginContent() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+
+  useEffect(() => {
+    if (status !== 'authenticated' || !session?.user) return;
+
+    const user = session.user as typeof session.user & {
+      approved?: boolean;
+      b2bStatus?: string | null;
+    };
+
+    if (user.b2bStatus === 'b2b-refused') {
+      router.replace('/refused');
+      return;
+    }
+
+    if (user.approved !== true) {
+      router.replace('/pending');
+      return;
+    }
+
+    router.replace(callbackUrl);
+    router.refresh();
+  }, [callbackUrl, router, session, status]);
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
@@ -45,7 +68,7 @@ function LoginContent() {
         return;
       }
 
-      router.push(callbackUrl);
+      router.replace(callbackUrl);
       router.refresh();
     } catch {
       toast.error('Something went wrong. Please try again.');
@@ -53,6 +76,19 @@ function LoginContent() {
       setIsLoading(false);
     }
   };
+
+  if (status === 'authenticated') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">
+        <div className="bg-[#f0ece4] rounded-2xl p-10 shadow-2xl text-center">
+          <div className="inline-flex items-center gap-2 text-[#333] text-sm font-medium">
+            <Loader2 size={16} className="animate-spin" />
+            Redirecting to your account...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">

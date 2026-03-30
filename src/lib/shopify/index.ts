@@ -119,21 +119,7 @@ export async function loginCustomer(
 
   const result = data?.customerAccessTokenCreate;
   if (result?.customerUserErrors?.length > 0) {
-    const firstError = result.customerUserErrors[0];
-    console.error(
-      '[Shopify login] customerAccessTokenCreate failed:',
-      JSON.stringify(
-        {
-          code: firstError.code,
-          message: firstError.message,
-          storeDomain: getShopifyStoreDomain(),
-          email: email.toLowerCase(),
-        },
-        null,
-        2
-      )
-    );
-    throw new Error(firstError.message);
+    throw new Error(result.customerUserErrors[0].message);
   }
 
   return result?.customerAccessToken ?? null;
