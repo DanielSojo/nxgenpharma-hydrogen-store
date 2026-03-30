@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { loginCustomer, getCustomer } from '@/lib/shopify';
+import { getShopifyEnvDebugInfo } from '@/lib/shopify/env';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -21,6 +22,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!parsed.success) return null;
 
         try {
+          console.log(
+            '[Auth] env debug:',
+            JSON.stringify(
+              {
+                ...getShopifyEnvDebugInfo(),
+                loginEmail: parsed.data.email.toLowerCase(),
+              },
+              null,
+              2
+            )
+          );
+
           const token = await loginCustomer(parsed.data.email, parsed.data.password);
           if (!token) {
             console.error('[Auth] loginCustomer returned null — invalid credentials');
