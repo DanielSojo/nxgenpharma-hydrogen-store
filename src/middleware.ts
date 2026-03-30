@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { auth } from '@/lib/auth';
 import { getShopifyStoreDomain } from '@/lib/shopify/env';
 
 const PUBLIC_PATHS = [
@@ -14,9 +14,8 @@ const PUBLIC_PATHS = [
   '/api/apply',
 ];
 
-export async function middleware(req: NextRequest) {
+export default auth((req) => {
   const { pathname } = req.nextUrl;
-  const authSecret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
 
   // Intercept Shopify reset URL → redirect to custom page
   if (pathname.startsWith('/account/reset')) {
@@ -29,7 +28,7 @@ export async function middleware(req: NextRequest) {
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
   if (isPublic) return NextResponse.next();
 
-  const token = await getToken({ req, secret: authSecret });
+  const token = req.auth;
 
   // Not logged in → redirect to login
   if (!token) {
@@ -49,7 +48,7 @@ export async function middleware(req: NextRequest) {
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
