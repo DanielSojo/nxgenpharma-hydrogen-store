@@ -37,6 +37,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
+        callbackUrl,
         redirect: false,
       });
 
@@ -45,7 +46,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
         return;
       }
 
-      window.location.href = callbackUrl;
+      window.location.href = result?.url ?? callbackUrl;
     } catch {
       toast.error('Something went wrong. Please try again.');
     } finally {
