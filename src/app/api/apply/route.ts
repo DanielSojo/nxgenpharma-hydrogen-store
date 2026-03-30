@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { shopifyClient } from '@/lib/shopify/client';
+import { getShopifyStoreDomain } from '@/lib/shopify/env';
 import { z } from 'zod';
 
 const applicationSchema = z.object({
@@ -186,7 +187,7 @@ export async function POST(req: NextRequest) {
           });
         } else {
           await fetch(
-            `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2025-04/graphql.json`,
+            `https://${getShopifyStoreDomain()}/admin/api/2025-04/graphql.json`,
             {
               method: 'POST',
               headers: {

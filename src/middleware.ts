@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { getShopifyStoreDomain } from '@/lib/shopify/env';
 
 const PUBLIC_PATHS = [
   '/login',
@@ -18,7 +19,7 @@ export async function middleware(req: NextRequest) {
 
   // Intercept Shopify reset URL → redirect to custom page
   if (pathname.startsWith('/account/reset')) {
-    const resetUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}${pathname}${req.nextUrl.search}`;
+    const resetUrl = `https://${getShopifyStoreDomain()}${pathname}${req.nextUrl.search}`;
     const newUrl = new URL('/reset-password', req.url);
     newUrl.searchParams.set('url', resetUrl);
     return NextResponse.redirect(newUrl);

@@ -1,3 +1,5 @@
+import { getShopifyStoreDomain } from './env';
+
 type AdminTokenResponse = {
   access_token: string;
   scope: string;
@@ -16,7 +18,7 @@ export async function getShopifyAdminAccessToken(): Promise<string> {
     return cachedToken;
   }
 
-  const domain = process.env.SHOPIFY_STORE_DOMAIN;
+  const domain = getShopifyStoreDomain();
   const clientId = process.env.SHOPIFY_ADMIN_CLIENT_ID;
   const clientSecret = process.env.SHOPIFY_ADMIN_CLIENT_SECRET;
 
@@ -60,9 +62,10 @@ export async function shopifyAdminRequest<T>(
 ): Promise<T> {
   const token = await getShopifyAdminAccessToken();
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04';
+  const domain = getShopifyStoreDomain();
 
   const response = await fetch(
-    `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${apiVersion}/graphql.json`,
+    `https://${domain}/admin/api/${apiVersion}/graphql.json`,
     {
       method: 'POST',
       headers: {
@@ -89,9 +92,10 @@ export async function shopifyAdminRestRequest(
 ): Promise<any> {
   const token = await getShopifyAdminAccessToken();
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04';
+  const domain = getShopifyStoreDomain();
 
   const response = await fetch(
-    `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${apiVersion}/${endpoint}`,
+    `https://${domain}/admin/api/${apiVersion}/${endpoint}`,
     {
       ...options,
       headers: {

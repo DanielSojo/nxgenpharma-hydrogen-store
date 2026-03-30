@@ -1,10 +1,12 @@
 import { createStorefrontApiClient } from '@shopify/storefront-api-client';
+import { getShopifyStoreDomain } from './env';
 
-if (!process.env.SHOPIFY_STORE_DOMAIN) throw new Error('SHOPIFY_STORE_DOMAIN is not set');
 if (!process.env.SHOPIFY_STOREFRONT_TOKEN) throw new Error('SHOPIFY_STOREFRONT_TOKEN is not set');
 
+const shopifyStoreDomain = getShopifyStoreDomain();
+
 export const shopifyClient = createStorefrontApiClient({
-  storeDomain: process.env.SHOPIFY_STORE_DOMAIN,
+  storeDomain: shopifyStoreDomain,
   apiVersion: '2025-04',
   publicAccessToken: process.env.SHOPIFY_STOREFRONT_TOKEN,
 });
@@ -15,7 +17,7 @@ export async function shopifyAdminFetch<T>(
   variables?: Record<string, unknown>
 ): Promise<T> {
   const response = await fetch(
-    `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2025-04/graphql.json`,
+    `https://${shopifyStoreDomain}/admin/api/2025-04/graphql.json`,
     {
       method: 'POST',
       headers: {

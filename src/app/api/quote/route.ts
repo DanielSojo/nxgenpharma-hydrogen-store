@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { shopifyAdminRequest, shopifyAdminRestRequest } from '@/lib/shopify/admin';
+import { getShopifyStoreDomain } from '@/lib/shopify/env';
 import { z } from 'zod';
 
 const quoteSchema = z.object({
@@ -67,7 +68,7 @@ async function getCustomerMarkup(customerId: string): Promise<number> {
       data = await shopifyAdminRequest<any>(query, { id: customerId });
     } else if (process.env.SHOPIFY_ADMIN_TOKEN) {
       const response = await fetch(
-        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04'}/graphql.json`,
+        `https://${getShopifyStoreDomain()}/admin/api/${process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04'}/graphql.json`,
         {
           method: 'POST',
           headers: {
@@ -190,7 +191,7 @@ async function createShopifyDraftOrder(
       });
     } else {
       const response = await fetch(
-        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${apiVersion}/draft_orders.json`,
+        `https://${getShopifyStoreDomain()}/admin/api/${apiVersion}/draft_orders.json`,
         {
           method: 'POST',
           headers: {
@@ -258,7 +259,7 @@ function buildEmailHtml(
             <p style="color: #0c4a6e; font-size: 14px; margin: 0 0 12px;">
               Draft Order <strong>${draftOrder.name}</strong> has been created automatically.
             </p>
-            <a href="https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/draft_orders"
+            <a href="https://${getShopifyStoreDomain()}/admin/draft_orders"
               style="display: inline-block; background: #0369a1; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;">
               View in Shopify Admin →
             </a>

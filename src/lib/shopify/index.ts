@@ -15,6 +15,7 @@ import {
   UPDATE_CART_LINES,
   REMOVE_CART_LINES,
 } from './mutations';
+import { getShopifyStoreDomain } from './env';
 import type {
   ShopifyProduct,
   ShopifyCollection,
@@ -118,7 +119,21 @@ export async function loginCustomer(
 
   const result = data?.customerAccessTokenCreate;
   if (result?.customerUserErrors?.length > 0) {
-    throw new Error(result.customerUserErrors[0].message);
+    const firstError = result.customerUserErrors[0];
+    console.error(
+      '[Shopify login] customerAccessTokenCreate failed:',
+      JSON.stringify(
+        {
+          code: firstError.code,
+          message: firstError.message,
+          storeDomain: getShopifyStoreDomain(),
+          email: email.toLowerCase(),
+        },
+        null,
+        2
+      )
+    );
+    throw new Error(firstError.message);
   }
 
   return result?.customerAccessToken ?? null;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { getShopifyStoreDomain } from '@/lib/shopify/env';
 
 const contactSchema = z.object({
   name: z.string().min(1),
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     // Use Shopify's native contact form endpoint
     // This emails you automatically using your store's email settings — no SMTP needed
-    const shopifyContactUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/contact`;
+    const shopifyContactUrl = `https://${getShopifyStoreDomain()}/contact`;
 
     const formBody = new URLSearchParams({
       'form_type': 'contact',
