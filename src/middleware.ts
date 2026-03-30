@@ -16,6 +16,7 @@ const PUBLIC_PATHS = [
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const authSecret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
 
   // Intercept Shopify reset URL → redirect to custom page
   if (pathname.startsWith('/account/reset')) {
@@ -28,7 +29,7 @@ export async function middleware(req: NextRequest) {
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
   if (isPublic) return NextResponse.next();
 
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ req, secret: authSecret });
 
   // Not logged in → redirect to login
   if (!token) {

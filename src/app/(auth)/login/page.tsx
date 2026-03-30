@@ -21,7 +21,11 @@ type LoginForm = z.infer<typeof loginSchema>;
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+  const rawCallbackUrl = searchParams.get('callbackUrl') ?? '/';
+  const callbackUrl =
+    rawCallbackUrl.startsWith('/login') || rawCallbackUrl.startsWith('http')
+      ? '/'
+      : rawCallbackUrl;
   const { data: session, status } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
