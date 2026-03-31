@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Lock, Eye, EyeOff, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 
 const schema = z
   .object({
@@ -95,13 +96,7 @@ function ResetPasswordContent() {
       <div className="w-full max-w-md">
         <div className="rounded-2xl bg-white p-10 shadow-2xl">
 
-          {/* Logo */}
-          <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mb-6">
-            <path
-              d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-              stroke="#1a1d6d" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
-            />
-          </svg>
+          <Image src="/nxgenpharma-logo.png" width={110} height={52} alt="NxGen Pharma Logo" className="mb-6 h-auto w-auto" />
 
           {success ? (
             <div className="text-center">

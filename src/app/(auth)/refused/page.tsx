@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { XCircle } from 'lucide-react';
 import { auth, signOut } from '@/lib/auth';
+import Image from 'next/image';
 
 export default async function RefusedPage() {
   const session = await auth();
@@ -13,12 +14,13 @@ export default async function RefusedPage() {
           <XCircle className="text-red-500" size={32} />
         </div>
 
-        <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mx-auto mb-5">
-          <path
-            d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-            stroke="#1a1d6d" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
-          />
-        </svg>
+        <Image
+          src="/nxgenpharma-logo.png"
+          width={150}
+          height={64}
+          alt="NxGen Pharma Logo"
+          className="mx-auto mb-5 h-auto w-auto"
+        />
 
         <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Not Approved</h1>
 

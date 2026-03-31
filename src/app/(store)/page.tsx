@@ -2,7 +2,6 @@ import { getProducts, getCollections } from '@/lib/shopify';
 import ProductCard from '@/components/store/ProductCard';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import Image from 'next/image';
 
 export default async function HomePage() {
   const [productsData, collections] = await Promise.all([
@@ -93,45 +92,6 @@ export default async function HomePage() {
           )}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="mt-8 bg-brand-navy px-6 py-16 text-white">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-          <div>
-            <Image src="/nxgenpharma-logo.png" width={200} height={100} alt='NxGen Pharma Logo' />
-            <p className="text-sm leading-relaxed text-white/65">
-              Professional pharmaceutical supply for verified B2B clients.
-            </p>
-          </div>
-          <div>
-            <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-aqua">Shipping</h4>
-            <p className="text-sm leading-relaxed text-white/65">
-              Mon – Thurs / Except Holidays<br />
-              Sat Delivery Available
-            </p>
-          </div>
-          <div>
-            <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-aqua">Contact</h4>
-            <p className="text-sm leading-relaxed text-white/65">
-              Business Inquiries Only<br />
-              Mon – Friday 9AM – 5PM
-            </p>
-          </div>
-          <div>
-            <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-aqua">Legal</h4>
-            <div className="flex flex-col gap-2">
-              {['Terms of Service', 'Privacy Policy', 'Refund Policy'].map((link) => (
-                <Link key={link} href="#" className="text-sm text-white/65 transition-colors hover:text-white">
-                  {link}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="mx-auto mt-10 max-w-6xl border-t border-white/10 pt-8 text-center text-sm text-white/45">
-          © {new Date().getFullYear()} NxGen Pharma. All rights reserved.
-        </div>
-      </footer>
 
     </div>
   );

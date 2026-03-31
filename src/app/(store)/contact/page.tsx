@@ -71,10 +71,10 @@ export default function ContactPage() {
               <div>
                 <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">Email</p>
                 <a
-                  href="mailto:info@nxgenpharma.com"
+                  href="mailto:support@nxgenpharma.com"
                   className="text-sm text-brand-blue transition-opacity hover:opacity-70"
                 >
-                  info@nxgenpharma.com
+                  support@nxgenpharma.com
                 </a>
                 <p className="mt-0.5 text-xs text-brand-ink/50">Business inquiries only</p>
               </div>
