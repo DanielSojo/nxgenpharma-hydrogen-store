@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, ClipboardList, Package, MapPin, FileText } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, MapPin, FileText, Download } from 'lucide-react';
 
 function formatPrice(amount: string | number, currency: string = 'USD') {
   return new Intl.NumberFormat('en-US', {
@@ -51,13 +51,8 @@ export default function QuoteDetailPage() {
     );
   }
 
-  // Parse quote number from note
-  const quoteNumberMatch = quote.note?.match(/Quote Number: (Q\S+)/);
-  const quoteNumber = quoteNumberMatch?.[1] ?? quote.name;
-
-  // Parse customer notes only (hide markup info)
-  const customerNotesMatch = quote.note?.match(/Customer Notes: (.+)/);
-  const customerNotes = customerNotesMatch?.[1];
+  const quoteNumber = quote.quoteNumber ?? quote.name;
+  const customerNotes = quote.customerNotes;
 
   const lineItems = quote.line_items ?? [];
   const shippingAddress = quote.shipping_address;
@@ -95,6 +90,13 @@ export default function QuoteDetailPage() {
             <p className="text-2xl font-bold">
               {formatPrice(quote.total_price, quote.currency)}
             </p>
+            <a
+              href={`/api/quotes/${id}/pdf`}
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-mist"
+            >
+              <Download size={15} />
+              Download PDF
+            </a>
           </div>
         </div>
       </div>

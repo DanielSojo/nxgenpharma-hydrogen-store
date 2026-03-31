@@ -1,0 +1,109 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { generateQuotePDF } from '@/lib/pdf';
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await auth();
+  if (!session?.user) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
+  const customerId = (session.user as any).id;
+  const draftOrderId = params.id;
+  const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04';
+
+  try {
+    // Fetch draft order
+    let responseJson: any;
+
+    if (process.env.SHOPIFY_ADMIN_CLIENT_ID && process.env.SHOPIFY_ADMIN_CLIENT_SECRET) {
+      const { shopifyAdminRestRequest } = await import('@/lib/shopify/admin');
+      responseJson = await shopifyAdminRestRequest(
+        `draft_orders/${draftOrderId}.json`
+      );
+    } else if (process.env.SHOPIFY_ADMIN_TOKEN) {
+      const response = await fetch(
+        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${apiVersion}/draft_orders/${draftOrderId}.json`,
+        {
+          headers: {
+            'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_TOKEN!,
+          },
+        }
+      );
+      responseJson = await response.json();
+    } else {
+      return new NextResponse('Admin API not configured', { status: 503 });
+    }
+
+    const order = responseJson?.draft_order;
+    if (!order) {
+      return new NextResponse('Quote not found', { status: 404 });
+    }
+
+    // Security: verify this belongs to the logged-in customer
+    const numericCustomerId = customerId?.includes('gid://')
+      ? customerId.split('/').pop()
+      : customerId;
+
+    if (String(order.customer?.id) !== String(numericCustomerId)) {
+      return new NextResponse('Unauthorized', { status: 403 });
+    }
+
+    // Parse quote number from note
+    const quoteNumberMatch = order.note?.match(/Quote Number: (Q\S+)/);
+    const quoteNumber = quoteNumberMatch?.[1] ?? order.name;
+
+    // Parse customer notes (strip admin info)
+    const customerNotesMatch = order.note?.match(/Customer Notes: (.+)/);
+    const customerNotes = customerNotesMatch?.[1];
+
+    // Strip sensitive properties from line items
+    const HIDDEN_PROPERTIES = ['basePrice', 'markupApplied', 'variantId', 'productHandle'];
+    const sanitizedLineItems = order.line_items.map((item: any) => ({
+      title: item.title,
+      price: item.price,
+      quantity: item.quantity,
+      properties: (item.properties ?? []).filter(
+        (p: any) => !HIDDEN_PROPERTIES.includes(p.name)
+      ),
+    }));
+
+    // Generate PDF
+    const pdfBuffer = await generateQuotePDF({
+      id: order.id,
+      name: order.name,
+      quoteNumber,
+      createdAt: order.created_at,
+      currency: order.currency,
+      subtotal_price: order.subtotal_price,
+      total_tax: order.total_tax,
+      total_price: order.total_price,
+      shipping_line: order.shipping_line,
+      line_items: sanitizedLineItems,
+      shipping_address: order.shipping_address,
+      customer: order.customer
+        ? {
+            first_name: order.customer.first_name,
+            last_name: order.customer.last_name,
+            email: order.email ?? '',
+          }
+        : undefined,
+      customerNotes,
+    });
+
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="quote-${quoteNumber}.pdf"`,
+        'Content-Length': String(pdfBuffer.length),
+      },
+    });
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    return new NextResponse('Failed to generate PDF', { status: 500 });
+  }
+}
