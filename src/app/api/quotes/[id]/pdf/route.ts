@@ -4,7 +4,7 @@ import { generateQuotePDF } from '@/lib/pdf';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   if (!session?.user) {
@@ -12,7 +12,7 @@ export async function GET(
   }
 
   const customerId = (session.user as any).id;
-  const draftOrderId = params.id;
+  const { id: draftOrderId } = await params;
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04';
 
   try {
