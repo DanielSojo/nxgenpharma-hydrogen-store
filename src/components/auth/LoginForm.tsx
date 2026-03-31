@@ -56,11 +56,11 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">
+    <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
       <div className="w-full max-w-5xl min-h-[640px] rounded-2xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2">
 
         <div
-          className="hidden md:block relative bg-[#1a1a1a] overflow-hidden"
+          className="relative hidden overflow-hidden md:block"
           style={{
             backgroundImage: 'url(/login-bg.jpg)',
             backgroundSize: 'cover',
@@ -68,7 +68,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             filter: 'grayscale(100%)',
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-navy via-brand-ink to-brand-blue/90" />
           <div
             className="absolute inset-0"
             style={{
@@ -92,46 +92,46 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
           <Image className='z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' src="/nxgenpharma-logo.png" width={400} height={100} alt='NxGen Pharma Logo' />
         </div>
 
-        <div className="bg-[#f0ece4] flex flex-col justify-center px-10 py-12">
+        <div className="flex flex-col justify-center bg-white px-10 py-12">
           <div className="mb-7">
             <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
           </div>
 
-          <p className="font-serif text-[17px] text-[#1a1a1a] mb-7 leading-relaxed">
+          <p className="mb-7 font-serif text-[17px] leading-relaxed text-brand-ink">
             Sign in below to access our B2B platform.
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-[#333]">Email</label>
+              <label className="text-[13px] font-medium text-brand-ink">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#aaa]" size={15} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35" size={15} />
                 <input
                   {...register('email')}
                   type="email"
                   placeholder="example@mail.com"
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                  className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 />
               </div>
               {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-[#333]">Password</label>
+              <label className="text-[13px] font-medium text-brand-ink">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#aaa]" size={15} />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35" size={15} />
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Password"
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-10 py-3 bg-white border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                  className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#aaa] hover:text-[#666]"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35 hover:text-brand-ink/65"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -140,17 +140,17 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-[13px] text-[#444] cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2 text-[13px] text-brand-ink/75">
                 <input
                   {...register('rememberMe')}
                   type="checkbox"
-                  className="w-4 h-4 accent-[#2b7fff]"
+                  className="h-4 w-4 accent-brand-blue"
                 />
                 Remember me
               </label>
               <Link
                 href="/forgot-password"
-                className="text-[13px] text-[#2b7fff] hover:opacity-70 transition-opacity"
+                className="text-[13px] text-brand-blue transition-opacity hover:opacity-70"
               >
                 Forgot your password?
               </Link>
@@ -159,32 +159,32 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3.5 bg-[#2b7fff] hover:bg-[#1a6fee] disabled:opacity-60 text-white rounded-xl text-[13px] font-bold tracking-widest uppercase transition-colors flex items-center justify-center gap-2 mt-1"
+              className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-blue py-3.5 text-[13px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-brand-navy disabled:opacity-60"
             >
               {isLoading && <Loader2 size={15} className="animate-spin" />}
               Sign In
             </button>
           </form>
 
-          <div className="h-px bg-[#ddd8cf] my-7" />
+          <div className="my-7 h-px bg-brand-line" />
 
           <div>
-            <p className="text-[18px] font-bold text-[#1a1a1a] mb-2.5">
+            <p className="mb-2.5 text-[18px] font-bold text-brand-navy">
               Open an account with us!
             </p>
-            <p className="text-[13.5px] text-[#555] leading-relaxed mb-5">
+            <p className="mb-5 text-[13.5px] leading-relaxed text-brand-ink/72">
               Click on the button below to apply for an account with us. We respond within 24 hours.
             </p>
             <div className="flex gap-3 flex-wrap">
               <Link
                 href="/apply"
-                className="flex flex-1 items-center justify-center min-w-[140px] py-3.5 px-5 bg-[#111] hover:bg-[#2a2a2a] text-white rounded-full text-[13px] font-semibold text-center transition-colors"
+                className="flex min-w-[140px] flex-1 items-center justify-center rounded-full bg-brand-navy px-5 py-3.5 text-center text-[13px] font-semibold text-white transition-colors hover:bg-brand-blue"
               >
                 Apply for an account
               </Link>
               <Link
                 href="/contact"
-                className="flex-1 min-w-[140px] py-3.5 px-5 border-2 border-[#111] text-[#111] hover:bg-[#111] hover:text-white rounded-full text-[13px] font-semibold text-center transition-colors"
+                className="min-w-[140px] flex-1 rounded-full border-2 border-brand-navy px-5 py-3.5 text-center text-[13px] font-semibold text-brand-navy transition-colors hover:bg-brand-navy hover:text-white"
               >
                 Questions? Contact us today!
               </Link>

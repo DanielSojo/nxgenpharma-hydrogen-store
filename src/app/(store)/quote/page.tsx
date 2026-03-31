@@ -87,29 +87,29 @@ export default function QuotePage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#f8f7f4] flex items-center justify-center p-6">
-        <div className="bg-white rounded-2xl p-14 max-w-lg w-full text-center shadow-sm border border-[#eeebe6]">
+      <div className="flex min-h-screen items-center justify-center bg-brand-mist p-6">
+        <div className="w-full max-w-lg rounded-2xl border border-brand-line bg-white p-14 text-center shadow-sm">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="text-green-600" size={32} />
           </div>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#2b7fff] mb-2">
+          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
             Quote #{quoteNumber}
           </p>
-          <h1 className="text-2xl font-bold text-[#111] mb-3">
+          <h1 className="mb-3 text-2xl font-bold text-brand-navy">
             Quote Request Received!
           </h1>
-          <p className="text-[15px] text-[#555] leading-relaxed mb-4">
+          <p className="mb-4 text-[15px] leading-relaxed text-brand-ink/72">
             Thank you! We've received your quote request and will review it shortly.
             You'll receive a reply at{' '}
-            <span className="font-semibold text-[#333]">{session?.user?.email}</span>{' '}
+            <span className="font-semibold text-brand-ink">{session?.user?.email}</span>{' '}
             with pricing and availability.
           </p>
           {draftOrderName && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-left">
-              <p className="text-[13px] text-blue-700 font-semibold">
+            <div className="mb-6 rounded-xl border border-brand-line bg-brand-mist p-4 text-left">
+              <p className="text-[13px] font-semibold text-brand-navy">
                 Order Reference: {draftOrderName}
               </p>
-              <p className="text-[12px] text-blue-600 mt-1">
+              <p className="mt-1 text-[12px] text-brand-blue">
                 Your quote has been registered in our system.
               </p>
             </div>
@@ -117,7 +117,7 @@ export default function QuotePage() {
           <div className="flex flex-col gap-3">
             <Link
               href="/"
-              className="w-full py-3.5 bg-[#111] hover:bg-[#2a2a2a] text-white rounded-full text-[13px] font-semibold text-center transition-colors"
+              className="w-full rounded-full bg-brand-navy py-3.5 text-center text-[13px] font-semibold text-white transition-colors hover:bg-brand-blue"
             >
               Continue Browsing
             </Link>
@@ -128,20 +128,20 @@ export default function QuotePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f7f4]">
+    <div className="min-h-screen bg-brand-mist">
       <div className="max-w-5xl mx-auto px-6 py-10">
 
         {/* Back */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-[#888] hover:text-[#333] text-sm transition-colors mb-8"
+          className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
         >
           <ArrowLeft size={16} /> Continue Browsing
         </Link>
 
         <div className="flex items-center gap-3 mb-8">
-          <ClipboardList size={24} className="text-[#111]" />
-          <h1 className="text-2xl font-bold text-[#111]">Request a Quote</h1>
+          <ClipboardList size={24} className="text-brand-blue" />
+          <h1 className="text-2xl font-bold text-brand-navy">Request a Quote</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -151,20 +151,20 @@ export default function QuotePage() {
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
 
               {/* Shipping Address */}
-              <div className="bg-white rounded-2xl p-6 border border-[#eeebe6]">
-                <h2 className="text-[15px] font-bold text-[#111] mb-5">
+              <div className="rounded-2xl border border-brand-line bg-white p-6">
+                <h2 className="mb-5 text-[15px] font-bold text-brand-navy">
                   Shipping Address
                 </h2>
                 <div className="flex flex-col gap-4">
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-[#333]">
+                    <label className="text-[13px] font-medium text-brand-ink">
                       Street Address <span className="text-red-500">*</span>
                     </label>
                     <input
                       {...register('shippingAddress')}
                       placeholder="123 Main St"
-                      className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                      className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
                     {errors.shippingAddress && (
                       <p className="text-xs text-red-500">{errors.shippingAddress.message}</p>
@@ -173,26 +173,26 @@ export default function QuotePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[13px] font-medium text-[#333]">
+                      <label className="text-[13px] font-medium text-brand-ink">
                         City <span className="text-red-500">*</span>
                       </label>
                       <input
                         {...register('shippingCity')}
                         placeholder="Miami"
-                        className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingCity && (
                         <p className="text-xs text-red-500">{errors.shippingCity.message}</p>
                       )}
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[13px] font-medium text-[#333]">
+                      <label className="text-[13px] font-medium text-brand-ink">
                         State <span className="text-red-500">*</span>
                       </label>
                       <input
                         {...register('shippingState')}
                         placeholder="FL"
-                        className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingState && (
                         <p className="text-xs text-red-500">{errors.shippingState.message}</p>
@@ -202,26 +202,26 @@ export default function QuotePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[13px] font-medium text-[#333]">
+                      <label className="text-[13px] font-medium text-brand-ink">
                         ZIP Code <span className="text-red-500">*</span>
                       </label>
                       <input
                         {...register('shippingZip')}
                         placeholder="33101"
-                        className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingZip && (
                         <p className="text-xs text-red-500">{errors.shippingZip.message}</p>
                       )}
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[13px] font-medium text-[#333]">
+                      <label className="text-[13px] font-medium text-brand-ink">
                         Country <span className="text-red-500">*</span>
                       </label>
                       <input
                         {...register('shippingCountry')}
                         placeholder="United States"
-                        className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingCountry && (
                         <p className="text-xs text-red-500">{errors.shippingCountry.message}</p>
@@ -232,15 +232,15 @@ export default function QuotePage() {
               </div>
 
               {/* Notes */}
-              <div className="bg-white rounded-2xl p-6 border border-[#eeebe6]">
-                <h2 className="text-[15px] font-bold text-[#111] mb-5">
+              <div className="rounded-2xl border border-brand-line bg-white p-6">
+                <h2 className="mb-5 text-[15px] font-bold text-brand-navy">
                   Additional Notes
                 </h2>
                 <textarea
                   {...register('notes')}
                   placeholder="Special requirements, preferred delivery timeframe, bulk pricing questions..."
                   rows={4}
-                  className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all resize-none"
+                  className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 />
               </div>
 
@@ -253,7 +253,7 @@ export default function QuotePage() {
               <button
                 type="submit"
                 disabled={isSubmitting || items.length === 0}
-                className="w-full py-4 bg-[#2b7fff] hover:bg-[#1a6fee] disabled:opacity-60 text-white rounded-full text-[13px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-blue py-4 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-brand-navy disabled:opacity-60"
               >
                 {isSubmitting && <Loader2 size={15} className="animate-spin" />}
                 Submit Quote Request
@@ -263,19 +263,19 @@ export default function QuotePage() {
 
           {/* ── Right: Quote Summary ── */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl border border-[#eeebe6] overflow-hidden sticky top-24">
+            <div className="sticky top-24 overflow-hidden rounded-2xl border border-brand-line bg-white">
 
-              <div className="px-6 py-4 border-b border-[#eeebe6]">
-                <h2 className="text-[15px] font-bold text-[#111]">
+              <div className="border-b border-brand-line px-6 py-4">
+                <h2 className="text-[15px] font-bold text-brand-navy">
                   Quote Summary ({totalItems} items)
                 </h2>
               </div>
 
-              <div className="divide-y divide-[#f5f2ed]">
+              <div className="divide-y divide-brand-line/60">
                 {items.map((item) => (
                   <div key={item.variantId} className="px-6 py-4 flex gap-3">
                     {/* Image */}
-                    <div className="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-[#f8f7f4]">
+                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-brand-mist">
                       {item.image ? (
                         <Image
                           src={item.image}
@@ -285,19 +285,19 @@ export default function QuotePage() {
                           className="object-cover w-full h-full"
                         />
                       ) : (
-                        <div className="w-full h-full bg-[#f0ece4]" />
+                        <div className="h-full w-full bg-brand-mist" />
                       )}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[#111] line-clamp-1">
+                      <p className="line-clamp-1 text-sm font-semibold text-brand-navy">
                         {item.productTitle}
                       </p>
                       {item.variantTitle !== 'Default Title' && (
-                        <p className="text-xs text-[#999] mt-0.5">{item.variantTitle}</p>
+                        <p className="mt-0.5 text-xs text-brand-ink/50">{item.variantTitle}</p>
                       )}
-                      <p className="text-xs text-[#666] mt-0.5">
+                      <p className="mt-0.5 text-xs text-brand-ink/65">
                         Qty: {item.quantity}
                       </p>
 
@@ -309,7 +309,7 @@ export default function QuotePage() {
                               ? updateQuantity(item.variantId, item.quantity - 1)
                               : removeItem(item.variantId)
                           }
-                          className="w-5 h-5 rounded bg-[#f8f7f4] flex items-center justify-center text-[#555] hover:bg-[#eeebe6]"
+                          className="flex h-5 w-5 items-center justify-center rounded bg-brand-mist text-brand-ink/70 hover:bg-brand-line"
                         >
                           {item.quantity === 1 ? (
                             <Trash2 size={9} />
@@ -317,12 +317,12 @@ export default function QuotePage() {
                             <Minus size={9} />
                           )}
                         </button>
-                        <span className="text-xs font-bold text-[#333] w-4 text-center">
+                        <span className="w-4 text-center text-xs font-bold text-brand-ink">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                          className="w-5 h-5 rounded bg-[#f8f7f4] flex items-center justify-center text-[#555] hover:bg-[#eeebe6]"
+                          className="flex h-5 w-5 items-center justify-center rounded bg-brand-mist text-brand-ink/70 hover:bg-brand-line"
                         >
                           <Plus size={9} />
                         </button>
@@ -333,14 +333,14 @@ export default function QuotePage() {
               </div>
 
               {/* Customer info */}
-              <div className="px-6 py-4 border-t border-[#eeebe6] bg-[#faf9f7]">
-                <p className="text-[12px] text-[#888] mb-1 font-medium uppercase tracking-wider">
+              <div className="border-t border-brand-line bg-brand-surface px-6 py-4">
+                <p className="mb-1 text-[12px] font-medium uppercase tracking-wider text-brand-ink/50">
                   Sending as
                 </p>
-                <p className="text-sm font-semibold text-[#333]">
+                <p className="text-sm font-semibold text-brand-ink">
                   {(session?.user as any)?.firstName} {(session?.user as any)?.lastName}
                 </p>
-                <p className="text-sm text-[#666]">{session?.user?.email}</p>
+                <p className="text-sm text-brand-ink/65">{session?.user?.email}</p>
               </div>
 
             </div>

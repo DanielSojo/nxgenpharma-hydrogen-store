@@ -4,9 +4,14 @@
 
 @layer base {
   :root {
-    --brand-blue: #2b7fff;
-    --brand-dark: #0a0a0a;
-    --brand-cream: #f0ece4;
+    --brand-aqua: #67c8b8;
+    --brand-teal: #49c3c8;
+    --brand-blue: #3e97da;
+    --brand-navy: #1a1d6d;
+    --brand-ink: #173252;
+    --brand-mist: #edf9f9;
+    --brand-surface: #f7fcfc;
+    --brand-line: #cfe7e7;
   }
 
   * {
@@ -18,8 +23,8 @@
   }
 
   body {
-    background: #0a0a0a;
-    color: #1a1a1a;
+    background: var(--brand-surface);
+    color: var(--brand-ink);
     -webkit-font-smoothing: antialiased;
   }
 }

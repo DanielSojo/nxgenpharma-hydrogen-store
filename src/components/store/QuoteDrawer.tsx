@@ -28,14 +28,14 @@ export default function QuoteDrawer() {
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#eeebe6]">
+        <div className="flex items-center justify-between border-b border-brand-line px-6 py-4">
           <div className="flex items-center gap-2">
-            <ClipboardList size={18} className="text-[#333]" />
-            <h2 className="font-bold text-[#111]">Quote Request ({totalItems})</h2>
+            <ClipboardList size={18} className="text-brand-blue" />
+            <h2 className="font-bold text-brand-navy">Quote Request ({totalItems})</h2>
           </div>
           <button
             onClick={closeQuote}
-            className="p-1.5 text-[#999] hover:text-[#333] transition-colors"
+            className="p-1.5 text-brand-ink/45 transition-colors hover:text-brand-navy"
           >
             <X size={18} />
           </button>
@@ -45,11 +45,11 @@ export default function QuoteDrawer() {
         <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
-              <ClipboardList size={40} className="text-[#ddd]" />
-              <p className="text-[#999] text-sm">Your quote is empty</p>
+              <ClipboardList size={40} className="text-brand-line" />
+              <p className="text-sm text-brand-ink/50">Your quote is empty</p>
               <button
                 onClick={closeQuote}
-                className="text-[#2b7fff] text-sm hover:opacity-70"
+                className="text-sm text-brand-blue hover:opacity-70"
               >
                 Browse products
               </button>
@@ -58,10 +58,10 @@ export default function QuoteDrawer() {
             items.map((item) => (
               <div
                 key={item.variantId}
-                className="flex gap-4 pb-4 border-b border-[#f5f2ed] last:border-0"
+                className="flex gap-4 border-b border-brand-line/60 pb-4 last:border-0"
               >
                 {/* Image */}
-                <div className="relative w-18 h-18 flex-shrink-0 rounded-xl overflow-hidden bg-[#f8f7f4]">
+                <div className="relative h-18 w-18 flex-shrink-0 overflow-hidden rounded-xl bg-brand-mist">
                   {item.image ? (
                     <Image
                       src={item.image}
@@ -71,7 +71,7 @@ export default function QuoteDrawer() {
                       className="object-cover w-full h-full"
                     />
                   ) : (
-                    <div className="w-full h-full bg-[#f0ece4]" />
+                    <div className="h-full w-full bg-brand-mist" />
                   )}
                 </div>
 
@@ -80,14 +80,14 @@ export default function QuoteDrawer() {
                   <Link
                     href={`/products/${item.productHandle}`}
                     onClick={closeQuote}
-                    className="text-sm font-semibold text-[#111] hover:text-[#2b7fff] transition-colors line-clamp-2"
+                    className="line-clamp-2 text-sm font-semibold text-brand-navy transition-colors hover:text-brand-blue"
                   >
                     {item.productTitle}
                   </Link>
                   {item.variantTitle !== 'Default Title' && (
-                    <p className="text-xs text-[#999]">{item.variantTitle}</p>
+                    <p className="text-xs text-brand-ink/50">{item.variantTitle}</p>
                   )}
-                  <p className="text-sm text-[#666]">
+                  <p className="text-sm text-brand-ink/65">
                     Qty: {item.quantity}
                   </p>
 
@@ -99,7 +99,7 @@ export default function QuoteDrawer() {
                           ? updateQuantity(item.variantId, item.quantity - 1)
                           : removeItem(item.variantId)
                       }
-                      className="w-6 h-6 rounded-md bg-[#f8f7f4] flex items-center justify-center text-[#555] hover:bg-[#eeebe6] transition-colors"
+                      className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-mist text-brand-ink/70 transition-colors hover:bg-brand-line"
                     >
                       {item.quantity === 1 ? (
                         <Trash2 size={11} />
@@ -107,12 +107,12 @@ export default function QuoteDrawer() {
                         <Minus size={11} />
                       )}
                     </button>
-                    <span className="text-sm font-semibold text-[#333] w-5 text-center">
+                    <span className="w-5 text-center text-sm font-semibold text-brand-ink">
                       {item.quantity}
                     </span>
                     <button
                       onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
-                      className="w-6 h-6 rounded-md bg-[#f8f7f4] flex items-center justify-center text-[#555] hover:bg-[#eeebe6] transition-colors"
+                      className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-mist text-brand-ink/70 transition-colors hover:bg-brand-line"
                     >
                       <Plus size={11} />
                     </button>
@@ -125,18 +125,18 @@ export default function QuoteDrawer() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="px-6 py-5 border-t border-[#eeebe6] flex flex-col gap-3 bg-[#faf9f7]">
-            <div className="flex justify-between items-center text-sm text-[#666]">
+          <div className="flex flex-col gap-3 border-t border-brand-line bg-brand-surface px-6 py-5">
+            <div className="flex items-center justify-between text-sm text-brand-ink/65">
               <span>Total items</span>
-              <span className="font-bold text-[#111]">{totalItems}</span>
+              <span className="font-bold text-brand-navy">{totalItems}</span>
             </div>
-            <p className="text-[12px] text-[#999]">
+            <p className="text-[12px] text-brand-ink/50">
               Pricing will be confirmed after quote review
             </p>
             <Link
               href="/quote"
               onClick={closeQuote}
-              className="w-full py-4 bg-[#2b7fff] hover:bg-[#1a6fee] text-white rounded-full text-sm font-bold text-center transition-colors flex items-center justify-center gap-2"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-blue py-4 text-center text-sm font-bold text-white transition-colors hover:bg-brand-navy"
             >
               Request Quote <ArrowRight size={15} />
             </Link>

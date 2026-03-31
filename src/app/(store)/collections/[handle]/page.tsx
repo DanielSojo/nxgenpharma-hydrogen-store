@@ -31,12 +31,12 @@ export default async function CollectionPage({ params }: Props) {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       <div className="mb-10">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#2b7fff] mb-2">
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
           Collection
         </p>
-        <h1 className="text-3xl font-bold text-[#111] mb-2">{collection.title}</h1>
+        <h1 className="mb-2 text-3xl font-bold text-brand-navy">{collection.title}</h1>
         {collection.description && (
-          <p className="text-[#666] text-base leading-relaxed max-w-2xl">
+          <p className="max-w-2xl text-base leading-relaxed text-brand-ink/65">
             {collection.description}
           </p>
         )}
@@ -51,8 +51,8 @@ export default async function CollectionPage({ params }: Props) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-24 text-[#999]">
-          <p className="text-lg font-medium mb-2">No products in this collection</p>
+        <div className="py-24 text-center text-brand-ink/50">
+          <p className="mb-2 text-lg font-medium">No products in this collection</p>
           <p className="text-sm">Check back soon.</p>
         </div>
       )}

@@ -7,8 +7,8 @@ export default async function PendingPage() {
   const session = await auth();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">
-      <div className="bg-[#f0ece4] rounded-2xl p-14 max-w-lg w-full text-center shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-14 text-center shadow-2xl">
 
         <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <Clock className="text-amber-600" size={32} />
@@ -17,34 +17,34 @@ export default async function PendingPage() {
         <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mx-auto mb-5">
           <path
             d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-            stroke="#111" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
+            stroke="#1a1d6d" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
           />
         </svg>
 
-        <h1 className="text-2xl font-bold text-[#111] mb-3">Application Under Review</h1>
+        <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Under Review</h1>
 
         {session?.user && (
-          <p className="text-[15px] text-[#555] mb-2">
+          <p className="mb-2 text-[15px] text-brand-ink/72">
             Hi {(session.user as any).firstName || session.user.name},
           </p>
         )}
 
-        <p className="text-[15px] text-[#555] leading-relaxed mb-8">
+        <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/72">
           Your B2B account application is currently being reviewed. We'll send you an email at{' '}
-          <span className="font-semibold text-[#333]">{session?.user?.email}</span> once
+          <span className="font-semibold text-brand-ink">{session?.user?.email}</span> once
           your account has been approved, typically within 24 hours.
         </p>
 
-        <div className="bg-white rounded-xl p-5 mb-8 text-left">
-          <h3 className="text-[13px] font-bold text-[#333] mb-3 uppercase tracking-wider">What happens next?</h3>
+        <div className="mb-8 rounded-xl bg-brand-mist p-5 text-left">
+          <h3 className="mb-3 text-[13px] font-bold uppercase tracking-wider text-brand-ink">What happens next?</h3>
           <ol className="flex flex-col gap-2.5">
             {[
               'Our team reviews your application',
               'You receive an approval email with account access',
               'Set your password and start ordering',
             ].map((step, i) => (
-              <li key={i} className="flex items-start gap-3 text-[13.5px] text-[#555]">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#2b7fff] text-white rounded-full text-[11px] font-bold flex items-center justify-center mt-0.5">
+              <li key={i} className="flex items-start gap-3 text-[13.5px] text-brand-ink/72">
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand-blue text-[11px] font-bold text-white">
                   {i + 1}
                 </span>
                 {step}
@@ -56,7 +56,7 @@ export default async function PendingPage() {
         <div className="flex flex-col gap-3">
           <Link
             href="/contact"
-            className="w-full py-3 border-2 border-[#111] text-[#111] rounded-full text-[13px] font-semibold hover:bg-[#111] hover:text-white transition-colors"
+            className="w-full rounded-full border-2 border-brand-navy py-3 text-[13px] font-semibold text-brand-navy transition-colors hover:bg-brand-navy hover:text-white"
           >
             Questions? Contact Us
           </Link>
@@ -68,7 +68,7 @@ export default async function PendingPage() {
           >
             <button
               type="submit"
-              className="w-full py-3 text-[#999] hover:text-[#555] text-[13px] transition-colors"
+              className="w-full py-3 text-[13px] text-brand-ink/50 transition-colors hover:text-brand-navy"
             >
               Sign out
             </button>

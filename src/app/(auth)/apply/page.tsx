@@ -39,12 +39,12 @@ const Input = ({
   required?: boolean;
 }) => (
   <div className="flex flex-col gap-1.5">
-    <label className="text-[13px] font-medium text-[#333]">
+    <label className="text-[13px] font-medium text-brand-ink">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <input
       {...props}
-      className="w-full px-4 py-3 bg-white border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+      className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
     />
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
@@ -62,12 +62,12 @@ const Select = ({
   required?: boolean;
 }) => (
   <div className="flex flex-col gap-1.5">
-    <label className="text-[13px] font-medium text-[#333]">
+    <label className="text-[13px] font-medium text-brand-ink">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     <select
       {...props}
-      className="w-full px-4 py-3 bg-white border border-[#e0dbd2] rounded-xl text-sm text-[#222] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all appearance-none"
+      className="w-full appearance-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
     >
       {children}
     </select>
@@ -104,16 +104,16 @@ export default function ApplyPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">
-        <div className="bg-[#f0ece4] rounded-2xl p-14 max-w-md w-full text-center shadow-2xl">
+      <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
+        <div className="w-full max-w-md rounded-2xl bg-white p-14 text-center shadow-2xl">
           <CheckCircle className="mx-auto mb-5 text-green-600" size={56} />
-          <h1 className="text-2xl font-bold text-[#111] mb-3">Application Received!</h1>
-          <p className="text-[15px] text-[#555] leading-relaxed mb-8">
+          <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Received!</h1>
+          <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/72">
             Thank you for applying. We'll review your application and respond within 24 hours to the email you provided.
           </p>
           <Link
             href="/login"
-            className="inline-block py-3 px-8 bg-[#111] text-white rounded-full text-[13px] font-semibold hover:bg-[#2a2a2a] transition-colors"
+            className="inline-block rounded-full bg-brand-navy px-8 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-brand-blue"
           >
             Back to Sign In
           </Link>
@@ -123,28 +123,28 @@ export default function ApplyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-10 px-5">
+    <div className="min-h-screen bg-brand-mist py-10 px-5">
       <div className="max-w-2xl mx-auto">
 
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 text-[#888] hover:text-white text-sm transition-colors mb-6"
+            className="mb-6 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
           >
             <ArrowLeft size={16} /> Back to Sign In
           </Link>
-          <div className="bg-[#f0ece4] rounded-2xl p-10 shadow-2xl">
+          <div className="rounded-2xl bg-white p-10 shadow-2xl">
             <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
-            <h1 className="text-2xl font-bold text-[#111] mb-2">Apply for a B2B Account</h1>
-            <p className="text-[14px] text-[#555] leading-relaxed">
+            <h1 className="mb-2 text-2xl font-bold text-brand-navy">Apply for a B2B Account</h1>
+            <p className="text-[14px] leading-relaxed text-brand-ink/72">
               Complete the form below to request access to our B2B platform. We review all applications within 24 hours.
             </p>
           </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-[#f0ece4] rounded-2xl p-10 shadow-2xl flex flex-col gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 rounded-2xl bg-white p-10 shadow-2xl">
 
           {serverError && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">
@@ -154,7 +154,7 @@ export default function ApplyPage() {
 
           {/* Personal Info */}
           <div>
-            <h2 className="text-[15px] font-bold text-[#111] mb-4 pb-2 border-b border-[#ddd8cf]">
+            <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
               Personal Information
             </h2>
             <div className="grid grid-cols-2 gap-4">
@@ -171,7 +171,7 @@ export default function ApplyPage() {
 
           {/* Business Info */}
           <div>
-            <h2 className="text-[15px] font-bold text-[#111] mb-4 pb-2 border-b border-[#ddd8cf]">
+            <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
               Business Information
             </h2>
             <div className="grid grid-cols-2 gap-4">
@@ -201,7 +201,7 @@ export default function ApplyPage() {
 
           {/* Address */}
           <div>
-            <h2 className="text-[15px] font-bold text-[#111] mb-4 pb-2 border-b border-[#ddd8cf]">
+            <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
               Business Address
             </h2>
             <div className="grid grid-cols-2 gap-4">
@@ -225,21 +225,21 @@ export default function ApplyPage() {
 
           {/* Message */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-[#333]">
-              Additional Information <span className="text-[#999]">(optional)</span>
+            <label className="text-[13px] font-medium text-brand-ink">
+              Additional Information <span className="text-brand-ink/50">(optional)</span>
             </label>
             <textarea
               {...register('message')}
               placeholder="Tell us more about your business and purchasing needs..."
               rows={4}
-              className="w-full px-4 py-3 bg-white border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all resize-none"
+              className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-4 bg-[#111] hover:bg-[#2a2a2a] disabled:opacity-60 text-white rounded-full text-[13px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-colors mt-2"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy py-4 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-brand-blue disabled:opacity-60"
           >
             {isSubmitting && <Loader2 size={15} className="animate-spin" />}
             Submit Application

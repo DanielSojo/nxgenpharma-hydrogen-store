@@ -20,11 +20,11 @@ export default async function AllCollectionsPage() {
 
       {/* Header */}
       <div className="mb-10">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#2b7fff] mb-2">
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
           B2B Catalog
         </p>
-        <h1 className="text-3xl font-bold text-[#111] mb-2">All Products</h1>
-        <p className="text-[#666] text-base">
+        <h1 className="mb-2 text-3xl font-bold text-brand-navy">All Products</h1>
+        <p className="text-base text-brand-ink/65">
           {products.length} product{products.length !== 1 ? 's' : ''} available
         </p>
       </div>
@@ -38,8 +38,8 @@ export default async function AllCollectionsPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-24 text-[#999]">
-          <p className="text-lg font-medium mb-2">No products found</p>
+        <div className="py-24 text-center text-brand-ink/50">
+          <p className="mb-2 text-lg font-medium">No products found</p>
           <p className="text-sm">Add products in your Shopify Admin to see them here.</p>
         </div>
       )}

@@ -5,9 +5,14 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          blue: '#2b7fff',
-          dark: '#0a0a0a',
-          cream: '#f0ece4',
+          aqua: '#67c8b8',
+          teal: '#49c3c8',
+          blue: '#3e97da',
+          navy: '#1a1d6d',
+          ink: '#173252',
+          mist: '#edf9f9',
+          surface: '#f7fcfc',
+          line: '#cfe7e7',
         },
       },
       fontFamily: {

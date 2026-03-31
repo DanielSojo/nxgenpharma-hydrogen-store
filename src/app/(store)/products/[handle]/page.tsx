@@ -30,7 +30,7 @@ export default async function ProductPage({ params }: Props) {
 
         {/* Images */}
         <div className="flex flex-col gap-4">
-          <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#f8f7f4]">
+          <div className="relative aspect-square overflow-hidden rounded-2xl bg-brand-mist">
             {product.featuredImage ? (
               <Image
                 src={product.featuredImage.url}
@@ -40,7 +40,7 @@ export default async function ProductPage({ params }: Props) {
                 priority
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-[#ccc] text-sm">
+              <div className="absolute inset-0 flex items-center justify-center text-sm text-brand-ink/35">
                 No image
               </div>
             )}
@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: Props) {
           {images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {images.slice(1, 5).map((img, i) => (
-                <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-[#f8f7f4]">
+                <div key={i} className="relative aspect-square overflow-hidden rounded-xl bg-brand-mist">
                   <Image src={img.url} alt={img.altText ?? ''} fill className="object-cover" />
                 </div>
               ))}
@@ -59,14 +59,14 @@ export default async function ProductPage({ params }: Props) {
         {/* Info */}
         <div className="flex flex-col">
           {product.vendor && (
-            <p className="text-xs font-bold uppercase tracking-widest text-[#2b7fff] mb-2">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
               {product.vendor}
             </p>
           )}
-          <h1 className="text-3xl font-bold text-[#111] mb-4">{product.title}</h1>
+          <h1 className="mb-4 text-3xl font-bold text-brand-navy">{product.title}</h1>
 
           <div className="flex items-baseline gap-3 mb-2">
-            <span className="text-lg font-semibold text-[#2b7fff]">
+            <span className="text-lg font-semibold text-brand-teal">
               Price available upon quote request
             </span>
           </div>
@@ -75,12 +75,12 @@ export default async function ProductPage({ params }: Props) {
           {product.options.map((option) =>
             option.values.length > 1 ? (
               <div key={option.name} className="mb-5">
-                <p className="text-sm font-semibold text-[#333] mb-2">{option.name}</p>
+                <p className="mb-2 text-sm font-semibold text-brand-ink">{option.name}</p>
                 <div className="flex flex-wrap gap-2">
                   {option.values.map((value) => (
                     <button
                       key={value}
-                      className="px-4 py-2 border border-[#e0dbd2] rounded-lg text-sm text-[#333] hover:border-[#2b7fff] hover:text-[#2b7fff] transition-colors"
+                      className="rounded-lg border border-brand-line px-4 py-2 text-sm text-brand-ink transition-colors hover:border-brand-blue hover:text-brand-blue"
                     >
                       {value}
                     </button>
@@ -97,7 +97,7 @@ export default async function ProductPage({ params }: Props) {
           {product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
               {product.tags.map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-[#f8f7f4] rounded-full text-xs text-[#666]">
+                <span key={tag} className="rounded-full bg-brand-mist px-3 py-1 text-xs text-brand-ink/65">
                   {tag}
                 </span>
               ))}
@@ -107,7 +107,7 @@ export default async function ProductPage({ params }: Props) {
           {/* Description */}
           {product.descriptionHtml && (
             <div
-              className="mt-8 pt-8 border-t border-[#eeebe6] prose prose-sm max-w-none text-[#555]"
+              className="prose prose-sm mt-8 max-w-none border-t border-brand-line pt-8 text-brand-ink/72"
               dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
             />
           )}

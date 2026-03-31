@@ -47,11 +47,11 @@ export default function ContactPage() {
 
       {/* Header */}
       <div className="mb-12">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#2b7fff] mb-2">
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
           Get in Touch
         </p>
-        <h1 className="text-3xl font-bold text-[#111] mb-3">Contact Us</h1>
-        <p className="text-[#666] text-base max-w-xl leading-relaxed">
+        <h1 className="mb-3 text-3xl font-bold text-brand-navy">Contact Us</h1>
+        <p className="max-w-xl text-base leading-relaxed text-brand-ink/72">
           Have questions about our products, pricing, or becoming a B2B partner?
           Our team responds within 24 hours on business days.
         </p>
@@ -65,30 +65,30 @@ export default function ContactPage() {
           {/* Contact Details */}
           <div className="flex flex-col gap-5">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
-                <Mail size={18} className="text-[#2b7fff]" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist">
+                <Mail size={18} className="text-brand-blue" />
               </div>
               <div>
-                <p className="text-[13px] font-bold text-[#333] uppercase tracking-wider mb-1">Email</p>
+                <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">Email</p>
                 <a
                   href="mailto:info@nxgenpharma.com"
-                  className="text-sm text-[#2b7fff] hover:opacity-70 transition-opacity"
+                  className="text-sm text-brand-blue transition-opacity hover:opacity-70"
                 >
                   info@nxgenpharma.com
                 </a>
-                <p className="text-xs text-[#999] mt-0.5">Business inquiries only</p>
+                <p className="mt-0.5 text-xs text-brand-ink/50">Business inquiries only</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
-                <Phone size={18} className="text-[#2b7fff]" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist">
+                <Phone size={18} className="text-brand-blue" />
               </div>
               <div>
-                <p className="text-[13px] font-bold text-[#333] uppercase tracking-wider mb-1">Phone</p>
+                <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">Phone</p>
                 <a
                   href="tel:+18444962712"
-                  className="text-sm text-[#2b7fff] hover:opacity-70 transition-opacity"
+                  className="text-sm text-brand-blue transition-opacity hover:opacity-70"
                 >
                   +1 (844) 496-2712
                 </a>
@@ -96,45 +96,45 @@ export default function ContactPage() {
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
-                <Clock size={18} className="text-[#2b7fff]" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist">
+                <Clock size={18} className="text-brand-blue" />
               </div>
               <div>
-                <p className="text-[13px] font-bold text-[#333] uppercase tracking-wider mb-1">
+                <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">
                   Business Hours
                 </p>
-                <p className="text-sm text-[#555]">Mon – Fri: 9AM – 5PM EST</p>
-                <p className="text-sm text-[#555]">Saturday: Delivery available</p>
-                <p className="text-sm text-[#999]">Closed on holidays</p>
+                <p className="text-sm text-brand-ink/72">Mon – Fri: 9AM – 5PM EST</p>
+                <p className="text-sm text-brand-ink/72">Saturday: Delivery available</p>
+                <p className="text-sm text-brand-ink/50">Closed on holidays</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
-                <MapPin size={18} className="text-[#2b7fff]" />
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist">
+                <MapPin size={18} className="text-brand-blue" />
               </div>
               <div>
-                <p className="text-[13px] font-bold text-[#333] uppercase tracking-wider mb-1">
+                <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">
                   Shipping
                 </p>
-                <p className="text-sm text-[#555]">Orders placed before 12PM EST</p>
-                <p className="text-sm text-[#555]">ship the same business day</p>
+                <p className="text-sm text-brand-ink/72">Orders placed before 12PM EST</p>
+                <p className="text-sm text-brand-ink/72">ship the same business day</p>
               </div>
             </div>
           </div>
 
           {/* Apply CTA */}
-          <div className="bg-[#0a0a0a] rounded-2xl p-6 text-white">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#2b7fff] mb-2">
+          <div className="rounded-2xl bg-gradient-to-br from-brand-navy via-brand-ink to-brand-blue p-6 text-white">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-aqua">
               New Customer?
             </p>
             <h3 className="text-lg font-bold mb-2">Apply for B2B Access</h3>
-            <p className="text-[#888] text-sm leading-relaxed mb-5">
+            <p className="mb-5 text-sm leading-relaxed text-white/72">
               Get access to our full catalog and B2B pricing by applying for an account.
             </p>
             <a
               href="/apply"
-              className="inline-block w-full py-3 bg-white text-[#111] rounded-full text-[13px] font-bold text-center hover:bg-[#f0ece4] transition-colors"
+              className="inline-block w-full rounded-full bg-white py-3 text-center text-[13px] font-bold text-brand-navy transition-colors hover:bg-brand-mist"
             >
               Apply for an Account
             </a>
@@ -145,29 +145,29 @@ export default function ContactPage() {
         {/* ── Right: Form ── */}
         <div className="lg:col-span-3">
           {submitted ? (
-            <div className="bg-white border border-[#eeebe6] rounded-2xl p-12 text-center">
+            <div className="rounded-2xl border border-brand-line bg-white p-12 text-center">
               <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
                 <CheckCircle className="text-green-600" size={28} />
               </div>
-              <h2 className="text-xl font-bold text-[#111] mb-3">Message Sent!</h2>
-              <p className="text-[#555] text-sm leading-relaxed">
+              <h2 className="mb-3 text-xl font-bold text-brand-navy">Message Sent!</h2>
+              <p className="text-sm leading-relaxed text-brand-ink/72">
                 Thank you for reaching out. We'll get back to you within 24 hours.
               </p>
             </div>
           ) : (
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="bg-white border border-[#eeebe6] rounded-2xl p-8 flex flex-col gap-5"
+              className="flex flex-col gap-5 rounded-2xl border border-brand-line bg-white p-8"
             >
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-[#333]">
+                  <label className="text-[13px] font-medium text-brand-ink">
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     {...register('name')}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                    className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                   />
                   {errors.name && (
                     <p className="text-xs text-red-500">{errors.name.message}</p>
@@ -175,24 +175,24 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-[#333]">Company</label>
+                  <label className="text-[13px] font-medium text-brand-ink">Company</label>
                   <input
                     {...register('company')}
                     placeholder="Acme Corp (optional)"
-                    className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                    className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-[#333]">
+                <label className="text-[13px] font-medium text-brand-ink">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   {...register('email')}
                   type="email"
                   placeholder="you@company.com"
-                  className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                  className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 />
                 {errors.email && (
                   <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -200,12 +200,12 @@ export default function ContactPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-[#333]">
+                <label className="text-[13px] font-medium text-brand-ink">
                   Subject <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register('subject')}
-                  className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all appearance-none"
+                  className="w-full appearance-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 >
                   <option value="">Select a subject...</option>
                   <option value="Product Inquiry">Product Inquiry</option>
@@ -222,14 +222,14 @@ export default function ContactPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-[#333]">
+                <label className="text-[13px] font-medium text-brand-ink">
                   Message <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   {...register('message')}
                   placeholder="Tell us how we can help you..."
                   rows={5}
-                  className="w-full px-4 py-3 bg-[#faf9f7] border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all resize-none"
+                  className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 />
                 {errors.message && (
                   <p className="text-xs text-red-500">{errors.message.message}</p>
@@ -245,7 +245,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-[#111] hover:bg-[#2a2a2a] disabled:opacity-60 text-white rounded-full text-[13px] font-bold tracking-wider uppercase flex items-center justify-center gap-2 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy py-4 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-brand-blue disabled:opacity-60"
               >
                 {isSubmitting && <Loader2 size={15} className="animate-spin" />}
                 Send Message

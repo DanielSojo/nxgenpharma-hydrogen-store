@@ -35,23 +35,23 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">
+    <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
       <div className="w-full max-w-md">
 
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-[#888] hover:text-white text-sm transition-colors mb-6"
+          className="mb-6 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
         >
           <ArrowLeft size={16} /> Back to Sign In
         </Link>
 
-        <div className="bg-[#f0ece4] rounded-2xl p-10 shadow-2xl">
+        <div className="rounded-2xl bg-white p-10 shadow-2xl">
 
           {/* Logo */}
           <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mb-6">
             <path
               d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-              stroke="#111" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
+              stroke="#1a1d6d" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
             />
           </svg>
 
@@ -61,19 +61,19 @@ export default function ForgotPasswordPage() {
               <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
                 <CheckCircle className="text-green-600" size={28} />
               </div>
-              <h1 className="text-xl font-bold text-[#111] mb-3">Check your email</h1>
-              <p className="text-[14px] text-[#555] leading-relaxed mb-2">
+              <h1 className="mb-3 text-xl font-bold text-brand-navy">Check your email</h1>
+              <p className="mb-2 text-[14px] leading-relaxed text-brand-ink/72">
                 If an account exists for
               </p>
-              <p className="font-semibold text-[#333] text-[14px] mb-4">
+              <p className="mb-4 text-[14px] font-semibold text-brand-ink">
                 {submittedEmail}
               </p>
-              <p className="text-[14px] text-[#555] leading-relaxed mb-8">
+              <p className="mb-8 text-[14px] leading-relaxed text-brand-ink/72">
                 you'll receive a password reset link shortly. Check your spam folder if you don't see it.
               </p>
               <Link
                 href="/login"
-                className="inline-block w-full py-3.5 bg-[#111] hover:bg-[#2a2a2a] text-white rounded-full text-[13px] font-semibold text-center transition-colors"
+                className="inline-block w-full rounded-full bg-brand-navy py-3.5 text-center text-[13px] font-semibold text-white transition-colors hover:bg-brand-blue"
               >
                 Back to Sign In
               </Link>
@@ -81,17 +81,17 @@ export default function ForgotPasswordPage() {
           ) : (
             // ── Form State ──
             <>
-              <h1 className="text-xl font-bold text-[#111] mb-2">Reset your password</h1>
-              <p className="text-[14px] text-[#555] leading-relaxed mb-7">
+              <h1 className="mb-2 text-xl font-bold text-brand-navy">Reset your password</h1>
+              <p className="mb-7 text-[14px] leading-relaxed text-brand-ink/72">
                 Enter your email address and we'll send you a link to reset your password.
               </p>
 
               <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-[#333]">Email</label>
+                  <label className="text-[13px] font-medium text-brand-ink">Email</label>
                   <div className="relative">
                     <Mail
-                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#aaa]"
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35"
                       size={15}
                     />
                     <input
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
                       type="email"
                       placeholder="example@mail.com"
                       autoComplete="email"
-                      className="w-full pl-10 pr-4 py-3 bg-white border border-[#e0dbd2] rounded-xl text-sm text-[#222] placeholder:text-[#bbb] outline-none focus:border-[#2b7fff] focus:ring-2 focus:ring-[#2b7fff]/10 transition-all"
+                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
                   </div>
                   {errors.email && (
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-[#2b7fff] hover:bg-[#1a6fee] disabled:opacity-60 text-white rounded-xl text-[13px] font-bold tracking-widest uppercase flex items-center justify-center gap-2 transition-colors mt-1"
+                  className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-blue py-3.5 text-[13px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-brand-navy disabled:opacity-60"
                 >
                   {isSubmitting && <Loader2 size={15} className="animate-spin" />}
                   Send Reset Link
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
 
                 <Link
                   href="/login"
-                  className="text-center text-[13px] text-[#888] hover:text-[#333] transition-colors"
+                  className="text-center text-[13px] text-brand-ink/55 transition-colors hover:text-brand-navy"
                 >
                   Remember your password? Sign in
                 </Link>

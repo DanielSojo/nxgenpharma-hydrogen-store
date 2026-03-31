@@ -6,8 +6,8 @@ export default async function RefusedPage() {
   const session = await auth();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-5">
-      <div className="bg-[#f0ece4] rounded-2xl p-14 max-w-lg w-full text-center shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-14 text-center shadow-2xl">
 
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <XCircle className="text-red-500" size={32} />
@@ -16,28 +16,28 @@ export default async function RefusedPage() {
         <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mx-auto mb-5">
           <path
             d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-            stroke="#111" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
+            stroke="#1a1d6d" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
           />
         </svg>
 
-        <h1 className="text-2xl font-bold text-[#111] mb-3">Application Not Approved</h1>
+        <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Not Approved</h1>
 
         {session?.user && (
-          <p className="text-[15px] text-[#555] mb-2">
+          <p className="mb-2 text-[15px] text-brand-ink/72">
             Hi {(session.user as any).firstName || session.user.name},
           </p>
         )}
 
-        <p className="text-[15px] text-[#555] leading-relaxed mb-8">
+        <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/72">
           Unfortunately your B2B account application for{' '}
-          <span className="font-semibold text-[#333]">{session?.user?.email}</span>{' '}
+          <span className="font-semibold text-brand-ink">{session?.user?.email}</span>{' '}
           was not approved at this time. If you believe this is a mistake or would like more information, please contact us.
         </p>
 
         <div className="flex flex-col gap-3">
           <Link
             href="/apply"
-            className="w-full py-3.5 border-2 border-[#111] text-[#111] hover:bg-[#111] hover:text-white rounded-full text-[13px] font-semibold text-center transition-colors"
+            className="w-full rounded-full border-2 border-brand-navy py-3.5 text-center text-[13px] font-semibold text-brand-navy transition-colors hover:bg-brand-navy hover:text-white"
           >
             Submit a New Application
           </Link>
@@ -50,7 +50,7 @@ export default async function RefusedPage() {
           >
             <button
               type="submit"
-              className="w-full py-3 text-[#999] hover:text-[#555] text-[13px] transition-colors"
+              className="w-full py-3 text-[13px] text-brand-ink/50 transition-colors hover:text-brand-navy"
             >
               Sign out
             </button>

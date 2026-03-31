@@ -13,7 +13,7 @@ export default function AddToCartButton({ variantId, available }: Props) {
 
   if (!available) {
     return (
-      <button disabled className="w-full py-4 bg-[#f8f7f4] text-[#999] rounded-full text-sm font-semibold cursor-not-allowed mt-4">
+      <button disabled className="mt-4 w-full cursor-not-allowed rounded-full bg-brand-mist py-4 text-sm font-semibold text-brand-ink/50">
         Out of Stock
       </button>
     );
@@ -23,7 +23,7 @@ export default function AddToCartButton({ variantId, available }: Props) {
     <button
       onClick={() => addItem(variantId, 1)}
       disabled={isLoading}
-      className="w-full py-4 bg-[#111] hover:bg-[#2a2a2a] disabled:opacity-60 text-white rounded-full text-sm font-bold tracking-wide flex items-center justify-center gap-2 transition-colors mt-4"
+      className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy py-4 text-sm font-bold tracking-wide text-white transition-colors hover:bg-brand-blue disabled:opacity-60"
     >
       {isLoading ? (
         <Loader2 size={16} className="animate-spin" />

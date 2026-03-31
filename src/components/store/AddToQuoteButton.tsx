@@ -19,7 +19,7 @@ export default function AddToQuoteButton({ product, selectedVariant }: Props) {
     return (
       <button
         disabled
-        className="w-full py-4 bg-[#f8f7f4] text-[#999] rounded-full text-sm font-semibold cursor-not-allowed mt-4"
+        className="mt-4 w-full cursor-not-allowed rounded-full bg-brand-mist py-4 text-sm font-semibold text-brand-ink/50"
       >
         Out of Stock
       </button>
@@ -44,10 +44,10 @@ export default function AddToQuoteButton({ product, selectedVariant }: Props) {
   return (
     <button
       onClick={handleAdd}
-      className={`w-full py-4 rounded-full text-sm font-bold tracking-wide flex items-center justify-center gap-2 transition-all mt-4 ${
+      className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full py-4 text-sm font-bold tracking-wide transition-all ${
         added
           ? 'bg-green-600 text-white'
-          : 'bg-[#111] hover:bg-[#2a2a2a] text-white'
+          : 'bg-brand-navy text-white hover:bg-brand-blue'
       }`}
     >
       {added ? (
