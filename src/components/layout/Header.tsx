@@ -5,6 +5,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { ClipboardList, User, LogOut, Menu, X } from 'lucide-react';
 import { useQuoteStore } from '@/store/quote';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Header() {
   const { data: session } = useSession();
@@ -18,12 +19,7 @@ export default function Header() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <svg width="36" height="24" viewBox="0 0 60 36" fill="none">
-            <path
-              d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-              stroke="#111" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
-            />
-          </svg>
+          <Image src="/nxgenpharma-logo.png" width={70} height={40} alt='NxGen Pharma Logo' />
           <span className="font-bold text-[#111] text-lg hidden sm:block">NxGen Pharma</span>
         </Link>
 

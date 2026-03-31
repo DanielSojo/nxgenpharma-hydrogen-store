@@ -12,6 +12,16 @@ export const metadata: Metadata = {
     template: '%s | NxGen Pharma',
   },
   description: 'Professional B2B pharmaceutical supply platform.',
+  icons: {
+    icon: [
+      { url: '/nxgenpharma-logo.png', sizes: 'any' },
+      { url: '/nxgenpharma-logo.png', type: 'image/png', sizes: '512x512' },
+    ],
+    apple: [
+      { url: '/nxgenpharma-logo.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/nxgenpharma-logo.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

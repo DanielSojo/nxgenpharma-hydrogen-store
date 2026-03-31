@@ -1,4 +1,5 @@
-import { getProducts } from '@/lib/shopify';
+import { getCollections, getProducts } from '@/lib/shopify';
+import CollectionFilter from '@/components/store/CollectionFilter';
 import ProductCard from '@/components/store/ProductCard';
 import type { Metadata } from 'next';
 
@@ -8,7 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AllCollectionsPage() {
-  const productsData = await getProducts({ first: 48, sortKey: 'TITLE' });
+  const [productsData, collections] = await Promise.all([
+    getProducts({ first: 48, sortKey: 'TITLE' }),
+    getCollections(50),
+  ]);
   const products = productsData?.nodes ?? [];
 
   return (
@@ -24,6 +28,8 @@ export default async function AllCollectionsPage() {
           {products.length} product{products.length !== 1 ? 's' : ''} available
         </p>
       </div>
+
+      <CollectionFilter collections={collections ?? []} activeHandle="all" />
 
       {products.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">

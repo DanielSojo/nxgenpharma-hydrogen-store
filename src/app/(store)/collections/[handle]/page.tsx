@@ -1,5 +1,6 @@
-import { getCollectionByHandle } from '@/lib/shopify';
+import { getCollectionByHandle, getCollections } from '@/lib/shopify';
 import { notFound, redirect } from 'next/navigation';
+import CollectionFilter from '@/components/store/CollectionFilter';
 import ProductCard from '@/components/store/ProductCard';
 import type { Metadata } from 'next';
 
@@ -19,7 +20,10 @@ export default async function CollectionPage({ params }: Props) {
   const { handle } = await params;
   if (handle === 'all') redirect('/collections/all');
 
-  const collection = await getCollectionByHandle(handle, 48);
+  const [collection, collections] = await Promise.all([
+    getCollectionByHandle(handle, 48),
+    getCollections(50),
+  ]);
   if (!collection) notFound();
 
   const products = collection.products.nodes;
@@ -37,6 +41,8 @@ export default async function CollectionPage({ params }: Props) {
           </p>
         )}
       </div>
+
+      <CollectionFilter collections={collections ?? []} activeHandle={handle} />
 
       {products.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">

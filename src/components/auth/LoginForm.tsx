@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -87,19 +88,13 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
               )`,
             }}
           />
+
+          <Image className='z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' src="/nxgenpharma-logo.png" width={400} height={100} alt='NxGen Pharma Logo' />
         </div>
 
         <div className="bg-[#f0ece4] flex flex-col justify-center px-10 py-12">
           <div className="mb-7">
-            <svg width="54" height="36" viewBox="0 0 60 36" fill="none">
-              <path
-                d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-                stroke="#111"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
           </div>
 
           <p className="font-serif text-[17px] text-[#1a1a1a] mb-7 leading-relaxed">

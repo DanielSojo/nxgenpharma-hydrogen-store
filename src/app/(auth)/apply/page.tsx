@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
 
 const applicationSchema = z.object({
   firstName: z.string().min(1, 'Required'),
@@ -134,12 +135,7 @@ export default function ApplyPage() {
             <ArrowLeft size={16} /> Back to Sign In
           </Link>
           <div className="bg-[#f0ece4] rounded-2xl p-10 shadow-2xl">
-            <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mb-5">
-              <path
-                d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-                stroke="#111" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
-              />
-            </svg>
+            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
             <h1 className="text-2xl font-bold text-[#111] mb-2">Apply for a B2B Account</h1>
             <p className="text-[14px] text-[#555] leading-relaxed">
               Complete the form below to request access to our B2B platform. We review all applications within 24 hours.

@@ -2,6 +2,7 @@ import { getProducts, getCollections } from '@/lib/shopify';
 import ProductCard from '@/components/store/ProductCard';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 export default async function HomePage() {
   const [productsData, collections] = await Promise.all([
@@ -97,10 +98,7 @@ export default async function HomePage() {
       <footer className="bg-[#0a0a0a] text-white py-16 px-6 mt-8">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
-            <svg width="44" height="30" viewBox="0 0 60 36" fill="none" className="mb-4">
-              <path d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-                stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <Image src="/nxgenpharma-logo.png" width={200} height={100} alt='NxGen Pharma Logo' />
             <p className="text-[#666] text-sm leading-relaxed">
               Professional pharmaceutical supply for verified B2B clients.
             </p>
