@@ -9,7 +9,6 @@ const loginSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   providers: [
     Credentials({
       name: 'Shopify',
@@ -93,8 +92,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       (session.user as any).firstName = token.firstName;
       (session.user as any).lastName = token.lastName;
       (session.user as any).approved = token.approved;
-      (session.user as any).b2bStatus = token.b2bStatus;
-      (session.user as any).accessToken = token.accessToken;
+      // b2bStatus and accessToken are intentionally NOT exposed in the session
+      // They stay in the JWT (server-side only) but are not sent to the client
       return session;
     },
   },

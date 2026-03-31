@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { getToken } from 'next-auth/jwt';
 import { shopifyClient } from '@/lib/shopify/client';
 import { GET_CUSTOMER_ORDERS } from '@/lib/shopify/queries';
 
@@ -9,7 +10,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const accessToken = (session.user as any).accessToken;
+  // Get accessToken from JWT (server-side only — not exposed in session)
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const accessToken = token?.accessToken as string;
+
   if (!accessToken) {
     return NextResponse.json({ error: 'No access token' }, { status: 401 });
   }
