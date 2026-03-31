@@ -5,6 +5,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { ClipboardList, User, LogOut, Menu, X } from 'lucide-react';
 import { useQuoteStore } from '@/store/quote';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Header() {
   const { data: session } = useSession();
@@ -13,27 +14,24 @@ export default function Header() {
   const itemCount = totalItems();
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[#eeebe6]">
+    <header className="sticky top-0 z-40 border-b border-brand-line/80 bg-white/90 backdrop-blur">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <svg width="36" height="24" viewBox="0 0 60 36" fill="none">
-            <path
-              d="M4 22 C10 10, 18 10, 24 18 C30 26, 38 26, 44 18 C50 10, 56 14, 56 14"
-              stroke="#111" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
-            />
-          </svg>
-          <span className="font-bold text-[#111] text-lg hidden sm:block">NxGen Pharma</span>
+          <Image src="/nxgenpharma-logo.png" width={70} height={40} alt="NxGen Pharma Logo" />
+          <span className="hidden text-lg font-bold text-brand-navy sm:block">NxGen Pharma</span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm text-[#555] hover:text-[#111] transition-colors">Home</Link>
-          <Link href="/collections/all" className="text-sm text-[#555] hover:text-[#111] transition-colors">Catalog</Link>
-          <Link href="/quotes" className="text-sm text-[#555] hover:text-[#111] transition-colors">Quotes</Link>
-          <Link href="/orders" className="text-sm text-[#555] hover:text-[#111] transition-colors">Orders</Link>
-          <Link href="/contact" className="text-sm text-[#555] hover:text-[#111] transition-colors">Contact</Link>
+          <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
+          <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
+          <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
+          <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
+          <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
+          <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
+          <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
         </nav>
 
         {/* Actions */}
@@ -42,12 +40,12 @@ export default function Header() {
           {/* Quote button */}
           <button
             onClick={openQuote}
-            className="relative p-2 text-[#555] hover:text-[#111] transition-colors"
+            className="relative rounded-full p-2 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
             aria-label="Open quote"
           >
             <ClipboardList size={20} />
             {itemCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2b7fff] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-navy text-[10px] font-bold text-white">
                 {itemCount}
               </span>
             )}
@@ -56,9 +54,9 @@ export default function Header() {
           {/* User menu */}
           {session?.user && (
             <div className="hidden md:flex items-center gap-2">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-[#f8f7f4] rounded-lg">
-                <User size={14} className="text-[#666]" />
-                <span className="text-sm text-[#333]">
+              <div className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5">
+                <User size={14} className="text-brand-blue" />
+                <span className="text-sm text-brand-ink">
                   {(session.user as any).firstName || session.user.email}
                 </span>
               </div>
@@ -69,14 +67,14 @@ export default function Header() {
                 .includes((session.user.email ?? '').toLowerCase()) && (
                 <Link
                   href="/admin"
-                  className="px-3 py-1.5 bg-[#0a0a0a] text-white rounded-lg text-xs font-semibold hover:bg-[#2a2a2a] transition-colors"
+                  className="rounded-lg bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-brand-blue"
                 >
                   Admin
                 </Link>
               )}
               <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
-                className="p-2 text-[#999] hover:text-[#555] transition-colors"
+                className="p-2 text-brand-ink/45 transition-colors hover:text-brand-navy"
                 aria-label="Sign out"
               >
                 <LogOut size={16} />
@@ -86,7 +84,7 @@ export default function Header() {
 
           {/* Mobile menu toggle */}
           <button
-            className="md:hidden p-2 text-[#555]"
+            className="rounded-full p-2 text-brand-ink/70 md:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -96,16 +94,18 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-[#eeebe6] px-6 py-4 flex flex-col gap-4">
-          <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-[#555]">Home</Link>
-          <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-[#555]">Catalog</Link>
-          <Link href="/quotes" onClick={() => setMobileOpen(false)} className="text-sm text-[#555]">Quotes</Link>
-          <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-[#555]">Orders</Link>
-          <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-[#555]">Contact</Link>
+        <div className="flex flex-col gap-4 border-t border-brand-line/80 bg-white px-6 py-4 md:hidden">
+          <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Home</Link>
+          <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Catalog</Link>
+          <Link href="/about" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">About</Link>
+          <Link href="/faqs" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">FAQs</Link>
+          <Link href="/quotes" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Quotes</Link>
+          <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Orders</Link>
+          <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Contact</Link>
           {session?.user && (
             <button
               onClick={() => signOut({ callbackUrl: '/login' })}
-              className="text-sm text-red-500 text-left"
+              className="text-left text-sm text-red-500"
             >
               Sign out
             </button>
