@@ -278,3 +278,41 @@ export const CREATE_DRAFT_ORDER = `
     }
   }
 `;
+
+// ─── Customer Orders ──────────────────────────────────────────────────────────
+
+export const GET_CUSTOMER_ORDERS = `
+  query GetCustomerOrders($accessToken: String!, $first: Int!) {
+    customer(customerAccessToken: $accessToken) {
+      orders(first: $first, sortKey: PROCESSED_AT, reverse: true) {
+        nodes {
+          id
+          orderNumber
+          processedAt
+          financialStatus
+          fulfillmentStatus
+          currentTotalPrice {
+            amount
+            currencyCode
+          }
+          lineItems(first: 10) {
+            nodes {
+              title
+              quantity
+              variant {
+                price {
+                  amount
+                  currencyCode
+                }
+                image {
+                  url
+                  altText
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
