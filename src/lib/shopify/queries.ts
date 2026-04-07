@@ -28,13 +28,15 @@ export const PRODUCT_CARD_FRAGMENT = `
       minVariantPrice { ...PriceFragment }
       maxVariantPrice { ...PriceFragment }
     }
-    variants(first: 1) {
+    variants(first: 50) {
       nodes {
         id
         title
         availableForSale
         price { ...PriceFragment }
         compareAtPrice { ...PriceFragment }
+        selectedOptions { name value }
+        image { ...ImageFragment }
       }
     }
   }

@@ -48,7 +48,13 @@ export default function OrdersPage() {
       .then((r) => r.json())
       .then((data) => {
         if (data.error) setError(data.error);
-        else setOrders(data.orders ?? []);
+        else {
+          const sortedOrders = [...(data.orders ?? [])].sort(
+            (a, b) =>
+              new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
+          );
+          setOrders(sortedOrders);
+        }
       })
       .catch(() => setError('Failed to load orders'))
       .finally(() => setLoading(false));
@@ -92,7 +98,7 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <Link
               key={order.id}
-              href={`/orders/${order.id.split('/').pop()}`}
+              href={`/orders/${order.orderNumber}`}
               className="group flex items-center justify-between rounded-2xl border border-brand-line bg-white px-6 py-5 transition-all hover:-translate-y-0.5 hover:border-brand-blue hover:shadow-sm"
             >
               <div className="flex items-center gap-4">

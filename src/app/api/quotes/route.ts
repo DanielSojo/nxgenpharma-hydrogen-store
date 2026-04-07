@@ -80,7 +80,11 @@ export async function GET(req: NextRequest) {
           .join('\n')
           .replace('Customer Notes: ', '')
           .trim(),
-      }));
+      }))
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
 
     return NextResponse.json({ quotes });
   } catch (error) {

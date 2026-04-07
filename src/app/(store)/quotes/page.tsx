@@ -32,7 +32,12 @@ export default function QuotesPage() {
       .then((r) => r.json())
       .then((data) => {
         if (data.error) setError(data.error);
-        else setQuotes(data.quotes ?? []);
+        else {
+          const sortedQuotes = [...(data.quotes ?? [])].sort(
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setQuotes(sortedQuotes);
+        }
       })
       .catch(() => setError('Failed to load quotes'))
       .finally(() => setLoading(false));

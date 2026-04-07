@@ -1,3 +1,6 @@
+'use client';
+
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { ShopifyProduct } from '@/types';
@@ -9,7 +12,17 @@ interface Props {
 }
 
 export default function ProductCard({ product }: Props) {
-  const variant = product.variants.nodes[0];
+  const variants = product.variants.nodes;
+  const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id ?? '');
+
+  const variant = useMemo(
+    () => variants.find((item) => item.id === selectedVariantId) ?? variants[0],
+    [selectedVariantId, variants]
+  );
+
+  const activeImage = variant?.image ?? product.featuredImage;
+  const hasVariantOptions =
+    variants.length > 1 && variants.some((item) => item.title !== 'Default Title');
   const hasDiscount =
     variant?.compareAtPrice &&
     parseFloat(variant.compareAtPrice.amount) > parseFloat(variant.price.amount);
@@ -19,10 +32,10 @@ export default function ProductCard({ product }: Props) {
       <Link href={`/products/${product.handle}`} className="flex flex-1 flex-col">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-brand-mist">
-          {product.featuredImage ? (
+          {activeImage ? (
             <Image
-              src={product.featuredImage.url}
-              alt={product.featuredImage.altText ?? product.title}
+              src={activeImage.url}
+              alt={activeImage.altText ?? product.title}
               fill
               className="object-contain transition-transform duration-500 group-hover:scale-105"
             />
@@ -80,6 +93,31 @@ export default function ProductCard({ product }: Props) {
       </Link>
 
       <div className="px-4 pb-4">
+        {hasVariantOptions && (
+          <div className="mb-3">
+            <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-brand-ink/45">
+              Variation
+            </label>
+            <select
+              value={variant?.id ?? ''}
+              onChange={(event) => setSelectedVariantId(event.target.value)}
+              className="w-full rounded-xl border border-brand-line bg-brand-surface px-3 py-2.5 text-sm text-brand-ink outline-none transition-colors focus:border-brand-blue"
+            >
+              {variants.map((item) => {
+                const label =
+                  item.title !== 'Default Title'
+                    ? item.title
+                    : item.selectedOptions.map((option) => option.value).join(' / ') || product.title;
+
+                return (
+                  <option key={item.id} value={item.id}>
+                    {label}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        )}
         {variant ? (
           <ProductCardQuoteButton product={product} variant={variant} />
         ) : (

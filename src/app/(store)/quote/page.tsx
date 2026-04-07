@@ -13,16 +13,65 @@ import { ArrowLeft, ClipboardList, Loader2, CheckCircle, Trash2, Plus, Minus } f
 import { formatPrice } from '@/lib/utils';
 
 const quoteSchema = z.object({
+  addressMode: z.enum(['saved', 'new']),
   notes: z.string().optional(),
   expectedDelivery: z.string().optional(),
-  shippingAddress: z.string().min(1, 'Shipping address is required'),
-  shippingCity: z.string().min(1, 'City is required'),
-  shippingState: z.string().min(1, 'State is required'),
-  shippingZip: z.string().min(1, 'ZIP code is required'),
-  shippingCountry: z.string().min(1, 'Country is required'),
+  shippingAddress: z.string().optional(),
+  shippingCity: z.string().optional(),
+  shippingState: z.string().optional(),
+  shippingZip: z.string().optional(),
+  shippingCountry: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.addressMode === 'new') {
+    if (!data.shippingAddress?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['shippingAddress'],
+        message: 'Shipping address is required',
+      });
+    }
+    if (!data.shippingCity?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['shippingCity'],
+        message: 'City is required',
+      });
+    }
+    if (!data.shippingState?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['shippingState'],
+        message: 'State is required',
+      });
+    }
+    if (!data.shippingZip?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['shippingZip'],
+        message: 'ZIP code is required',
+      });
+    }
+    if (!data.shippingCountry?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['shippingCountry'],
+        message: 'Country is required',
+      });
+    }
+  }
 });
 
 type QuoteForm = z.infer<typeof quoteSchema>;
+
+interface SavedAddress {
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+}
 
 export default function QuotePage() {
   const router = useRouter();
@@ -32,12 +81,31 @@ export default function QuotePage() {
   const [serverError, setServerError] = useState('');
   const [quoteNumber, setQuoteNumber] = useState('');
   const [draftOrderName, setDraftOrderName] = useState('');
+  const [savedAddress, setSavedAddress] = useState<SavedAddress | null>(null);
+  const [addressError, setAddressError] = useState('');
+  const [loadingAddress, setLoadingAddress] = useState(true);
 
   const {
     register,
     handleSubmit,
+    watch,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm<QuoteForm>({ resolver: zodResolver(quoteSchema) });
+  } = useForm<QuoteForm>({
+    resolver: zodResolver(quoteSchema),
+    defaultValues: {
+      addressMode: 'new',
+      shippingAddress: '',
+      shippingCity: '',
+      shippingState: '',
+      shippingZip: '',
+      shippingCountry: '',
+      notes: '',
+      expectedDelivery: '',
+    },
+  });
+
+  const addressMode = watch('addressMode');
 
   useEffect(() => {
     if (items.length === 0 && !submitted) {
@@ -45,8 +113,77 @@ export default function QuotePage() {
     }
   }, [items, submitted, router]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSavedAddress() {
+      if (!session?.user?.id) {
+        setLoadingAddress(false);
+        return;
+      }
+
+      try {
+        setLoadingAddress(true);
+        setAddressError('');
+
+        const res = await fetch('/api/customer/address');
+        const json = await res.json();
+
+        if (!res.ok) {
+          throw new Error(json.error ?? 'Failed to load saved address');
+        }
+
+        if (cancelled) return;
+
+        const nextAddress = json.address as SavedAddress | null;
+        setSavedAddress(nextAddress);
+        reset((currentValues) => ({
+          ...currentValues,
+          addressMode: nextAddress ? 'saved' : 'new',
+          shippingAddress: nextAddress?.address ?? currentValues.shippingAddress ?? '',
+          shippingCity: nextAddress?.city ?? currentValues.shippingCity ?? '',
+          shippingState: nextAddress?.state ?? currentValues.shippingState ?? '',
+          shippingZip: nextAddress?.zip ?? currentValues.shippingZip ?? '',
+          shippingCountry: nextAddress?.country ?? currentValues.shippingCountry ?? '',
+        }));
+      } catch (error) {
+        if (cancelled) return;
+        setAddressError(
+          error instanceof Error ? error.message : 'Failed to load saved address'
+        );
+      } finally {
+        if (!cancelled) {
+          setLoadingAddress(false);
+        }
+      }
+    }
+
+    loadSavedAddress();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reset, session?.user?.id]);
+
   const onSubmit = async (formData: QuoteForm) => {
     setServerError('');
+
+    const shipping =
+      formData.addressMode === 'saved' && savedAddress
+        ? {
+            address: savedAddress.address,
+            city: savedAddress.city,
+            state: savedAddress.state,
+            zip: savedAddress.zip,
+            country: savedAddress.country,
+          }
+        : {
+            address: formData.shippingAddress ?? '',
+            city: formData.shippingCity ?? '',
+            state: formData.shippingState ?? '',
+            zip: formData.shippingZip ?? '',
+            country: formData.shippingCountry ?? '',
+          };
 
     const res = await fetch('/api/quote', {
       method: 'POST',
@@ -57,13 +194,7 @@ export default function QuotePage() {
           name: `${(session?.user as any)?.firstName ?? ''} ${(session?.user as any)?.lastName ?? ''}`.trim(),
           email: session?.user?.email,
         },
-        shipping: {
-          address: formData.shippingAddress,
-          city: formData.shippingCity,
-          state: formData.shippingState,
-          zip: formData.shippingZip,
-          country: formData.shippingCountry,
-        },
+        shipping,
         notes: formData.notes,
       }),
     });
@@ -156,7 +287,58 @@ export default function QuotePage() {
                   Shipping Address
                 </h2>
                 <div className="flex flex-col gap-4">
+                  {loadingAddress ? (
+                    <div className="rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink/60">
+                      Loading saved address...
+                    </div>
+                  ) : savedAddress ? (
+                    <div className="flex flex-col gap-3">
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-brand-line p-4 transition-colors hover:border-brand-blue">
+                        <input
+                          type="radio"
+                          value="saved"
+                          {...register('addressMode')}
+                          className="mt-1"
+                        />
+                        <div className="text-sm text-brand-ink">
+                          <p className="font-semibold text-brand-navy">Use saved address</p>
+                          <p className="mt-1 text-brand-ink/70">
+                            {[savedAddress.address, `${savedAddress.city}, ${savedAddress.state} ${savedAddress.zip}`, savedAddress.country]
+                              .filter(Boolean)
+                              .join(', ')}
+                          </p>
+                        </div>
+                      </label>
 
+                      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-brand-line p-4 transition-colors hover:border-brand-blue">
+                        <input
+                          type="radio"
+                          value="new"
+                          {...register('addressMode')}
+                          className="mt-1"
+                        />
+                        <div className="text-sm text-brand-ink">
+                          <p className="font-semibold text-brand-navy">Use a new address</p>
+                          <p className="mt-1 text-brand-ink/70">
+                            Enter a different shipping address for this quote request.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink/60">
+                      No saved address was found on your account. Enter a shipping address below.
+                    </div>
+                  )}
+
+                  {addressError && (
+                    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                      {addressError}
+                    </div>
+                  )}
+
+                  {(addressMode === 'new' || !savedAddress) && (
+                    <>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-medium text-brand-ink">
                       Street Address <span className="text-red-500">*</span>
@@ -228,6 +410,8 @@ export default function QuotePage() {
                       )}
                     </div>
                   </div>
+                    </>
+                  )}
                 </div>
               </div>
 

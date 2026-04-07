@@ -28,7 +28,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
     }
 
-    const orders = data?.customer?.orders?.nodes ?? [];
+    const orders = (data?.customer?.orders?.nodes ?? []).sort(
+      (a: any, b: any) =>
+        new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
+    );
 
     return NextResponse.json({
       orders: orders.map((order: any) => ({
