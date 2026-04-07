@@ -21,6 +21,7 @@ export const PRODUCT_CARD_FRAGMENT = `
     id
     handle
     title
+    vendor
     availableForSale
     featuredImage { ...ImageFragment }
     priceRange {
@@ -30,6 +31,7 @@ export const PRODUCT_CARD_FRAGMENT = `
     variants(first: 1) {
       nodes {
         id
+        title
         availableForSale
         price { ...PriceFragment }
         compareAtPrice { ...PriceFragment }
