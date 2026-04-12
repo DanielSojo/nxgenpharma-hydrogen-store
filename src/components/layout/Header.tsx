@@ -31,6 +31,7 @@ export default function Header() {
           <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
           <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
           <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
+          <Link href="/profile" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Profile</Link>
           <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
         </nav>
 
@@ -54,12 +55,12 @@ export default function Header() {
           {/* User menu */}
           {session?.user && (
             <div className="hidden md:flex items-center gap-2">
-              <div className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5">
+              <Link href="/profile" className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5 transition-colors hover:bg-brand-surface">
                 <User size={14} className="text-brand-blue" />
                 <span className="text-sm text-brand-ink">
                   {(session.user as any).firstName || session.user.email}
                 </span>
-              </div>
+              </Link>
               {/* Admin link — only shows for admin emails */}
               {(process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
                 .split(',')
@@ -101,6 +102,7 @@ export default function Header() {
           <Link href="/faqs" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">FAQs</Link>
           <Link href="/quotes" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Quotes</Link>
           <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Orders</Link>
+          <Link href="/profile" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Profile</Link>
           <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Contact</Link>
           {session?.user && (
             <button

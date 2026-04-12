@@ -23,17 +23,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const token = await loginCustomer(parsed.data.email, parsed.data.password);
           if (!token) {
-            console.error('[Auth] loginCustomer returned null — invalid credentials');
+            console.error('[Auth] loginCustomer returned null');
             return null;
           }
 
           const customer = await getCustomer(token.accessToken);
           if (!customer) {
-            console.error('[Auth] getCustomer returned null — could not fetch customer');
+            console.error('[Auth] getCustomer returned null');
             return null;
           }
 
-          console.log('[Auth] Login success:', customer.email, '| approved:', customer.approved, '| status:', customer.b2bStatus);
+          console.log('[Auth] Login:', customer.email, '| b2bStatus:', customer.b2bStatus);
 
           return {
             id: customer.id,
@@ -80,7 +80,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.approvedCheckedAt = Date.now();
           }
         } catch (err) {
-          console.warn('[JWT] Could not refresh approval status:', err);
+          console.warn('[JWT] Could not refresh status:', err);
         }
       }
 
@@ -92,8 +92,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       (session.user as any).firstName = token.firstName;
       (session.user as any).lastName = token.lastName;
       (session.user as any).approved = token.approved;
-      // b2bStatus and accessToken are intentionally NOT exposed in the session
-      // They stay in the JWT (server-side only) but are not sent to the client
+      // accessToken is included so server-side Route Handlers can use it via auth()
+      // It is NOT exposed to the browser via /api/auth/session
+      (session.user as any).accessToken = token.accessToken;
       return session;
     },
   },
