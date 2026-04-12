@@ -109,15 +109,16 @@ export const GET_COLLECTIONS = `
 `;
 
 export const GET_COLLECTION_BY_HANDLE = `
-  query GetCollectionByHandle($handle: String!, $first: Int!) {
+  query GetCollectionByHandle($handle: String!, $first: Int!, $after: String) {
     collectionByHandle(handle: $handle) {
       id
       handle
       title
       description
       image { ...ImageFragment }
-      products(first: $first) {
+      products(first: $first, after: $after) {
         nodes { ...ProductCardFragment }
+        pageInfo { hasNextPage endCursor }
       }
     }
   }
@@ -286,9 +287,9 @@ export const CREATE_DRAFT_ORDER = `
 // ─── Customer Orders ──────────────────────────────────────────────────────────
 
 export const GET_CUSTOMER_ORDERS = `
-  query GetCustomerOrders($accessToken: String!, $first: Int!) {
+  query GetCustomerOrders($accessToken: String!, $first: Int!, $after: String) {
     customer(customerAccessToken: $accessToken) {
-      orders(first: $first, sortKey: PROCESSED_AT, reverse: true) {
+      orders(first: $first, after: $after, sortKey: PROCESSED_AT, reverse: true) {
         nodes {
           id
           orderNumber
@@ -315,6 +316,10 @@ export const GET_CUSTOMER_ORDERS = `
               }
             }
           }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }

@@ -10,6 +10,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const searchParams = req.nextUrl.searchParams;
+  const firstParam = Number(searchParams.get('first'));
+  const first = Number.isFinite(firstParam) ? Math.min(Math.max(firstParam, 1), 50) : 10;
+  const after = searchParams.get('after') || null;
+
   // Get accessToken from JWT (server-side only — not exposed in session)
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const accessToken = token?.accessToken as string;
@@ -20,7 +25,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const { data, errors } = await shopifyClient.request(GET_CUSTOMER_ORDERS, {
-      variables: { accessToken, first: 20 },
+      variables: { accessToken, first, after },
     });
 
     if (errors) {
@@ -28,7 +33,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
     }
 
-    const orders = (data?.customer?.orders?.nodes ?? []).sort(
+    const orderConnection = data?.customer?.orders;
+    const orders = (orderConnection?.nodes ?? []).sort(
       (a: any, b: any) =>
         new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
     );
@@ -43,6 +49,10 @@ export async function GET(req: NextRequest) {
         currentTotalPrice: order.currentTotalPrice,
         lineItemsCount: order.lineItems?.nodes?.length ?? 0,
       })),
+      pageInfo: {
+        hasNextPage: Boolean(orderConnection?.pageInfo?.hasNextPage),
+        endCursor: orderConnection?.pageInfo?.endCursor ?? null,
+      },
     });
   } catch (error) {
     console.error('Orders error:', error);

@@ -3,7 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { ShoppingBag, ArrowRight, ChevronRight, CheckCircle, Clock, Truck } from 'lucide-react';
+import {
+  ShoppingBag,
+  ArrowRight,
+  ChevronRight,
+  CheckCircle,
+  Clock,
+  Truck,
+  ChevronLeft,
+} from 'lucide-react';
 
 interface Order {
   id: string;
@@ -14,6 +22,17 @@ interface Order {
   currentTotalPrice: { amount: string; currencyCode: string };
   lineItemsCount: number;
 }
+
+interface OrdersResponse {
+  error?: string;
+  orders?: Order[];
+  pageInfo?: {
+    hasNextPage: boolean;
+    endCursor: string | null;
+  };
+}
+
+const PAGE_SIZE = 10;
 
 function formatPrice(amount: string, currency: string) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(parseFloat(amount));
@@ -40,25 +59,82 @@ export default function OrdersPage() {
   const { data: session } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isPaginating, setIsPaginating] = useState(false);
   const [error, setError] = useState('');
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [cursorHistory, setCursorHistory] = useState<(string | null)[]>([null]);
+  const [page, setPage] = useState(1);
+
+  const currentCursor = cursorHistory[cursorHistory.length - 1] ?? null;
 
   useEffect(() => {
     if (!session) return;
-    fetch('/api/orders')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) setError(data.error);
-        else {
-          const sortedOrders = [...(data.orders ?? [])].sort(
-            (a, b) =>
-              new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
-          );
-          setOrders(sortedOrders);
+
+    const controller = new AbortController();
+
+    const fetchOrders = async () => {
+      const isInitialLoad = currentCursor === null && page === 1;
+      setError('');
+
+      if (isInitialLoad) setLoading(true);
+      else setIsPaginating(true);
+
+      try {
+        const params = new URLSearchParams({ first: String(PAGE_SIZE) });
+        if (currentCursor) params.set('after', currentCursor);
+
+        const response = await fetch(`/api/orders?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        const data: OrdersResponse = await response.json();
+
+        if (!response.ok || data.error) {
+          setError(data.error ?? 'Failed to load orders');
+          setOrders([]);
+          setHasNextPage(false);
+          return;
         }
-      })
-      .catch(() => setError('Failed to load orders'))
-      .finally(() => setLoading(false));
-  }, [session]);
+
+        const sortedOrders = [...(data.orders ?? [])].sort(
+          (a, b) =>
+            new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
+        );
+
+        setOrders(sortedOrders);
+        setHasNextPage(Boolean(data.pageInfo?.hasNextPage));
+        setNextCursor(data.pageInfo?.endCursor ?? null);
+      } catch (fetchError) {
+        if ((fetchError as Error).name !== 'AbortError') {
+          setError('Failed to load orders');
+          setOrders([]);
+          setHasNextPage(false);
+          setNextCursor(null);
+        }
+      } finally {
+        if (isInitialLoad) setLoading(false);
+        else setIsPaginating(false);
+      }
+    };
+
+    fetchOrders();
+
+    return () => controller.abort();
+  }, [session, currentCursor, page]);
+
+  const goToNextPage = () => {
+    if (!hasNextPage || !nextCursor) return;
+
+    setCursorHistory((prev) => [...prev, nextCursor]);
+    setPage((prev) => prev + 1);
+  };
+
+  const goToPreviousPage = () => {
+    if (cursorHistory.length === 1) return;
+
+    setCursorHistory((prev) => prev.slice(0, -1));
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
@@ -125,6 +201,33 @@ export default function OrdersPage() {
               </div>
             </Link>
           ))}
+
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-brand-line bg-white px-4 py-4">
+            <div className="text-sm text-brand-ink/60">
+              Page {page}
+              {isPaginating ? ' • Updating…' : ''}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={goToPreviousPage}
+                disabled={cursorHistory.length === 1 || isPaginating}
+                className="inline-flex items-center gap-2 rounded-full border border-brand-line px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={goToNextPage}
+                disabled={!hasNextPage || isPaginating}
+                className="inline-flex items-center gap-2 rounded-full bg-brand-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

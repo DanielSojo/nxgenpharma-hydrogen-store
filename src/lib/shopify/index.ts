@@ -63,7 +63,22 @@ export async function getCollections(first = 10) {
 
 export async function getCollectionByHandle(handle: string, first = 24) {
   const { data } = await shopifyClient.request(GET_COLLECTION_BY_HANDLE, {
-    variables: { handle, first },
+    variables: { handle, first, after: null },
+  });
+  return data?.collectionByHandle as ShopifyCollection | null;
+}
+
+export async function getCollectionProductsByHandle(options: {
+  handle: string;
+  first?: number;
+  after?: string | null;
+}) {
+  const { data } = await shopifyClient.request(GET_COLLECTION_BY_HANDLE, {
+    variables: {
+      handle: options.handle,
+      first: options.first ?? 24,
+      after: options.after ?? null,
+    },
   });
   return data?.collectionByHandle as ShopifyCollection | null;
 }

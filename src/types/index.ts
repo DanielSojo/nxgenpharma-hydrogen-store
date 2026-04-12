@@ -47,7 +47,13 @@ export interface ShopifyCollection {
   title: string;
   description: string;
   image: ShopifyImage | null;
-  products: { nodes: ShopifyProduct[] };
+  products: {
+    nodes: ShopifyProduct[];
+    pageInfo?: {
+      hasNextPage: boolean;
+      endCursor: string | null;
+    };
+  };
 }
 
 export interface ShopifyCartLine {
