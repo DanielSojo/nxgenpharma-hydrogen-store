@@ -56,43 +56,52 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
-      <div className="w-full max-w-5xl min-h-[640px] rounded-2xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2">
+    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,_rgba(103,200,184,0.3),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(62,151,218,0.26),_transparent_30%),linear-gradient(135deg,_#f7fcfc_0%,_#edf9f9_45%,_#dff2f4_100%)] p-5">
+      <div className="grid min-h-[640px] w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/70 bg-white/80 shadow-[0_24px_70px_rgba(23,50,82,0.16)] backdrop-blur-sm md:grid-cols-2">
 
-        <div
-          className="relative hidden overflow-hidden md:block"
-          style={{
-            backgroundImage: 'url(/login-bg.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'grayscale(100%)',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-navy via-brand-ink to-brand-blue/90" />
+        <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#0f2550_0%,#1a1d6d_48%,#3e97da_100%)] md:block">
+          <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(8,23,52,0.84)_0%,rgba(26,29,109,0.7)_38%,rgba(62,151,218,0.34)_100%)]" />
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `repeating-linear-gradient(
+              backgroundImage: `radial-gradient(circle at top right, rgba(103,200,184,0.22), transparent 28%),
+              radial-gradient(circle at bottom left, rgba(255,255,255,0.1), transparent 24%),
+              repeating-linear-gradient(
                 0deg,
                 transparent,
                 transparent 40px,
-                rgba(255,255,255,0.03) 40px,
-                rgba(255,255,255,0.03) 41px
+                rgba(255,255,255,0.035) 40px,
+                rgba(255,255,255,0.035) 41px
               ),
               repeating-linear-gradient(
                 90deg,
                 transparent,
                 transparent 40px,
-                rgba(255,255,255,0.03) 40px,
-                rgba(255,255,255,0.03) 41px
+                rgba(255,255,255,0.035) 40px,
+                rgba(255,255,255,0.035) 41px
               )`,
             }}
           />
 
-          <Image className='z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' src="/nxgenpharma-logo.png" width={400} height={100} alt='NxGen Pharma Logo' />
+          <div className="absolute inset-x-10 top-10 z-10">
+            <p className="max-w-xs text-xs font-semibold uppercase tracking-[0.35em] text-white/75">
+              B2B Pharmaceutical Platform
+            </p>
+          </div>
+
+          <Image className='z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_18px_40px_rgba(0,0,0,0.22)]' src="/nxgenpharma-logo.png" width={400} height={100} alt='NxGen Pharma Logo' />
+
+          <div className="absolute bottom-10 left-10 right-10 z-10 rounded-[28px] border border-white/15 bg-white/10 p-6 backdrop-blur-md">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/65">
+              Trusted Access
+            </p>
+            <p className="mt-3 max-w-sm text-2xl font-semibold leading-tight text-white">
+              Built for wholesale ordering, quoting, and account management in one place.
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-col justify-center bg-white px-10 py-12">
+        <div className="flex flex-col justify-center bg-[linear-gradient(180deg,rgba(255,255,255,0.97)_0%,rgba(247,252,252,0.98)_100%)] px-10 py-12">
           <div className="mb-7">
             <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
           </div>
