@@ -13,18 +13,10 @@ const GET_CUSTOMER_ORDER_DETAIL = `
           processedAt
           financialStatus
           fulfillmentStatus
-          currentTotalPrice {
-            amount
-            currencyCode
-          }
+          currentTotalPrice { amount currencyCode }
           shippingAddress {
-            firstName
-            lastName
-            address1
-            city
-            province
-            zip
-            country
+            firstName lastName address1
+            city province zip country
           }
           lineItems(first: 50) {
             nodes {
@@ -32,14 +24,8 @@ const GET_CUSTOMER_ORDER_DETAIL = `
               quantity
               variant {
                 title
-                price {
-                  amount
-                  currencyCode
-                }
-                image {
-                  url
-                  altText
-                }
+                price { amount currencyCode }
+                image { url altText }
               }
             }
           }
@@ -48,6 +34,43 @@ const GET_CUSTOMER_ORDER_DETAIL = `
     }
   }
 `;
+
+// Admin API query to get fulfillment + tracking
+const GET_ORDER_FULFILLMENTS = `
+  query GetOrderFulfillments($id: ID!) {
+    order(id: $id) {
+      fulfillments(first: 5) {
+        trackingCompany
+        trackingInfo(first: 5) {
+          number
+          url
+        }
+        status
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+
+async function getAdminFulfillments(orderId: string) {
+  const adminUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-10/graphql.json`;
+
+  const res = await fetch(adminUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_API_TOKEN!,
+    },
+    body: JSON.stringify({
+      query: GET_ORDER_FULFILLMENTS,
+      variables: { id: orderId }, // e.g. "gid://shopify/Order/123456"
+    }),
+  });
+
+  const json = await res.json();
+  return json?.data?.order?.fulfillments ?? [];
+}
 
 export async function GET(
   req: NextRequest,
@@ -73,7 +96,6 @@ export async function GET(
     });
 
     if (errors) {
-      console.error('Order detail fetch errors:', errors);
       return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
     }
 
@@ -88,7 +110,10 @@ export async function GET(
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ order });
+    // Fetch tracking from Admin API using the full GID
+    const fulfillments = await getAdminFulfillments(order.id);
+
+    return NextResponse.json({ order: { ...order, fulfillments } });
   } catch (error) {
     console.error('Order detail error:', error);
     return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
