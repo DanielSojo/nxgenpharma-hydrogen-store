@@ -36,7 +36,11 @@ export async function GET(req: NextRequest) {
         processedAt: order.processedAt,
         financialStatus: order.financialStatus,
         fulfillmentStatus: order.fulfillmentStatus,
+        currentSubtotalPrice: order.currentSubtotalPrice,
+        currentTotalShippingPrice: order.currentTotalShippingPrice,
+        currentTotalTax: order.currentTotalTax,
         currentTotalPrice: order.currentTotalPrice,
+        lineItems: order.lineItems,
         lineItemsCount: order.lineItems?.nodes?.length ?? 0,
       })),
     });

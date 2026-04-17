@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ShoppingBag, ArrowRight, ChevronRight, CheckCircle, Clock, Truck } from 'lucide-react';
+import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 
 interface Order {
   id: string;
@@ -11,7 +12,18 @@ interface Order {
   processedAt: string;
   financialStatus: string;
   fulfillmentStatus: string;
+  currentSubtotalPrice: { amount: string; currencyCode: string };
+  currentTotalShippingPrice: { amount: string; currencyCode: string };
+  currentTotalTax: { amount: string; currencyCode: string };
   currentTotalPrice: { amount: string; currencyCode: string };
+  lineItems: {
+    nodes: Array<{
+      quantity: number;
+      variant?: {
+        price?: { amount: string; currencyCode: string };
+      };
+    }>;
+  };
   lineItemsCount: number;
 }
 
@@ -38,6 +50,7 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function OrdersPage() {
   const { data: session } = useSession();
+  const { calculatePrice } = useCustomerPricing();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -49,8 +62,6 @@ export default function OrdersPage() {
       .then((data) => {
         if (data.error) setError(data.error);
         else setOrders(data.orders ?? []);
-
-        console.log({ orders: data.orders })
       })
       .catch(() => setError('Failed to load orders'))
       .finally(() => setLoading(false));
@@ -83,36 +94,50 @@ export default function OrdersPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {orders.map((order) => (
-            <Link
-              key={order.id}
-              href={`/orders/${order.orderNumber}`}
-              className="bg-white border border-[#eeebe6] rounded-2xl px-6 py-5 flex items-center justify-between hover:border-[#3296d2] hover:shadow-sm transition-all group"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
-                  <ShoppingBag size={18} className="text-[#666]" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-[#111]">Order #{order.orderNumber}</p>
-                    <StatusBadge status={order.financialStatus} />
+          {orders.map((order) => {
+            const productSubtotal = (order.lineItems?.nodes ?? []).reduce((sum, item) => {
+              const basePrice = item.variant?.price?.amount ?? '0';
+              return sum + calculatePrice(basePrice) * item.quantity;
+            }, 0);
+            const shippingTotal = Number(order.currentTotalShippingPrice?.amount ?? 0);
+            const taxTotal = Number(order.currentTotalTax?.amount ?? 0);
+            const rawSubtotal = Number(order.currentSubtotalPrice?.amount ?? 0);
+            const rawTotal = Number(order.currentTotalPrice?.amount ?? 0);
+            const discountTotal = Math.max(0, rawSubtotal + shippingTotal + taxTotal - rawTotal);
+            const displayTotal = productSubtotal + shippingTotal + taxTotal - discountTotal;
+            const currency = order.currentTotalPrice?.currencyCode ?? order.currentSubtotalPrice?.currencyCode ?? 'USD';
+
+            return (
+              <Link
+                key={order.id}
+                href={`/orders/${order.orderNumber}`}
+                className="bg-white border border-[#eeebe6] rounded-2xl px-6 py-5 flex items-center justify-between hover:border-[#3296d2] hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
+                    <ShoppingBag size={18} className="text-[#666]" />
                   </div>
-                  <p className="text-sm text-[#666]">
-                    {new Date(order.processedAt).toLocaleDateString('en-US', {
-                      month: 'short', day: 'numeric', year: 'numeric',
-                    })}
-                  </p>
+                  <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <p className="font-semibold text-[#111]">Order #{order.orderNumber}</p>
+                      <StatusBadge status={order.financialStatus} />
+                    </div>
+                    <p className="text-sm text-[#666]">
+                      {new Date(order.processedAt).toLocaleDateString('en-US', {
+                        month: 'short', day: 'numeric', year: 'numeric',
+                      })}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-bold text-[#111]">
-                  {formatPrice(order.currentTotalPrice.amount, order.currentTotalPrice.currencyCode)}
-                </span>
-                <ChevronRight size={18} className="text-[#ccc] group-hover:text-[#3296d2] transition-colors" />
-              </div>
-            </Link>
-          ))}
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-bold text-[#111]">
+                    {formatPrice(String(displayTotal), currency)}
+                  </span>
+                  <ChevronRight size={18} className="text-[#ccc] group-hover:text-[#3296d2] transition-colors" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

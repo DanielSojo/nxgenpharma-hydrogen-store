@@ -296,6 +296,18 @@ export const GET_CUSTOMER_ORDERS = `
           processedAt
           financialStatus
           fulfillmentStatus
+          currentSubtotalPrice {
+            amount
+            currencyCode
+          }
+          currentTotalShippingPrice {
+            amount
+            currencyCode
+          }
+          currentTotalTax {
+            amount
+            currencyCode
+          }
           currentTotalPrice {
             amount
             currencyCode

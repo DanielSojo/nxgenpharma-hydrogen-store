@@ -9,6 +9,8 @@ import {
   ShoppingBag,
   Package,
   MapPin,
+  Receipt,
+  TicketPercent,
   CheckCircle,
   Clock,
   Truck,
@@ -90,7 +92,16 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { formatCalculatedPrice, calculatePrice } = useCustomerPricing();
+  const { calculatePrice } = useCustomerPricing();
+
+  function formatMoney(amount: string | number | undefined, currencyCode = 'USD') {
+    const numericAmount = typeof amount === 'number' ? amount : Number(amount ?? 0);
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currencyCode,
+    }).format(numericAmount);
+  }
 
   useEffect(() => {
     fetch(`/api/orders/${id}`)
@@ -127,13 +138,33 @@ export default function OrderDetailPage() {
   const lineItems = order.lineItems?.nodes ?? [];
   const shippingAddress = order.shippingAddress;
   const fulfillments = order.fulfillments ?? [];
-
-  // Calculate total with markup
-  const currency = order.currentTotalPrice.currencyCode;
-  const totalWithMarkup = lineItems.reduce((sum: number, item: any) => {
-    const price = item.variant?.price?.amount ?? '0';
-    return sum + calculatePrice(price) * item.quantity;
+  const shippingLines = order.shippingLines ?? [];
+  const discountCodes = order.discountCodes ?? [];
+  const tags = order.tags ?? [];
+  const summary = order.summary ?? {
+    subtotal: order.currentTotalPrice?.amount ?? '0',
+    shipping: '0',
+    tax: '0',
+    discounts: '0',
+    total: order.currentTotalPrice?.amount ?? '0',
+    currency: order.currentTotalPrice?.currencyCode ?? 'USD',
+  };
+  const currency =
+    order.currentTotalPrice?.currencyCode ??
+    order.currentTotalShippingPrice?.currencyCode ??
+    order.currentTotalTax?.currencyCode ??
+    summary.currency ??
+    'USD';
+  const productSubtotal = lineItems.reduce((sum: number, item: any) => {
+    const basePrice = item.variant?.price?.amount ?? '0';
+    return sum + calculatePrice(basePrice) * item.quantity;
   }, 0);
+  const shippingTotal = Number(order.currentTotalShippingPrice?.amount ?? summary.shipping ?? 0);
+  const taxTotal = Number(order.currentTotalTax?.amount ?? summary.tax ?? 0);
+  const rawOrderSubtotal = Number(order.currentSubtotalPrice?.amount ?? summary.subtotal ?? 0);
+  const rawOrderTotal = Number(order.currentTotalPrice?.amount ?? summary.total ?? 0);
+  const discountTotal = Math.max(0, rawOrderSubtotal + shippingTotal + taxTotal - rawOrderTotal);
+  const orderTotal = productSubtotal + shippingTotal + taxTotal - discountTotal;
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
@@ -159,7 +190,7 @@ export default function OrderDetailPage() {
           <div className="text-right">
             <p className="mb-1 text-sm text-brand-ink/65">Total</p>
             <p className="text-2xl font-bold text-brand-navy">
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(totalWithMarkup)}
+              {formatMoney(orderTotal, currency)}
             </p>
             <div className="mt-3 flex justify-end gap-2">
               <StatusBadge status={order.financialStatus} />
@@ -181,6 +212,9 @@ export default function OrderDetailPage() {
             <div className="divide-y divide-brand-line/60">
               {lineItems.map((item: any, index: number) => {
                 const variantPrice = item.variant?.price;
+                const lineTotal = variantPrice
+                  ? calculatePrice(variantPrice.amount) * item.quantity
+                  : 0;
                 return (
                   <div key={`${item.title}-${index}`} className="flex gap-4 px-6 py-4">
                     <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-brand-line bg-brand-mist">
@@ -208,9 +242,14 @@ export default function OrderDetailPage() {
                           Qty: {item.quantity}
                         </span>
                         {variantPrice && (
-                          <span className="text-sm font-bold text-brand-navy">
-                            {formatCalculatedPrice(variantPrice.amount, variantPrice.currencyCode)}
-                          </span>
+                          <div className="text-right">
+                            <p className="text-sm font-bold text-brand-navy">
+                              {formatMoney(lineTotal, variantPrice.currencyCode)}
+                            </p>
+                            <p className="text-xs text-brand-ink/50">
+                              {formatMoney(calculatePrice(variantPrice.amount), variantPrice.currencyCode)} each
+                            </p>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -223,6 +262,104 @@ export default function OrderDetailPage() {
 
         {/* Sidebar */}
         <div className="flex flex-col gap-4">
+          <div className="rounded-2xl border border-brand-line bg-white p-5">
+            <div className="mb-3 flex items-center gap-2">
+              <Receipt size={15} className="text-brand-blue" />
+              <h3 className="text-sm font-semibold text-brand-navy">Order Summary</h3>
+            </div>
+            <div className="space-y-3 text-sm text-brand-ink/72">
+              <div className="flex items-center justify-between gap-3">
+                <span>Subtotal</span>
+                <span className="font-semibold text-brand-navy">{formatMoney(productSubtotal, currency)}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span>Shipping</span>
+                <span className="font-semibold text-brand-navy">{formatMoney(shippingTotal, currency)}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span>Tax</span>
+                <span className="font-semibold text-brand-navy">{formatMoney(taxTotal, currency)}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span>Discount</span>
+                <span className="font-semibold text-emerald-700">-{formatMoney(discountTotal, currency)}</span>
+              </div>
+              <div className="border-t border-brand-line pt-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-semibold text-brand-navy">Order Total</span>
+                  <span className="text-base font-bold text-brand-navy">{formatMoney(orderTotal, currency)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {(shippingLines.length > 0 || discountCodes.length > 0 || order.note || tags.length > 0) && (
+            <div className="rounded-2xl border border-brand-line bg-white p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <TicketPercent size={15} className="text-brand-blue" />
+                <h3 className="text-sm font-semibold text-brand-navy">Order Info</h3>
+              </div>
+              <div className="flex flex-col gap-4 text-sm text-brand-ink/72">
+                {shippingLines.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Shipping Method</p>
+                    <div className="flex flex-col gap-2">
+                      {shippingLines.map((line: any, index: number) => (
+                        <div key={`${line.title}-${index}`} className="flex items-center justify-between gap-3 rounded-xl bg-brand-mist px-4 py-3">
+                          <div>
+                            <p className="font-semibold text-brand-navy">{line.title}</p>
+                            {line.code && <p className="text-xs text-brand-ink/55">{line.code}</p>}
+                          </div>
+                          <span className="font-semibold text-brand-navy">{formatMoney(line.price, currency)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {discountCodes.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Discounts</p>
+                    <div className="flex flex-col gap-2">
+                      {discountCodes.map((discount: any, index: number) => (
+                        <div key={`${discount.code}-${index}`} className="rounded-xl bg-emerald-50 px-4 py-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="font-semibold text-emerald-800">{discount.code}</p>
+                            <span className="font-semibold text-emerald-800">
+                              {discount.type === 'percentage'
+                                ? `${Number(discount.amount ?? 0)}%`
+                                : formatMoney(discount.amount, currency)}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {order.note && (
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Order Note</p>
+                    <p className="rounded-xl bg-brand-mist px-4 py-3 leading-relaxed text-brand-ink/72">{order.note}</p>
+                  </div>
+                )}
+
+                {tags.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Tags</p>
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag: string) => (
+                        <span key={tag} className="rounded-full bg-brand-mist px-3 py-1 text-xs font-semibold text-brand-navy">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {shippingAddress && (
             <div className="rounded-2xl border border-brand-line bg-white p-5">
               <div className="mb-3 flex items-center gap-2">

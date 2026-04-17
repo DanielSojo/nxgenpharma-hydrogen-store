@@ -90,7 +90,7 @@ export async function shopifyAdminRestRequest(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<any> {
-  const token = await getShopifyAdminAccessToken();
+  const token = process.env.SHOPIFY_ADMIN_TOKEN || await getShopifyAdminAccessToken();
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2025-04';
   const domain = getShopifyStoreDomain();
 
@@ -106,7 +106,18 @@ export async function shopifyAdminRestRequest(
     }
   );
 
-  const json = await response.json();
+  const text = await response.text();
+  let json: any = null;
+
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    if (!response.ok) {
+      throw new Error(`Admin REST API returned non-JSON response (${response.status})`);
+    }
+
+    throw new Error('Admin REST API returned invalid JSON');
+  }
 
   if (!response.ok) {
     throw new Error(JSON.stringify(json.errors ?? json));

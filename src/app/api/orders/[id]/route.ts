@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { getToken } from 'next-auth/jwt';
 import { shopifyClient } from '@/lib/shopify/client';
+import { shopifyAdminRestRequest } from '@/lib/shopify/admin';
 
 const GET_CUSTOMER_ORDER_DETAIL = `
   query GetCustomerOrderDetail($accessToken: String!, $first: Int!) {
@@ -13,6 +14,9 @@ const GET_CUSTOMER_ORDER_DETAIL = `
           processedAt
           financialStatus
           fulfillmentStatus
+          currentSubtotalPrice { amount currencyCode }
+          currentTotalShippingPrice { amount currencyCode }
+          currentTotalTax { amount currencyCode }
           currentTotalPrice { amount currencyCode }
           shippingAddress {
             firstName lastName address1
@@ -35,41 +39,104 @@ const GET_CUSTOMER_ORDER_DETAIL = `
   }
 `;
 
-// Admin API query to get fulfillment + tracking
-const GET_ORDER_FULFILLMENTS = `
-  query GetOrderFulfillments($id: ID!) {
-    order(id: $id) {
-      fulfillments(first: 5) {
-        trackingCompany
-        trackingInfo(first: 5) {
-          number
-          url
-        }
-        status
-        createdAt
-        updatedAt
-      }
-    }
+function getNumericOrderId(orderId: string) {
+  return typeof orderId === 'string' ? orderId.split('/').pop() ?? '' : '';
+}
+
+async function getAdminOrderDetails(orderId: string) {
+  const numericOrderId = getNumericOrderId(orderId);
+
+  if (!numericOrderId) {
+    return {
+      fulfillments: [],
+      summary: null,
+      shippingLines: [],
+      discountCodes: [],
+      note: null,
+      tags: [],
+    };
   }
-`;
 
-async function getAdminFulfillments(orderId: string) {
-  const adminUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-10/graphql.json`;
+  let responseJson: any = null;
 
-  const res = await fetch(adminUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_API_TOKEN!,
+  try {
+    responseJson = await shopifyAdminRestRequest(`orders/${numericOrderId}.json`);
+  } catch (error) {
+    console.warn('[Order Detail] Admin order enrichment unavailable:', error);
+    return {
+      fulfillments: [],
+      summary: null,
+      shippingLines: [],
+      discountCodes: [],
+      note: null,
+      tags: [],
+    };
+  }
+
+  const adminOrder = responseJson?.order;
+
+  if (!adminOrder) {
+    return {
+      fulfillments: [],
+      summary: null,
+      shippingLines: [],
+      discountCodes: [],
+      note: null,
+      tags: [],
+    };
+  }
+
+  const shippingLines = Array.isArray(adminOrder.shipping_lines)
+    ? adminOrder.shipping_lines.map((line: any) => ({
+        title: line.title,
+        code: line.code,
+        price: line.discounted_price ?? line.price ?? '0',
+      }))
+    : [];
+
+  const discountCodes = Array.isArray(adminOrder.discount_codes)
+    ? adminOrder.discount_codes.map((discount: any) => ({
+        code: discount.code,
+        amount: discount.amount,
+        type: discount.type,
+      }))
+    : [];
+
+  return {
+    fulfillments: Array.isArray(adminOrder.fulfillments)
+      ? adminOrder.fulfillments.map((fulfillment: any) => ({
+          trackingCompany: fulfillment.tracking_company,
+          trackingInfo: Array.isArray(fulfillment.tracking_numbers)
+            ? fulfillment.tracking_numbers.map((number: string, index: number) => ({
+                number,
+                url: Array.isArray(fulfillment.tracking_urls) ? fulfillment.tracking_urls[index] : null,
+              }))
+            : [],
+          status: fulfillment.shipment_status ?? fulfillment.status,
+          createdAt: fulfillment.created_at,
+          updatedAt: fulfillment.updated_at,
+        }))
+      : [],
+    summary: {
+      subtotal: adminOrder.current_subtotal_price ?? adminOrder.subtotal_price ?? '0',
+      shipping:
+        adminOrder.total_shipping_price_set?.shop_money?.amount ??
+        shippingLines.reduce((sum: number, line: any) => sum + Number(line.price ?? 0), 0).toString(),
+      tax: adminOrder.current_total_tax ?? adminOrder.total_tax ?? '0',
+      discounts: adminOrder.current_total_discounts ?? adminOrder.total_discounts ?? '0',
+      total: adminOrder.current_total_price ?? adminOrder.total_price ?? '0',
+      currency:
+        adminOrder.currency ??
+        adminOrder.total_shipping_price_set?.shop_money?.currency_code ??
+        'USD',
     },
-    body: JSON.stringify({
-      query: GET_ORDER_FULFILLMENTS,
-      variables: { id: orderId }, // e.g. "gid://shopify/Order/123456"
-    }),
-  });
-
-  const json = await res.json();
-  return json?.data?.order?.fulfillments ?? [];
+    shippingLines,
+    discountCodes,
+    note: adminOrder.note ?? null,
+    tags: typeof adminOrder.tags === 'string'
+      ? adminOrder.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean)
+      : [],
+  };
 }
 
 export async function GET(
@@ -110,10 +177,19 @@ export async function GET(
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    // Fetch tracking from Admin API using the full GID
-    const fulfillments = await getAdminFulfillments(order.id);
+    const adminDetails = await getAdminOrderDetails(order.id);
 
-    return NextResponse.json({ order: { ...order, fulfillments } });
+    return NextResponse.json({
+      order: {
+        ...order,
+        fulfillments: adminDetails.fulfillments,
+        summary: adminDetails.summary,
+        shippingLines: adminDetails.shippingLines,
+        discountCodes: adminDetails.discountCodes,
+        note: adminDetails.note,
+        tags: adminDetails.tags,
+      },
+    });
   } catch (error) {
     console.error('Order detail error:', error);
     return NextResponse.json({ error: 'Failed to fetch order' }, { status: 500 });
