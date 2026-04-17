@@ -4,8 +4,8 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { ShopifyProduct } from '@/types';
-import { formatPrice } from '@/lib/utils';
 import ProductCardQuoteButton from '@/components/store/ProductCardQuoteButton';
+import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 
 interface Props {
   product: ShopifyProduct;
@@ -14,6 +14,7 @@ interface Props {
 export default function ProductCard({ product }: Props) {
   const variants = product.variants.nodes;
   const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id ?? '');
+  const { formatCalculatedPrice } = useCustomerPricing();
 
   const variant = useMemo(
     () => variants.find((item) => item.id === selectedVariantId) ?? variants[0],
@@ -72,11 +73,11 @@ export default function ProductCard({ product }: Props) {
             {variant ? (
               <div className="flex items-baseline gap-2">
                 <span className="text-base font-semibold text-brand-teal">
-                  {formatPrice(variant.price.amount, variant.price.currencyCode)}
+                  {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
                 </span>
                 {hasDiscount && variant.compareAtPrice && (
                   <span className="text-sm text-brand-ink/45 line-through">
-                    {formatPrice(
+                    {formatCalculatedPrice(
                       variant.compareAtPrice.amount,
                       variant.compareAtPrice.currencyCode
                     )}
@@ -93,12 +94,9 @@ export default function ProductCard({ product }: Props) {
       </Link>
 
       <div className="px-4 pb-4">
-        {hasVariantOptions && (
           <div className="mb-3">
-            <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-brand-ink/45">
-              Variation
-            </label>
             <select
+              disabled={!hasVariantOptions}
               value={variant?.id ?? ''}
               onChange={(event) => setSelectedVariantId(event.target.value)}
               className="w-full rounded-xl border border-brand-line bg-brand-surface px-3 py-2.5 text-sm text-brand-ink outline-none transition-colors focus:border-brand-blue"
@@ -117,7 +115,6 @@ export default function ProductCard({ product }: Props) {
               })}
             </select>
           </div>
-        )}
         {variant ? (
           <ProductCardQuoteButton product={product} variant={variant} />
         ) : (

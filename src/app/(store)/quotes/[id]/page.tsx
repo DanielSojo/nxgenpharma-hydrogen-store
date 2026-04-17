@@ -5,19 +5,14 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, ClipboardList, Package, MapPin, FileText, Download } from 'lucide-react';
-
-function formatPrice(amount: string | number, currency: string = 'USD') {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-  }).format(typeof amount === 'string' ? parseFloat(amount) : amount);
-}
+import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 
 export default function QuoteDetailPage() {
   const { id } = useParams();
   const [quote, setQuote] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { formatCalculatedPrice, calculatePrice } = useCustomerPricing();
 
   useEffect(() => {
     fetch(`/api/quotes/${id}`)
@@ -33,7 +28,7 @@ export default function QuoteDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-blue border-t-transparent" />
+        <div className="w-6 h-6 border-2 border-[#3296d2] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -44,84 +39,87 @@ export default function QuoteDetailPage() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600 text-sm">
           {error || 'Quote not found'}
         </div>
-        <Link href="/quotes" className="mt-4 inline-flex items-center gap-2 text-sm text-brand-ink/65 hover:text-brand-navy">
+        <Link href="/quotes" className="inline-flex items-center gap-2 mt-4 text-sm text-[#666] hover:text-[#111]">
           <ArrowLeft size={16} /> Back to Quotes
         </Link>
       </div>
     );
   }
 
-  const quoteNumber = quote.quoteNumber ?? quote.name;
-  const customerNotes = quote.customerNotes;
-
+  const quoteNumber = quote._quoteNumber ?? quote.name;
+  const customerNotesMatch = quote.note?.match(/Customer Notes: (.+)/);
+  const customerNotes = customerNotesMatch?.[1];
   const lineItems = quote.line_items ?? [];
   const shippingAddress = quote.shipping_address;
+  const hasTax = parseFloat(quote.total_tax ?? '0') > 0;
+  const hasShipping = quote.shipping_line && parseFloat(quote.shipping_line.price ?? '0') > 0;
+
+  // Calculate totals with markup
+  const subtotalWithMarkup = lineItems.reduce((sum: number, item: any) => {
+    return sum + calculatePrice(item.price) * item.quantity;
+  }, 0);
+  const taxWithMarkup = hasTax ? calculatePrice(quote.total_tax) : 0;
+  const shippingWithMarkup = hasShipping ? calculatePrice(quote.shipping_line.price) : 0;
+  const totalWithMarkup = subtotalWithMarkup + taxWithMarkup + shippingWithMarkup;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
 
-      {/* Back */}
-      <Link
-        href="/quotes"
-        className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
-      >
-        <ArrowLeft size={16} /> Back to Quotes
-      </Link>
+      {/* Back + Download */}
+      <div className="flex items-center justify-between mb-8">
+        <Link href="/quotes" className="inline-flex items-center gap-2 text-[#888] hover:text-[#333] text-sm transition-colors">
+          <ArrowLeft size={16} /> Back to Quotes
+        </Link>
+        <a
+          href={`/api/quotes/${id}/pdf`}
+          download
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#191b4e] hover:bg-[#3296d2] text-white rounded-full text-sm font-semibold transition-colors"
+        >
+          <Download size={14} />
+          Download PDF
+        </a>
+      </div>
 
       {/* Header */}
-      <div className="mb-6 rounded-2xl bg-gradient-to-br from-brand-navy via-brand-ink to-brand-blue p-8 text-white">
+      <div className="bg-[#0a0a0a] text-white rounded-2xl p-8 mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-aqua">
-              Quote Request
-            </p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#42c2c1] mb-2">Quote Request</p>
             <h1 className="text-2xl font-bold mb-1">{quoteNumber}</h1>
-            <p className="text-sm text-white/70">
+            <p className="text-[#888] text-sm">
               {new Date(quote.created_at).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
               })}
             </p>
           </div>
           <div className="text-right">
-            <p className="mb-1 text-sm text-white/70">Total</p>
-            <p className="text-2xl font-bold">
-              {formatPrice(quote.total_price, quote.currency)}
+            <p className="text-[#888] text-sm mb-1">Total</p>
+            <p className="text-2xl font-bold text-[#42c2c1]">
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(totalWithMarkup)}
             </p>
-            <a
-              href={`/api/quotes/${id}/pdf`}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-mist"
-            >
-              <Download size={15} />
-              Download PDF
-            </a>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ── Left: Products ── */}
+        {/* ── Products ── */}
         <div className="lg:col-span-2 flex flex-col gap-4">
-          <div className="overflow-hidden rounded-2xl border border-brand-line bg-white">
-            <div className="flex items-center gap-2 border-b border-brand-line px-6 py-4">
-              <Package size={16} className="text-brand-blue" />
-              <h2 className="font-semibold text-brand-navy">
-                Products ({lineItems.length})
-              </h2>
+          <div className="bg-white border border-[#eeebe6] rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#eeebe6] flex items-center gap-2">
+              <Package size={16} className="text-[#666]" />
+              <h2 className="font-semibold text-[#111]">Products ({lineItems.length})</h2>
             </div>
 
-            <div className="divide-y divide-brand-line/60">
+            <div className="divide-y divide-[#f5f2ed]">
               {lineItems.map((item: any, index: number) => {
-                const itemPrice = parseFloat(item.price);
-                const itemTotal = itemPrice * item.quantity;
+                const unitPrice = calculatePrice(item.price);
+                const rowTotal = unitPrice * item.quantity;
 
                 return (
                   <div key={index} className="px-6 py-4 flex gap-4">
                     {/* Image */}
-                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-brand-line bg-brand-mist">
+                    <div className="w-14 h-14 bg-[#f8f7f4] rounded-xl flex-shrink-0 overflow-hidden border border-[#eeebe6]">
                       {item._image ? (
                         <Image
                           src={item._image}
@@ -132,20 +130,20 @@ export default function QuoteDetailPage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package size={20} className="text-brand-ink/30" />
+                          <Package size={20} className="text-[#ccc]" />
                         </div>
                       )}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-brand-navy">{item.title}</p>
+                      <p className="font-semibold text-[#111] text-sm">{item.title}</p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-sm text-brand-ink/65">
-                          Qty: {item.quantity} × {formatPrice(item.price, quote.currency)}
+                        <span className="text-sm text-[#666]">
+                          Qty: {item.quantity} × {formatCalculatedPrice(item.price, quote.currency)}
                         </span>
-                        <span className="text-sm font-bold text-brand-navy">
-                          {formatPrice(String(itemTotal), quote.currency)}
+                        <span className="font-bold text-[#111] text-sm">
+                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(rowTotal)}
                         </span>
                       </div>
                     </div>
@@ -155,52 +153,48 @@ export default function QuoteDetailPage() {
             </div>
 
             {/* Totals */}
-            <div className="border-t border-brand-line bg-brand-surface px-6 py-4">
+            <div className="px-6 py-4 bg-[#faf9f7] border-t border-[#eeebe6]">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-brand-ink/65">Subtotal</span>
-                <span className="font-bold text-brand-navy">
-                  {formatPrice(quote.subtotal_price, quote.currency)}
+                <span className="text-sm text-[#666]">Subtotal</span>
+                <span className="font-bold text-[#111]">
+                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(subtotalWithMarkup)}
                 </span>
               </div>
-              {quote.shipping_line && parseFloat(quote.shipping_line.price ?? '0') > 0 && (
+              {hasShipping && (
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-brand-ink/65">
-                    Shipping — {quote.shipping_line.title}
-                  </span>
-                  <span className="text-sm text-brand-ink">
-                    {formatPrice(quote.shipping_line.price, quote.currency)}
+                  <span className="text-sm text-[#666]">Shipping — {quote.shipping_line.title}</span>
+                  <span className="text-sm text-[#333]">
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(shippingWithMarkup)}
                   </span>
                 </div>
               )}
-              {parseFloat(quote.total_tax ?? '0') > 0 && (
+              {hasTax && (
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-brand-ink/65">Tax</span>
-                  <span className="text-sm text-brand-ink">
-                    {formatPrice(quote.total_tax, quote.currency)}
+                  <span className="text-sm text-[#666]">Tax</span>
+                  <span className="text-sm text-[#333]">
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(taxWithMarkup)}
                   </span>
                 </div>
               )}
-              <div className="mt-3 flex items-center justify-between border-t border-brand-line pt-3">
-                <span className="font-bold text-brand-navy">Total</span>
-                <span className="text-lg font-bold text-brand-navy">
-                  {formatPrice(quote.total_price, quote.currency)}
+              <div className="flex justify-between items-center mt-3 pt-3 border-t border-[#eeebe6]">
+                <span className="font-bold text-[#111]">Total</span>
+                <span className="text-lg font-bold text-[#191b4e]">
+                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(totalWithMarkup)}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── Right: Details ── */}
+        {/* ── Right ── */}
         <div className="flex flex-col gap-4">
-
-          {/* Shipping Address */}
           {shippingAddress && (
-            <div className="rounded-2xl border border-brand-line bg-white p-5">
+            <div className="bg-white border border-[#eeebe6] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-3">
-                <MapPin size={15} className="text-brand-blue" />
-                <h3 className="text-sm font-semibold text-brand-navy">Ship To</h3>
+                <MapPin size={15} className="text-[#666]" />
+                <h3 className="font-semibold text-[#111] text-sm">Ship To</h3>
               </div>
-              <p className="text-sm leading-relaxed text-brand-ink/72">
+              <p className="text-sm text-[#555] leading-relaxed">
                 {shippingAddress.first_name} {shippingAddress.last_name}<br />
                 {shippingAddress.address1}<br />
                 {shippingAddress.city}, {shippingAddress.province} {shippingAddress.zip}<br />
@@ -209,41 +203,33 @@ export default function QuoteDetailPage() {
             </div>
           )}
 
-          {/* Customer Notes */}
           {customerNotes && (
-            <div className="rounded-2xl border border-brand-line bg-white p-5">
+            <div className="bg-white border border-[#eeebe6] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-3">
-                <FileText size={15} className="text-brand-blue" />
-                <h3 className="text-sm font-semibold text-brand-navy">Your Notes</h3>
+                <FileText size={15} className="text-[#666]" />
+                <h3 className="font-semibold text-[#111] text-sm">Your Notes</h3>
               </div>
-              <p className="text-sm leading-relaxed text-brand-ink/72">{customerNotes}</p>
+              <p className="text-sm text-[#555] leading-relaxed">{customerNotes}</p>
             </div>
           )}
 
-          {/* Status */}
-          <div className="rounded-2xl border border-brand-line bg-brand-mist p-5">
-            <p className="mb-1 text-xs font-bold uppercase tracking-wider text-brand-blue">
-              Status
-            </p>
-            <p className="text-sm font-semibold text-brand-navy">
-              Under Review
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-brand-ink/65">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Status</p>
+            <p className="text-sm text-amber-800 font-semibold">Under Review</p>
+            <p className="text-xs text-amber-600 mt-1 leading-relaxed">
               Our team is reviewing your quote. You'll receive an email when it's ready.
             </p>
           </div>
 
-          {/* Contact */}
-          <div className="rounded-2xl border border-brand-line bg-white p-5 text-center">
-            <p className="mb-3 text-sm text-brand-ink/72">Questions about this quote?</p>
+          <div className="bg-white border border-[#eeebe6] rounded-2xl p-5 text-center">
+            <p className="text-sm text-[#555] mb-3">Questions about this quote?</p>
             <Link
               href="/contact"
-              className="inline-block w-full rounded-full border-2 border-brand-navy py-2.5 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-navy hover:text-white"
+              className="inline-block w-full py-2.5 border-2 border-[#191b4e] text-[#191b4e] rounded-full text-sm font-semibold hover:bg-[#191b4e] hover:text-white transition-colors"
             >
               Contact Us
             </Link>
           </div>
-
         </div>
       </div>
     </div>

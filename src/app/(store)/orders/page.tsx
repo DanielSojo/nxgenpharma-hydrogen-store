@@ -3,15 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import {
-  ShoppingBag,
-  ArrowRight,
-  ChevronRight,
-  CheckCircle,
-  Clock,
-  Truck,
-  ChevronLeft,
-} from 'lucide-react';
+import { ShoppingBag, ArrowRight, ChevronRight, CheckCircle, Clock, Truck } from 'lucide-react';
 
 interface Order {
   id: string;
@@ -23,27 +15,16 @@ interface Order {
   lineItemsCount: number;
 }
 
-interface OrdersResponse {
-  error?: string;
-  orders?: Order[];
-  pageInfo?: {
-    hasNextPage: boolean;
-    endCursor: string | null;
-  };
-}
-
-const PAGE_SIZE = 10;
-
 function formatPrice(amount: string, currency: string) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(parseFloat(amount));
 }
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; color: string; icon: any }> = {
-    PAID: { label: 'Paid', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-    PENDING: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: Clock },
-    FULFILLED: { label: 'Fulfilled', color: 'bg-blue-100 text-blue-700', icon: Truck },
-    UNFULFILLED: { label: 'Processing', color: 'bg-gray-100 text-gray-600', icon: Clock },
+    PAID:        { label: 'Paid',       color: 'bg-green-100 text-green-700', icon: CheckCircle },
+    PENDING:     { label: 'Pending',    color: 'bg-amber-100 text-amber-700', icon: Clock },
+    FULFILLED:   { label: 'Fulfilled',  color: 'bg-blue-100 text-blue-700',   icon: Truck },
+    UNFULFILLED: { label: 'Processing', color: 'bg-gray-100 text-gray-600',   icon: Clock },
   };
   const config = map[status] ?? { label: status, color: 'bg-gray-100 text-gray-600', icon: Clock };
   const Icon = config.icon;
@@ -59,112 +40,41 @@ export default function OrdersPage() {
   const { data: session } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isPaginating, setIsPaginating] = useState(false);
   const [error, setError] = useState('');
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [cursorHistory, setCursorHistory] = useState<(string | null)[]>([null]);
-  const [page, setPage] = useState(1);
-
-  const currentCursor = cursorHistory[cursorHistory.length - 1] ?? null;
 
   useEffect(() => {
     if (!session) return;
-
-    const controller = new AbortController();
-
-    const fetchOrders = async () => {
-      const isInitialLoad = currentCursor === null && page === 1;
-      setError('');
-
-      if (isInitialLoad) setLoading(true);
-      else setIsPaginating(true);
-
-      try {
-        const params = new URLSearchParams({ first: String(PAGE_SIZE) });
-        if (currentCursor) params.set('after', currentCursor);
-
-        const response = await fetch(`/api/orders?${params.toString()}`, {
-          signal: controller.signal,
-        });
-        const data: OrdersResponse = await response.json();
-
-        if (!response.ok || data.error) {
-          setError(data.error ?? 'Failed to load orders');
-          setOrders([]);
-          setHasNextPage(false);
-          return;
-        }
-
-        const sortedOrders = [...(data.orders ?? [])].sort(
-          (a, b) =>
-            new Date(b.processedAt).getTime() - new Date(a.processedAt).getTime()
-        );
-
-        setOrders(sortedOrders);
-        setHasNextPage(Boolean(data.pageInfo?.hasNextPage));
-        setNextCursor(data.pageInfo?.endCursor ?? null);
-      } catch (fetchError) {
-        if ((fetchError as Error).name !== 'AbortError') {
-          setError('Failed to load orders');
-          setOrders([]);
-          setHasNextPage(false);
-          setNextCursor(null);
-        }
-      } finally {
-        if (isInitialLoad) setLoading(false);
-        else setIsPaginating(false);
-      }
-    };
-
-    fetchOrders();
-
-    return () => controller.abort();
-  }, [session, currentCursor, page]);
-
-  const goToNextPage = () => {
-    if (!hasNextPage || !nextCursor) return;
-
-    setCursorHistory((prev) => [...prev, nextCursor]);
-    setPage((prev) => prev + 1);
-  };
-
-  const goToPreviousPage = () => {
-    if (cursorHistory.length === 1) return;
-
-    setCursorHistory((prev) => prev.slice(0, -1));
-    setPage((prev) => Math.max(prev - 1, 1));
-  };
+    fetch('/api/orders')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) setError(data.error);
+        else setOrders(data.orders ?? []);
+      })
+      .catch(() => setError('Failed to load orders'))
+      .finally(() => setLoading(false));
+  }, [session]);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
-      <div className="mb-8 rounded-3xl bg-gradient-to-br from-brand-mist via-white to-brand-surface p-8 ring-1 ring-brand-line">
-        <div className="flex items-center gap-3">
-          <ShoppingBag size={24} className="text-brand-blue" />
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">Account</p>
-            <h1 className="mt-2 text-2xl font-bold text-brand-navy">My Orders</h1>
-          </div>
-        </div>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-brand-ink/72">
-          Track completed orders, review financial status, and keep up with fulfillment progress.
-        </p>
+    <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="flex items-center gap-3 mb-8">
+        <ShoppingBag size={24} className="text-[#111]" />
+        <h1 className="text-2xl font-bold text-[#111]">My Orders</h1>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-blue border-t-transparent" />
+          <div className="w-6 h-6 border-2 border-[#3296d2] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : error ? (
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600 text-sm">{error}</div>
       ) : orders.length === 0 ? (
-        <div className="rounded-2xl border border-brand-line bg-white p-16 text-center">
-          <ShoppingBag size={40} className="mx-auto mb-4 text-brand-line" />
-          <p className="mb-2 font-medium text-brand-ink/60">No orders yet</p>
-          <p className="mb-6 text-sm text-brand-ink/40">Your completed orders will appear here</p>
+        <div className="bg-white border border-[#eeebe6] rounded-2xl p-16 text-center">
+          <ShoppingBag size={40} className="text-[#ddd] mx-auto mb-4" />
+          <p className="text-[#999] font-medium mb-2">No orders yet</p>
+          <p className="text-[#bbb] text-sm mb-6">Your completed orders will appear here</p>
           <Link
             href="/quotes"
-            className="inline-flex items-center gap-2 rounded-full bg-brand-navy px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-blue"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#191b4e] text-white rounded-full text-sm font-semibold hover:bg-[#3296d2] transition-colors"
           >
             View Quotes <ArrowRight size={15} />
           </Link>
@@ -174,19 +84,19 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <Link
               key={order.id}
-              href={`/orders/${order.orderNumber}`}
-              className="group flex items-center justify-between rounded-2xl border border-brand-line bg-white px-6 py-5 transition-all hover:-translate-y-0.5 hover:border-brand-blue hover:shadow-sm"
+              href={`/orders/${order.id.split('/').pop()}`}
+              className="bg-white border border-[#eeebe6] rounded-2xl px-6 py-5 flex items-center justify-between hover:border-[#3296d2] hover:shadow-sm transition-all group"
             >
               <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist">
-                  <ShoppingBag size={18} className="text-brand-blue" />
+                <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
+                  <ShoppingBag size={18} className="text-[#666]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-brand-navy">Order #{order.orderNumber}</p>
+                    <p className="font-semibold text-[#111]">Order #{order.orderNumber}</p>
                     <StatusBadge status={order.financialStatus} />
                   </div>
-                  <p className="text-sm text-brand-ink/65">
+                  <p className="text-sm text-[#666]">
                     {new Date(order.processedAt).toLocaleDateString('en-US', {
                       month: 'short', day: 'numeric', year: 'numeric',
                     })}
@@ -194,40 +104,13 @@ export default function OrdersPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-sm font-bold text-brand-navy">
+                <span className="text-sm font-bold text-[#111]">
                   {formatPrice(order.currentTotalPrice.amount, order.currentTotalPrice.currencyCode)}
                 </span>
-                <ChevronRight size={18} className="text-brand-ink/30 transition-colors group-hover:text-brand-blue" />
+                <ChevronRight size={18} className="text-[#ccc] group-hover:text-[#3296d2] transition-colors" />
               </div>
             </Link>
           ))}
-
-          <div className="mt-4 flex items-center justify-between rounded-2xl border border-brand-line bg-white px-4 py-4">
-            <div className="text-sm text-brand-ink/60">
-              Page {page}
-              {isPaginating ? ' • Updating…' : ''}
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={goToPreviousPage}
-                disabled={cursorHistory.length === 1 || isPaginating}
-                className="inline-flex items-center gap-2 rounded-full border border-brand-line px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <ChevronLeft size={16} />
-                Previous
-              </button>
-              <button
-                type="button"
-                onClick={goToNextPage}
-                disabled={!hasNextPage || isPaginating}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Next
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>

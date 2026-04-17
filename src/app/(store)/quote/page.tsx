@@ -466,7 +466,7 @@ export default function QuotePage() {
                           alt={item.productTitle}
                           width={56}
                           height={56}
-                          className="object-cover w-full h-full"
+                          className="object-contain w-full h-full"
                         />
                       ) : (
                         <div className="h-full w-full bg-brand-mist" />
