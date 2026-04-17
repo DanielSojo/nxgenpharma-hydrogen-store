@@ -49,6 +49,8 @@ export default function OrdersPage() {
       .then((data) => {
         if (data.error) setError(data.error);
         else setOrders(data.orders ?? []);
+
+        console.log({ orders: data.orders })
       })
       .catch(() => setError('Failed to load orders'))
       .finally(() => setLoading(false));
@@ -84,7 +86,7 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <Link
               key={order.id}
-              href={`/orders/${order.id.split('/').pop()}`}
+              href={`/orders/${order.orderNumber}`}
               className="bg-white border border-[#eeebe6] rounded-2xl px-6 py-5 flex items-center justify-between hover:border-[#3296d2] hover:shadow-sm transition-all group"
             >
               <div className="flex items-center gap-4">
