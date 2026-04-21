@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { getToken } from 'next-auth/jwt';
 import { shopifyClient } from '@/lib/shopify/client';
 import { shopifyAdminRestRequest } from '@/lib/shopify/admin';
 
@@ -47,14 +46,7 @@ async function getAdminOrderDetails(orderId: string) {
   const numericOrderId = getNumericOrderId(orderId);
 
   if (!numericOrderId) {
-    return {
-      fulfillments: [],
-      summary: null,
-      shippingLines: [],
-      discountCodes: [],
-      note: null,
-      tags: [],
-    };
+    return { fulfillments: [], summary: null, shippingLines: [], discountCodes: [], note: null, tags: [] };
   }
 
   let responseJson: any = null;
@@ -63,27 +55,12 @@ async function getAdminOrderDetails(orderId: string) {
     responseJson = await shopifyAdminRestRequest(`orders/${numericOrderId}.json`);
   } catch (error) {
     console.warn('[Order Detail] Admin order enrichment unavailable:', error);
-    return {
-      fulfillments: [],
-      summary: null,
-      shippingLines: [],
-      discountCodes: [],
-      note: null,
-      tags: [],
-    };
+    return { fulfillments: [], summary: null, shippingLines: [], discountCodes: [], note: null, tags: [] };
   }
 
   const adminOrder = responseJson?.order;
-
   if (!adminOrder) {
-    return {
-      fulfillments: [],
-      summary: null,
-      shippingLines: [],
-      discountCodes: [],
-      note: null,
-      tags: [],
-    };
+    return { fulfillments: [], summary: null, shippingLines: [], discountCodes: [], note: null, tags: [] };
   }
 
   const shippingLines = Array.isArray(adminOrder.shipping_lines)
@@ -148,8 +125,9 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const accessToken = token?.accessToken as string;
+  // Use auth() to get accessToken — never use getToken() in production
+  // NextAuth v5 uses __Secure- cookie prefix which breaks getToken()
+  const accessToken = (session.user as any).accessToken as string;
 
   if (!accessToken) {
     return NextResponse.json({ error: 'No access token' }, { status: 401 });
