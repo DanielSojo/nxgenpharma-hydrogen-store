@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { ShopifyProduct } from '@/types';
 import ProductCardQuoteButton from '@/components/store/ProductCardQuoteButton';
-import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import ProductPrice from '@/components/store/ProductPrice';
 
 interface Props {
   product: ShopifyProduct;
@@ -14,7 +14,6 @@ interface Props {
 export default function ProductCard({ product }: Props) {
   const variants = product.variants.nodes;
   const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id ?? '');
-  const { formatCalculatedPrice } = useCustomerPricing();
 
   const variant = useMemo(
     () => variants.find((item) => item.id === selectedVariantId) ?? variants[0],
@@ -71,19 +70,12 @@ export default function ProductCard({ product }: Props) {
           </p>
           <div className="mt-auto pt-3">
             {variant ? (
-              <div className="flex items-baseline gap-2">
-                <span className="text-base font-semibold text-brand-teal">
-                  {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
-                </span>
-                {hasDiscount && variant.compareAtPrice && (
-                  <span className="text-sm text-brand-ink/45 line-through">
-                    {formatCalculatedPrice(
-                      variant.compareAtPrice.amount,
-                      variant.compareAtPrice.currencyCode
-                    )}
-                  </span>
-                )}
-              </div>
+              <ProductPrice
+                amount={variant.price.amount}
+                currencyCode={variant.price.currencyCode}
+                compareAtAmount={variant.compareAtPrice?.amount}
+                size="sm"
+              />
             ) : (
               <span className="text-sm font-medium text-brand-ink/55">
                 Price available upon request

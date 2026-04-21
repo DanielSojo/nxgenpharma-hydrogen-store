@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import AddToQuoteButton from '@/components/store/AddToQuoteButton';
-import { formatPrice } from '@/lib/utils';
+import ProductPrice from '@/components/store/ProductPrice';
 import type { ShopifyProduct } from '@/types';
 
 interface Props {
@@ -118,26 +118,13 @@ export default function ProductVariantDetails({ product }: Props) {
           )}
         </div>
 
-        <div className="mb-2 flex items-baseline gap-3">
+        <div className="mb-2">
           {selectedVariant ? (
-            <>
-              <span className="text-lg font-semibold text-brand-teal">
-                {formatPrice(
-                  selectedVariant.price.amount,
-                  selectedVariant.price.currencyCode
-                )}
-              </span>
-              {selectedVariant.compareAtPrice &&
-                parseFloat(selectedVariant.compareAtPrice.amount) >
-                  parseFloat(selectedVariant.price.amount) && (
-                  <span className="text-sm text-brand-ink/45 line-through">
-                    {formatPrice(
-                      selectedVariant.compareAtPrice.amount,
-                      selectedVariant.compareAtPrice.currencyCode
-                    )}
-                  </span>
-                )}
-            </>
+            <ProductPrice
+              amount={selectedVariant.price.amount}
+              currencyCode={selectedVariant.price.currencyCode}
+              compareAtAmount={selectedVariant.compareAtPrice?.amount}
+            />
           ) : (
             <span className="text-lg font-semibold text-brand-teal">
               Price available upon quote request
