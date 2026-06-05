@@ -24,36 +24,40 @@ export default function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
-          <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
-          <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
-          <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
-          <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
-          <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
-          <Link href="/profile" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Profile</Link>
-          <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
-        </nav>
+        {session?.user && (
+          <nav className="hidden md:flex items-center gap-8">
+            <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
+            <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
+            <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
+            <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
+            <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
+            <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
+            <Link href="/profile" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Profile</Link>
+            <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
+          </nav>
+        )}
 
         {/* Actions */}
         <div className="flex items-center gap-3">
 
           {/* Quote button */}
-          <button
-            onClick={openQuote}
-            className="relative rounded-full p-2 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
-            aria-label="Open quote"
-          >
-            <ClipboardList size={20} />
-            {itemCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-navy text-[10px] font-bold text-white">
-                {itemCount}
-              </span>
-            )}
-          </button>
+          {session?.user && (
+            <button
+              onClick={openQuote}
+              className="relative rounded-full p-2 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
+              aria-label="Open quote"
+            >
+              <ClipboardList size={20} />
+              {itemCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-navy text-[10px] font-bold text-white">
+                  {itemCount}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* User menu */}
-          {session?.user && (
+          {session?.user ? (
             <div className="hidden md:flex items-center gap-2">
               <Link href="/profile" className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5 transition-colors hover:bg-brand-surface">
                 <User size={14} className="text-brand-blue" />
@@ -81,20 +85,29 @@ export default function Header() {
                 <LogOut size={16} />
               </button>
             </div>
+          ) : (
+            <Link
+              href="/login?callbackUrl=/collections/all"
+              className="hidden rounded bg-brand-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-blue md:inline-flex"
+            >
+              Login
+            </Link>
           )}
 
           {/* Mobile menu toggle */}
-          <button
-            className="rounded-full p-2 text-brand-ink/70 md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {session?.user && (
+            <button
+              className="rounded-full p-2 text-brand-ink/70 md:hidden"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {mobileOpen && (
+      {session?.user && mobileOpen && (
         <div className="flex flex-col gap-4 border-t border-brand-line/80 bg-white px-6 py-4 md:hidden">
           <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Home</Link>
           <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Catalog</Link>
@@ -104,14 +117,12 @@ export default function Header() {
           <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Orders</Link>
           <Link href="/profile" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Profile</Link>
           <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Contact</Link>
-          {session?.user && (
-            <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="text-left text-sm text-red-500"
-            >
-              Sign out
-            </button>
-          )}
+          <button
+            onClick={() => signOut({ callbackUrl: '/login' })}
+            className="text-left text-sm text-red-500"
+          >
+            Sign out
+          </button>
         </div>
       )}
     </header>

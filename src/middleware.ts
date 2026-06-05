@@ -17,6 +17,10 @@ const PUBLIC_PATHS = [
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
+  if (pathname === '/') {
+    return NextResponse.next();
+  }
+
   // Intercept Shopify reset URL → redirect to custom page
   if (pathname.startsWith('/account/reset')) {
     const resetUrl = `https://${getShopifyStoreDomain()}${pathname}${req.nextUrl.search}`;
