@@ -41,9 +41,7 @@ export default auth((req) => {
 
   // Not logged in → redirect to login
   if (!req.auth?.user) {
-    const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   // Refused → redirect to /refused

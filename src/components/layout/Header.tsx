@@ -78,7 +78,7 @@ export default function Header() {
                 </Link>
               )}
               <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
+                onClick={() => signOut({ callbackUrl: '/' })}
                 className="p-2 text-brand-ink/45 transition-colors hover:text-brand-navy"
                 aria-label="Sign out"
               >
@@ -118,7 +118,7 @@ export default function Header() {
           <Link href="/profile" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Profile</Link>
           <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Contact</Link>
           <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
+            onClick={() => signOut({ callbackUrl: '/' })}
             className="text-left text-sm text-red-500"
           >
             Sign out
