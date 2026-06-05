@@ -39,7 +39,7 @@ function formatDate(value: string | null) {
   });
 }
 
-export function SellerDashboard() {
+export function SellerDashboard({ alwaysShow = false }: { alwaysShow?: boolean }) {
   const { status } = useSession();
   const [loading, setLoading] = useState(true);
   const [clinics, setClinics] = useState<SellerClinic[]>([]);
@@ -86,7 +86,9 @@ export function SellerDashboard() {
   }
 
   // Not a seller — render nothing so regular customers see their normal profile.
-  if (!isSeller) return null;
+  // `alwaysShow` is passed from the seller-only route, where the role is already
+  // verified, so the dashboard (and its empty state) renders even with 0 clinics.
+  if (!isSeller && !alwaysShow) return null;
 
   const currency = clinics[0]?.orders[0]?.currencyCode ?? 'USD';
 

@@ -12,6 +12,7 @@ export default function Header() {
   const { openQuote, totalItems } = useQuoteStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const itemCount = totalItems();
+  const isSeller = ((session?.user as any)?.role ?? '').toLowerCase() === 'seller';
 
   return (
     <header className="sticky top-0 z-40 border-b border-brand-line/80 bg-white/90 backdrop-blur">
@@ -26,14 +27,20 @@ export default function Header() {
         {/* Desktop Nav */}
         {session?.user && (
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
-            <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
-            <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
-            <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
-            <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
-            <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
-            <Link href="/profile" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Profile</Link>
-            <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
+            {isSeller ? (
+              <Link href="/seller-dashboard" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Dashboard</Link>
+            ) : (
+              <>
+                <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
+                <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
+                <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
+                <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
+                <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
+                <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
+                <Link href="/profile" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Profile</Link>
+                <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
+              </>
+            )}
           </nav>
         )}
 
@@ -41,7 +48,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
 
           {/* Quote button */}
-          {session?.user && (
+          {session?.user && !isSeller && (
             <button
               onClick={openQuote}
               className="relative rounded-full p-2 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
@@ -59,7 +66,7 @@ export default function Header() {
           {/* User menu */}
           {session?.user ? (
             <div className="hidden md:flex items-center gap-2">
-              <Link href="/profile" className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5 transition-colors hover:bg-brand-surface">
+              <Link href={isSeller ? '/seller-dashboard' : '/profile'} className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5 transition-colors hover:bg-brand-surface">
                 <User size={14} className="text-brand-blue" />
                 <span className="text-sm text-brand-ink">
                   {(session.user as any).firstName || session.user.email}
@@ -109,14 +116,20 @@ export default function Header() {
       {/* Mobile Menu */}
       {session?.user && mobileOpen && (
         <div className="flex flex-col gap-4 border-t border-brand-line/80 bg-white px-6 py-4 md:hidden">
-          <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Home</Link>
-          <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Catalog</Link>
-          <Link href="/about" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">About</Link>
-          <Link href="/faqs" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">FAQs</Link>
-          <Link href="/quotes" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Quotes</Link>
-          <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Orders</Link>
-          <Link href="/profile" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Profile</Link>
-          <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Contact</Link>
+          {isSeller ? (
+            <Link href="/seller-dashboard" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Dashboard</Link>
+          ) : (
+            <>
+              <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Home</Link>
+              <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Catalog</Link>
+              <Link href="/about" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">About</Link>
+              <Link href="/faqs" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">FAQs</Link>
+              <Link href="/quotes" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Quotes</Link>
+              <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Orders</Link>
+              <Link href="/profile" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Profile</Link>
+              <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Contact</Link>
+            </>
+          )}
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
             className="text-left text-sm text-red-500"

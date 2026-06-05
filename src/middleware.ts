@@ -17,10 +17,6 @@ const PUBLIC_PATHS = [
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  if (pathname === '/') {
-    return NextResponse.next();
-  }
-
   // Intercept Shopify reset URL → redirect to custom page
   if (pathname.startsWith('/account/reset')) {
     const resetUrl = `https://${getShopifyStoreDomain()}${pathname}${req.nextUrl.search}`;
@@ -29,15 +25,29 @@ export default auth((req) => {
     return NextResponse.redirect(newUrl);
   }
 
-  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
-  if (isPublic) return NextResponse.next();
-
   const user = req.auth?.user as
     | {
         approved?: boolean;
         b2bStatus?: string | null;
+        role?: string | null;
       }
     | undefined;
+
+  const isSeller = (user?.role ?? '').toLowerCase() === 'seller';
+
+  // Sellers are restricted to the dashboard only — everything else (incl. the
+  // landing page) bounces there. API routes are left alone so the dashboard can
+  // still load its data and sign-out keeps working.
+  if (isSeller && !pathname.startsWith('/api') && !pathname.startsWith('/seller-dashboard')) {
+    return NextResponse.redirect(new URL('/seller-dashboard', req.url));
+  }
+
+  if (pathname === '/') {
+    return NextResponse.next();
+  }
+
+  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
+  if (isPublic) return NextResponse.next();
 
   // Not logged in → redirect to login
   if (!req.auth?.user) {

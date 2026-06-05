@@ -8,12 +8,19 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-async function fetchCustomerMarkup(customerId: string): Promise<number> {
+/**
+ * Fetch customer metafields via the Admin API (reliable regardless of whether
+ * the definition has Storefront access enabled). Returns markup% and role.
+ */
+async function fetchCustomerMeta(customerId: string): Promise<{ markup: number; role: string | null }> {
   try {
     const query = `
-      query GetCustomerMarkup($id: ID!) {
+      query GetCustomerMeta($id: ID!) {
         customer(id: $id) {
-          metafield(namespace: "custom", key: "price_markup") {
+          markup: metafield(namespace: "custom", key: "price_markup") {
+            value
+          }
+          role: metafield(namespace: "custom", key: "role") {
             value
           }
         }
@@ -42,10 +49,14 @@ async function fetchCustomerMarkup(customerId: string): Promise<number> {
       const json = await response.json();
       data = json.data;
     }
-    const value = data?.customer?.metafield?.value;
-    return value ? parseFloat(value) : 0;
+    const markupValue = data?.customer?.markup?.value;
+    const roleValue = data?.customer?.role?.value;
+    return {
+      markup: markupValue ? parseFloat(markupValue) : 0,
+      role: roleValue ?? null,
+    };
   } catch {
-    return 0;
+    return { markup: 0, role: null };
   }
 }
 
@@ -67,9 +78,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const customer = await getCustomer(token.accessToken);
           if (!customer) return null;
 
-          // Fetch markup at login — stored in JWT, no repeated API calls while browsing
-          const markup = await fetchCustomerMarkup(customer.id);
-          console.log('[Auth] Login:', customer.email, '| markup:', markup, '| b2bStatus:', customer.b2bStatus);
+          // Fetch markup + role at login — stored in JWT, no repeated API calls while browsing
+          const { markup, role } = await fetchCustomerMeta(customer.id);
+          console.log('[Auth] Login:', customer.email, '| markup:', markup, '| role:', role, '| b2bStatus:', customer.b2bStatus);
 
           return {
             id: customer.id,
@@ -79,6 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             lastName: customer.lastName,
             approved: customer.approved,
             b2bStatus: customer.b2bStatus,
+            role,
             markup,
             accessToken: token.accessToken,
             expiresAt: token.expiresAt,
@@ -99,6 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.lastName = (user as any).lastName;
         token.approved = (user as any).approved;
         token.b2bStatus = (user as any).b2bStatus;
+        token.role = (user as any).role ?? null;
         token.markup = (user as any).markup ?? 0;
         token.accessToken = (user as any).accessToken;
         token.expiresAt = (user as any).expiresAt;
@@ -116,7 +129,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.approvedCheckedAt = Date.now();
           }
           if (token.id) {
-            token.markup = await fetchCustomerMarkup(token.id as string);
+            const { markup, role } = await fetchCustomerMeta(token.id as string);
+            token.markup = markup;
+            token.role = role;
           }
         } catch (err) {
           console.warn('[JWT] Could not refresh:', err);
@@ -131,6 +146,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       (session.user as any).firstName = token.firstName;
       (session.user as any).lastName = token.lastName;
       (session.user as any).approved = token.approved;
+      (session.user as any).role = token.role ?? null;
       (session.user as any).markup = token.markup ?? 0;
       // accessToken for server-side API routes only
       (session.user as any).accessToken = token.accessToken;

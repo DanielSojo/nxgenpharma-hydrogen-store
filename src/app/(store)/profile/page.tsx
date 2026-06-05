@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeft, Loader2, MapPin, Save, UserCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { SellerDashboard } from './SellerDashboard';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'Required'),
@@ -184,8 +183,6 @@ export default function ProfilePage() {
           Keep your contact details and default shipping address up to date for quotes and orders.
         </p>
       </div>
-
-      <SellerDashboard />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 rounded-3xl border border-brand-line bg-white p-8 shadow-sm">
         {serverError && (
