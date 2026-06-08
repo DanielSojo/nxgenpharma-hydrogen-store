@@ -84,7 +84,10 @@ export default function ApplyPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ApplicationForm>({ resolver: zodResolver(applicationSchema) });
+  } = useForm<ApplicationForm>({
+    resolver: zodResolver(applicationSchema),
+    defaultValues: { country: 'US' },
+  });
 
   const onSubmit = async (data: ApplicationForm) => {
     setServerError('');
@@ -209,7 +212,7 @@ export default function ApplyPage() {
                 </Select>
               </div>
               <div className="col-span-2">
-                <Input label="Tax ID / EIN" placeholder="XX-XXXXXXX (optional)" error={errors.taxId?.message} {...register('taxId')} />
+                <Input label="NPI" placeholder="XX-XXXXXXX (optional)" error={errors.taxId?.message} {...register('taxId')} />
               </div>
               <div className="col-span-2">
                 <Input label="Website" type="url" placeholder="https://yourcompany.com (optional)" error={errors.website?.message} {...register('website')} />
@@ -232,10 +235,6 @@ export default function ApplyPage() {
               <Select label="Country" required error={errors.country?.message} {...register('country')}>
                 <option value="">Select country...</option>
                 <option value="US">United States</option>
-                <option value="CA">Canada</option>
-                <option value="MX">Mexico</option>
-                <option value="GB">United Kingdom</option>
-                <option value="AU">Australia</option>
                 <option value="OTHER">Other</option>
               </Select>
             </div>
