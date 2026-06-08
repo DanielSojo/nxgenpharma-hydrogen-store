@@ -96,7 +96,7 @@ function ResetPasswordContent() {
       <div className="w-full max-w-md">
         <div className="rounded-2xl bg-white p-10 shadow-2xl">
 
-          <Image src="/nxgenpharma-logo.png" width={110} height={52} alt="NxGen Pharma Logo" className="mb-6 h-auto w-auto" />
+          <Image src="/nxgenpharma-logo.png" width={110} height={52} alt="NexGen Pharma Logo" className="mb-6 h-auto w-auto" />
 
           {success ? (
             <div className="text-center">

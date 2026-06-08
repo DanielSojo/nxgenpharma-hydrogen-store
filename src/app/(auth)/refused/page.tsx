@@ -18,7 +18,7 @@ export default async function RefusedPage() {
           src="/nxgenpharma-logo.png"
           width={150}
           height={64}
-          alt="NxGen Pharma Logo"
+          alt="NexGen Pharma Logo"
           className="mx-auto mb-5 h-auto w-auto"
         />
 

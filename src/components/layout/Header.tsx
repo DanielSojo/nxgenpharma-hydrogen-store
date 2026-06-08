@@ -20,8 +20,8 @@ export default function Header() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <Image src="/nxgenpharma-logo.png" width={70} height={40} alt="NxGen Pharma Logo" />
-          <span className="hidden text-lg font-bold text-brand-navy sm:block">NxGen Pharma</span>
+          <Image src="/nxgenpharma-logo.png" width={70} height={40} alt="NexGen Pharma Logo" />
+          <span className="hidden text-lg font-bold text-brand-navy sm:block">NexGen Pharma</span>
         </Link>
 
         {/* Desktop Nav */}

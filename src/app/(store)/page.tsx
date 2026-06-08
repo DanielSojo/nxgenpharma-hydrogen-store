@@ -37,7 +37,7 @@ const faqs = [
       'Peptides are short chains of amino acids that act as signaling molecules in the body and are used across many areas of healthcare and research.',
   },
   {
-    question: 'Who can access the NxGen Pharma catalog?',
+    question: 'Who can access the NexGen Pharma catalog?',
     answer:
       'Catalog access is reserved for verified professional accounts. New users can apply for access, and approved users can sign in to browse products.',
   },
@@ -79,7 +79,7 @@ export default async function LandingPage() {
             Advancing the Next Generation of Science
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82">
-            NxGen Pharma brings peptide-focused supply, provider verification, and professional purchasing tools into one streamlined B2B platform.
+            NexGen Pharma brings peptide-focused supply, provider verification, and professional purchasing tools into one streamlined B2B platform.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             {isLoggedIn ? (
@@ -121,7 +121,7 @@ export default async function LandingPage() {
               Innovating at the forefront of peptide-based healthcare
             </h2>
             <p className="mt-5 text-lg leading-8 text-brand-ink/72">
-              NxGen Pharma is focused on advancing the next generation of science through peptide innovation, personalized therapies, and a commitment to better health outcomes.
+              NexGen Pharma is focused on advancing the next generation of science through peptide innovation, personalized therapies, and a commitment to better health outcomes.
             </p>
           </div>
 
@@ -153,7 +153,7 @@ export default async function LandingPage() {
 
       <section className="bg-[#eef4ff] px-6 py-20">
         <div className="mx-auto max-w-6xl text-center">
-          <h2 className="text-3xl font-semibold text-brand-navy">The NxGen Advantage</h2>
+          <h2 className="text-3xl font-semibold text-brand-navy">The NexGen Advantage</h2>
           <p className="mx-auto mt-4 max-w-2xl text-brand-ink/70">
             Precision-engineered platform tools for a more efficient professional ordering experience.
           </p>
@@ -176,7 +176,7 @@ export default async function LandingPage() {
           <div>
             <h2 className="text-3xl font-semibold leading-tight text-brand-navy">Frequently Asked Questions</h2>
             <p className="mt-4 leading-7 text-brand-ink/70">
-              Answers for providers getting started with NxGen Pharma.
+              Answers for providers getting started with NexGen Pharma.
             </p>
           </div>
           <div className="space-y-4">

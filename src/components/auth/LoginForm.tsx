@@ -89,7 +89,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             </p>
           </div>
 
-          <Image className='z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_18px_40px_rgba(0,0,0,0.22)]' src="/nxgenpharma-logo.png" width={400} height={100} alt='NxGen Pharma Logo' />
+          <Image className='z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_18px_40px_rgba(0,0,0,0.22)]' src="/nxgenpharma-logo.png" width={400} height={100} alt='NexGen Pharma Logo' />
 
           <div className="absolute bottom-10 left-10 right-10 z-10 rounded-[28px] border border-white/15 bg-white/10 p-6 backdrop-blur-md">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/65">
@@ -103,7 +103,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
 
         <div className="flex flex-col justify-center bg-[linear-gradient(180deg,rgba(255,255,255,0.97)_0%,rgba(247,252,252,0.98)_100%)] px-10 py-12">
           <div className="mb-7">
-            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
+            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NexGen Pharma Logo' />
           </div>
 
           <p className="mb-7 font-serif text-[17px] leading-relaxed text-brand-ink">

@@ -30,7 +30,7 @@ export async function sendEmail({ to, subject, html, replyTo }: SendEmailOptions
   const transporter = createTransporter();
 
   await transporter.sendMail({
-    from: `"NxGen Pharma" <${process.env.EMAIL_USER}>`,
+    from: `"NexGen Pharma" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,

@@ -135,7 +135,7 @@ export default function ApplyPage() {
             <ArrowLeft size={16} /> Back to Sign In
           </Link>
           <div className="rounded-2xl bg-white p-10 shadow-2xl">
-            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NxGen Pharma Logo' />
+            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NexGen Pharma Logo' />
             <h1 className="mb-2 text-2xl font-bold text-brand-navy">Apply for a B2B Account</h1>
             <p className="text-[14px] leading-relaxed text-brand-ink/72">
               Complete the form below to request access to our B2B platform. We review all applications within 24 hours.

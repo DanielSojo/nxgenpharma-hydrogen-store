@@ -49,6 +49,6 @@ export const useQuoteStore = create<QuoteState>()(
 
       clearQuote: () => set({ items: [] }),
     }),
-    { name: 'nxgen-quote' }
+    { name: 'NexGen-quote' }
   )
 );

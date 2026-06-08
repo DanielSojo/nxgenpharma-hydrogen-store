@@ -1,4 +1,4 @@
-# NxGen Pharma — B2B Storefront
+# NexGen Pharma — B2B Storefront
 
 A fully custom Next.js 15 B2B storefront powered by Shopify Storefront API.
 

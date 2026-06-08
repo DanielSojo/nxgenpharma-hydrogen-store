@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: {
-    default: 'NxGen Pharma | B2B Platform',
-    template: '%s | NxGen Pharma',
+    default: 'NexGen Pharma | B2B Platform',
+    template: '%s | NexGen Pharma',
   },
   description: 'Professional B2B pharmaceutical supply platform.',
   icons: {

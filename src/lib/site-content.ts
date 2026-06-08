@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: 'NexGen Pharmaceuticals',
-  shortName: 'NxGen Pharma',
+  shortName: 'NexGen Pharma',
   domain: 'nxgenpharma.com',
   supportEmail: 'support@nxgenpharma.com',
   slogan: 'Advancing the Next Generation of Science',

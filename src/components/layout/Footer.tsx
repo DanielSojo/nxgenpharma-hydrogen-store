@@ -22,7 +22,7 @@ export default function Footer() {
     <footer className="mt-8 bg-brand-navy px-6 py-16 text-white">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-4">
         <div>
-          <Image src="/nxgenpharma-logo.png" width={200} height={100} alt="NxGen Pharma Logo" />
+          <Image src="/nxgenpharma-logo.png" width={200} height={100} alt="NexGen Pharma Logo" />
           <p className="mt-4 text-sm leading-relaxed text-white/65">
             {siteConfig.slogan}
           </p>
