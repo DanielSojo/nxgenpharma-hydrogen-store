@@ -25,6 +25,11 @@ const profileSchema = z.object({
 
 type ProfileForm = z.infer<typeof profileSchema>;
 
+// Strip the +1 country code for display; the user only edits the number.
+const stripCountryCode = (phone: string) => phone.replace(/^\+1/, '').trim();
+// Prepend +1 to the digits before sending to the API.
+const withCountryCode = (phone: string) => `+1${phone.replace(/\D/g, '')}`;
+
 const emptyProfile: ProfileForm = {
   firstName: '',
   lastName: '',
@@ -98,7 +103,8 @@ export default function ProfilePage() {
           throw new Error(data.error ?? 'Failed to load profile');
         }
 
-        reset(data.profile ?? emptyProfile);
+        const profile = data.profile ?? emptyProfile;
+        reset({ ...profile, phone: stripCountryCode(profile.phone ?? '') });
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
           setServerError(error instanceof Error ? error.message : 'Failed to load profile');
@@ -116,10 +122,12 @@ export default function ProfilePage() {
   const onSubmit = async (values: ProfileForm) => {
     setServerError('');
 
+    const payload = { ...values, phone: withCountryCode(values.phone) };
+
     const response = await fetch('/api/customer/profile', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      body: JSON.stringify(payload),
     });
     const data = await response.json();
 
@@ -130,7 +138,8 @@ export default function ProfilePage() {
       return;
     }
 
-    reset(data.profile ?? values);
+    const updated = data.profile ?? payload;
+    reset({ ...updated, phone: stripCountryCode(updated.phone ?? '') });
     await update({
       ...session,
       user: {
@@ -203,7 +212,21 @@ export default function ProfilePage() {
               <Input label="Email Address" required type="email" error={errors.email?.message} {...register('email')} />
             </div>
             <div className="md:col-span-2">
-              <Input label="Phone Number" required type="tel" error={errors.phone?.message} {...register('phone')} />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-brand-ink">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <div className="flex items-center rounded-xl border border-brand-line bg-brand-surface transition-all focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/10">
+                  <span className="pl-4 pr-2 text-sm text-brand-ink/55">+1</span>
+                  <input
+                    type="tel"
+                    placeholder="(555) 000-0000"
+                    {...register('phone')}
+                    className="w-full rounded-xl bg-transparent py-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
+                  />
+                </div>
+                {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}
+              </div>
             </div>
           </div>
         </div>

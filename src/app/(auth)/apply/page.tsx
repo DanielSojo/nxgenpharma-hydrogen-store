@@ -88,10 +88,14 @@ export default function ApplyPage() {
 
   const onSubmit = async (data: ApplicationForm) => {
     setServerError('');
+    const payload = {
+      ...data,
+      phone: `+1${data.phone.replace(/\D/g, '')}`,
+    };
     const res = await fetch('/api/apply', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
@@ -164,7 +168,21 @@ export default function ApplyPage() {
                 <Input label="Email Address" required type="email" placeholder="john@company.com" error={errors.email?.message} {...register('email')} />
               </div>
               <div className="col-span-2">
-                <Input label="Phone Number" required type="tel" placeholder="+1 (555) 000-0000" error={errors.phone?.message} {...register('phone')} />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-medium text-brand-ink">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex items-center rounded-xl border border-brand-line bg-brand-surface transition-all focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/10">
+                    <span className="pl-4 pr-2 text-sm text-brand-ink/55">+1</span>
+                    <input
+                      type="tel"
+                      placeholder="(555) 000-0000"
+                      {...register('phone')}
+                      className="w-full rounded-xl bg-transparent py-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
+                    />
+                  </div>
+                  {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}
+                </div>
               </div>
             </div>
           </div>
