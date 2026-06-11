@@ -15,7 +15,7 @@ const applicationSchema = z.object({
   zipCode: z.string().min(1),
   country: z.string().min(1),
   businessType: z.string().min(1),
-  taxId: z.string().optional(),
+  taxId: z.string().regex(/^\d{10}$/),
   website: z.string().optional(),
   message: z.string().optional(),
 });
@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
         const note = [
           `Company: ${data.company}`,
           `Business Type: ${data.businessType}`,
-          data.taxId ? `Tax ID: ${data.taxId}` : '',
+          `NPI: ${data.taxId}`,
           data.website ? `Website: ${data.website}` : '',
           data.message ? `Message: ${data.message}` : '',
         ].filter(Boolean).join('\n');

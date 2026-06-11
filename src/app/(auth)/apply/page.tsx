@@ -21,7 +21,7 @@ const applicationSchema = z.object({
   zipCode: z.string().min(1, 'Required'),
   country: z.string().min(1, 'Required'),
   businessType: z.string().min(1, 'Required'),
-  taxId: z.string().optional(),
+  taxId: z.string().regex(/^\d{10}$/, 'Enter a valid 10-digit NPI'),
   website: z.string().optional(),
   message: z.string().optional(),
 });
@@ -212,7 +212,7 @@ export default function ApplyPage() {
                 </Select>
               </div>
               <div className="col-span-2">
-                <Input label="NPI" placeholder="XX-XXXXXXX (optional)" error={errors.taxId?.message} {...register('taxId')} />
+                <Input label="NPI" required placeholder="1234567890" error={errors.taxId?.message} {...register('taxId')} />
               </div>
               <div className="col-span-2">
                 <Input label="Website" type="url" placeholder="https://yourcompany.com (optional)" error={errors.website?.message} {...register('website')} />
