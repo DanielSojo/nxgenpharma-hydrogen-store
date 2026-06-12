@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 
 const applicationSchema = z.object({
@@ -44,7 +44,7 @@ const Input = ({
     </label>
     <input
       {...props}
-      className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+      className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
     />
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
@@ -65,12 +65,18 @@ const Select = ({
     <label className="text-[13px] font-medium text-brand-ink">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
-    <select
-      {...props}
-      className="w-full appearance-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
-    >
-      {children}
-    </select>
+    <div className="group relative">
+      <select
+        {...props}
+        className="w-full appearance-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 pr-10 text-sm text-brand-ink outline-none transition-all hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+      >
+        {children}
+      </select>
+      <ChevronDown
+        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/40 transition-colors group-focus-within:text-brand-blue"
+        size={16}
+      />
+    </div>
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
 );
@@ -111,16 +117,18 @@ export default function ApplyPage() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-brand-mist p-5">
-        <div className="w-full max-w-md rounded-2xl bg-white p-14 text-center shadow-2xl">
-          <CheckCircle className="mx-auto mb-5 text-green-600" size={56} />
+      <div className="auth-aurora flex min-h-screen items-center justify-center p-5">
+        <div className="animate-fade-up w-full max-w-md rounded-3xl border border-white/70 bg-white/70 p-14 text-center shadow-[0_30px_90px_-20px_rgba(23,50,82,0.35)] ring-1 ring-white/40 backdrop-blur-xl">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+            <CheckCircle className="text-green-600" size={36} />
+          </div>
           <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Received!</h1>
-          <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/72">
+          <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/65">
             Thank you for applying. We'll review your application and respond within 24 hours to the email you provided.
           </p>
           <Link
             href="/login"
-            className="inline-block rounded-full bg-brand-navy px-8 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-brand-blue"
+            className="bg-brand-gradient-navy inline-block rounded-full px-8 py-3 text-[13px] font-semibold text-white shadow-md shadow-brand-navy/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
           >
             Back to Sign In
           </Link>
@@ -130,28 +138,30 @@ export default function ApplyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-mist py-10 px-5">
-      <div className="max-w-2xl mx-auto">
+    <div className="auth-aurora min-h-screen px-5 py-10">
+      <div className="animate-fade-up mx-auto max-w-2xl">
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Link
             href="/login"
-            className="mb-6 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
           >
             <ArrowLeft size={16} /> Back to Sign In
           </Link>
-          <div className="rounded-2xl bg-white p-10 shadow-2xl">
-            <Image src="/nxgenpharma-logo.png" width={100} height={100} alt='NexGen Pharma Logo' />
-            <h1 className="mb-2 text-2xl font-bold text-brand-navy">Apply for a B2B Account</h1>
-            <p className="text-[14px] leading-relaxed text-brand-ink/72">
-              Complete the form below to request access to our B2B platform. We review all applications within 24 hours.
-            </p>
+          <div className="overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-[0_24px_70px_-20px_rgba(23,50,82,0.3)] ring-1 ring-white/40 backdrop-blur-xl">
+            <div className="bg-brand-gradient-navy px-10 pb-10 pt-8 text-white">
+              <Image src="/nxgenpharma-logo.png" width={88} height={88} alt='NexGen Pharma Logo' className="mb-4 brightness-0 invert" />
+              <h1 className="mb-2 text-2xl font-bold tracking-tight">Apply for a B2B Account</h1>
+              <p className="max-w-md text-[14px] leading-relaxed text-white/75">
+                Complete the form below to request access to our B2B platform. We review all applications within 24 hours.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 rounded-2xl bg-white p-10 shadow-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 rounded-3xl border border-white/70 bg-white/70 p-8 shadow-[0_24px_70px_-20px_rgba(23,50,82,0.3)] ring-1 ring-white/40 backdrop-blur-xl sm:p-10">
 
           {serverError && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">
@@ -175,13 +185,13 @@ export default function ApplyPage() {
                   <label className="text-[13px] font-medium text-brand-ink">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex items-center rounded-xl border border-brand-line bg-brand-surface transition-all focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/10">
-                    <span className="pl-4 pr-2 text-sm text-brand-ink/55">+1</span>
+                  <div className="flex items-center rounded-xl border border-brand-line bg-white/70 transition-all hover:border-brand-blue/40 focus-within:border-brand-blue focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-blue/10">
+                    <span className="border-r border-brand-line pl-4 pr-3 text-sm font-medium text-brand-ink/55">+1</span>
                     <input
                       type="tel"
                       placeholder="(555) 000-0000"
                       {...register('phone')}
-                      className="w-full rounded-xl bg-transparent py-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
+                      className="w-full rounded-xl bg-transparent py-3 pl-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
                     />
                   </div>
                   {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}
@@ -249,14 +259,14 @@ export default function ApplyPage() {
               {...register('message')}
               placeholder="Tell us more about your business and purchasing needs..."
               rows={4}
-              className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+              className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
             />
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy py-4 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-brand-blue disabled:opacity-60"
+            className="bg-brand-gradient mt-2 flex w-full items-center justify-center gap-2 rounded-full py-4 text-[13px] font-bold uppercase tracking-wider text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-blue/30 active:translate-y-0 disabled:translate-y-0 disabled:opacity-60"
           >
             {isSubmitting && <Loader2 size={15} className="animate-spin" />}
             Submit Application
