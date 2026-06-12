@@ -4,7 +4,6 @@ import { useQuoteStore } from '@/store/quote';
 import { X, ClipboardList, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatPrice } from '@/lib/utils';
 
 export default function QuoteDrawer() {
   const { items, isOpen, closeQuote, updateQuantity, removeItem } = useQuoteStore();

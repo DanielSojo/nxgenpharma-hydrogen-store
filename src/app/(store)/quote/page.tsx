@@ -10,7 +10,6 @@ import { z } from 'zod';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ClipboardList, Loader2, CheckCircle, Trash2, Plus, Minus } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
 
 const quoteSchema = z.object({
   addressMode: z.enum(['saved', 'new']),

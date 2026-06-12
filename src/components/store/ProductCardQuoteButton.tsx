@@ -8,25 +8,29 @@ import type { ShopifyProduct, ShopifyProductVariant } from '@/types';
 interface Props {
   product: ShopifyProduct;
   variant: ShopifyProductVariant;
+  quantity?: number;
 }
 
-export default function ProductCardQuoteButton({ product, variant }: Props) {
+export default function ProductCardQuoteButton({ product, variant, quantity = 1 }: Props) {
   const { addItem } = useQuoteStore();
   const [added, setAdded] = useState(false);
 
   const handleClick = () => {
     if (!variant.availableForSale) return;
 
-    addItem({
-      variantId: variant.id,
-      productId: product.id,
-      productTitle: product.title,
-      variantTitle: variant.title,
-      productHandle: product.handle,
-      image: product.featuredImage?.url ?? null,
-      price: variant.price.amount,
-      currencyCode: variant.price.currencyCode,
-    });
+    addItem(
+      {
+        variantId: variant.id,
+        productId: product.id,
+        productTitle: product.title,
+        variantTitle: variant.title,
+        productHandle: product.handle,
+        image: product.featuredImage?.url ?? null,
+        price: variant.price.amount,
+        currencyCode: variant.price.currencyCode,
+      },
+      quantity
+    );
 
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);

@@ -4,10 +4,11 @@ import { useCartStore } from '@/store/cart';
 import { X, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatPrice } from '@/lib/utils';
+import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 
 export default function CartDrawer() {
   const { cart, isOpen, closeCart, updateItem, removeItem } = useCartStore();
+  const { formatCalculatedPrice } = useCustomerPricing();
   const lines = cart?.lines.nodes ?? [];
 
   return (
@@ -83,7 +84,10 @@ export default function CartDrawer() {
                     <p className="text-xs text-brand-ink/50">{line.merchandise.title}</p>
                   )}
                   <p className="text-sm font-bold text-brand-navy">
-                    {formatPrice(line.cost.totalAmount.amount, line.cost.totalAmount.currencyCode)}
+                    {formatCalculatedPrice(
+                      line.cost.totalAmount.amount,
+                      line.cost.totalAmount.currencyCode
+                    )}
                   </p>
 
                   {/* Quantity controls */}
@@ -119,7 +123,10 @@ export default function CartDrawer() {
             <div className="flex justify-between items-center">
               <span className="text-sm text-brand-ink/65">Subtotal</span>
               <span className="font-bold text-brand-navy">
-                {formatPrice(cart.cost.subtotalAmount.amount, cart.cost.subtotalAmount.currencyCode)}
+                {formatCalculatedPrice(
+                  cart.cost.subtotalAmount.amount,
+                  cart.cost.subtotalAmount.currencyCode
+                )}
               </span>
             </div>
             <p className="-mt-2 text-[12px] text-brand-ink/50">

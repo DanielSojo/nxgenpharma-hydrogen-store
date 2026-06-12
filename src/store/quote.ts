@@ -15,20 +15,21 @@ export const useQuoteStore = create<QuoteState>()(
 
       totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
 
-      addItem: (newItem) => {
+      addItem: (newItem, quantity = 1) => {
         const items = get().items;
         const existing = items.find((i) => i.variantId === newItem.variantId);
+        const quantityToAdd = Math.max(1, quantity);
         if (existing) {
           set({
             items: items.map((i) =>
               i.variantId === newItem.variantId
-                ? { ...i, quantity: i.quantity + 1 }
+                ? { ...i, quantity: i.quantity + quantityToAdd }
                 : i
             ),
             isOpen: true,
           });
         } else {
-          set({ items: [...items, { ...newItem, quantity: 1 }], isOpen: true });
+          set({ items: [...items, { ...newItem, quantity: quantityToAdd }], isOpen: true });
         }
       },
 

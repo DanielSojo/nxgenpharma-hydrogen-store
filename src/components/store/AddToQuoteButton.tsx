@@ -4,7 +4,6 @@ import { useQuoteStore } from '@/store/quote';
 import { ClipboardList, Check } from 'lucide-react';
 import { useState } from 'react';
 import type { ShopifyProductVariant, ShopifyProduct } from '@/types';
-import { formatPrice } from '@/lib/utils';
 
 interface Props {
   product: ShopifyProduct;

@@ -150,7 +150,7 @@ export interface QuoteItem {
 export interface QuoteState {
   items: QuoteItem[];
   isOpen: boolean;
-  addItem: (item: Omit<QuoteItem, 'quantity'>) => void;
+  addItem: (item: Omit<QuoteItem, 'quantity'>, quantity?: number) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   clearQuote: () => void;
