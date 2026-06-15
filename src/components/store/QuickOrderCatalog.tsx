@@ -532,7 +532,7 @@ export default function QuickOrderCatalog({
 
       <div className="sticky top-[72px] z-20 mb-8 flex flex-col gap-4 rounded-2xl border border-brand-line/70 bg-white/80 px-4 py-3 shadow-[0_8px_24px_-18px_rgba(23,50,82,0.4)] backdrop-blur-md lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-          <span className="text-base font-semibold text-brand-ink">Filter:</span>
+          <span className="hidden md:inline text-base font-semibold text-brand-ink">Filter:</span>
 
           <label className="relative">
             <span className="sr-only">Stock availability</span>
@@ -626,7 +626,7 @@ export default function QuickOrderCatalog({
               <List size={16} />
             </button>
           </div>
-          <span className="text-base font-semibold text-brand-ink">Sort by:</span>
+          <span className="hidden md:inline text-base font-semibold text-brand-ink">Sort by:</span>
           <label className="relative">
             <span className="sr-only">Sort products</span>
             <select

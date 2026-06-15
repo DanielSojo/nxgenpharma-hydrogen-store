@@ -2,17 +2,43 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { ClipboardList, User, LogOut, Menu, X } from 'lucide-react';
+import { ClipboardList, User, LogOut, Menu, X, ChevronDown, UserCircle2, ShoppingBag, TrendingUp } from 'lucide-react';
 import { useQuoteStore } from '@/store/quote';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 export default function Header() {
   const { data: session } = useSession();
   const { openQuote, totalItems } = useQuoteStore();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const itemCount = totalItems();
   const isSeller = ((session?.user as any)?.role ?? '').toLowerCase() === 'seller';
+
+  // Close the account dropdown on outside click or Escape.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handlePointer = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+
+    document.addEventListener('mousedown', handlePointer);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handlePointer);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [menuOpen]);
+
+  const accountName =
+    (session?.user as any)?.firstName || session?.user?.email || 'Account';
 
   return (
     <header className="sticky top-0 z-40 border-b border-brand-line/60 bg-white/80 shadow-[0_8px_30px_-22px_rgba(23,50,82,0.45)] backdrop-blur-xl">
@@ -35,9 +61,6 @@ export default function Header() {
                 <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
                 <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
                 <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
-                <Link href="/quotes" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Quotes</Link>
-                <Link href="/orders" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Orders</Link>
-                <Link href="/profile" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Profile</Link>
                 <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
               </>
             )}
@@ -65,32 +88,76 @@ export default function Header() {
 
           {/* User menu */}
           {session?.user ? (
-            <div className="hidden md:flex items-center gap-2">
-              <Link href={isSeller ? '/seller-dashboard' : '/profile'} className="flex items-center gap-2 rounded-full border border-brand-line/70 bg-brand-mist px-3 py-1.5 transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:bg-white hover:shadow-sm">
-                <User size={14} className="text-brand-blue" />
-                <span className="text-sm text-brand-ink">
-                  {(session.user as any).firstName || session.user.email}
-                </span>
-              </Link>
-              {/* Admin link — only shows for admin emails */}
-              {(process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
-                .split(',')
-                .map(e => e.trim().toLowerCase())
-                .includes((session.user.email ?? '').toLowerCase()) && (
-                <Link
-                  href="/admin"
-                  className="bg-brand-gradient rounded-full px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  Admin
-                </Link>
-              )}
+            <div className="relative hidden md:block" ref={menuRef}>
               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="p-2 text-brand-ink/45 transition-colors hover:text-brand-navy"
-                aria-label="Sign out"
+                onClick={() => setMenuOpen((open) => !open)}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                className="flex items-center gap-2 rounded-full border border-brand-line/70 bg-brand-mist py-1.5 pl-3 pr-2.5 transition-all hover:border-brand-blue/40 hover:bg-white hover:shadow-sm"
               >
-                <LogOut size={16} />
+                <User size={14} className="text-brand-blue" />
+                <span className="max-w-[140px] truncate text-sm text-brand-ink">{accountName}</span>
+                <ChevronDown
+                  size={15}
+                  className={`text-brand-ink/50 transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`}
+                />
               </button>
+
+              {menuOpen && (
+                <div
+                  role="menu"
+                  className="animate-fade-up absolute right-0 mt-2 w-60 overflow-hidden rounded-2xl border border-brand-line/70 bg-white shadow-[0_22px_50px_-20px_rgba(23,50,82,0.42)]"
+                >
+                  <div className="border-b border-brand-line/60 bg-brand-surface px-4 py-3">
+                    <p className="truncate text-sm font-semibold text-brand-navy">{accountName}</p>
+                    {session.user.email && (
+                      <p className="truncate text-xs text-brand-ink/55">{session.user.email}</p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col p-1.5">
+                    {isSeller ? (
+                      <Link href="/seller-dashboard" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-brand-ink/80 transition-colors hover:bg-brand-mist hover:text-brand-navy">
+                        <TrendingUp size={16} className="text-brand-blue" /> Dashboard
+                      </Link>
+                    ) : (
+                      <>
+                        <Link href="/profile" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-brand-ink/80 transition-colors hover:bg-brand-mist hover:text-brand-navy">
+                          <UserCircle2 size={16} className="text-brand-blue" /> Profile
+                        </Link>
+                        <Link href="/orders" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-brand-ink/80 transition-colors hover:bg-brand-mist hover:text-brand-navy">
+                          <ShoppingBag size={16} className="text-brand-blue" /> Orders
+                        </Link>
+                        <Link href="/quotes" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-brand-ink/80 transition-colors hover:bg-brand-mist hover:text-brand-navy">
+                          <ClipboardList size={16} className="text-brand-blue" /> Quotes
+                        </Link>
+                      </>
+                    )}
+
+                    {(process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
+                      .split(',')
+                      .map((e) => e.trim().toLowerCase())
+                      .includes((session.user.email ?? '').toLowerCase()) && (
+                      <Link href="/admin" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-brand-blue transition-colors hover:bg-brand-mist">
+                        <User size={16} /> Admin
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="border-t border-brand-line/60 p-1.5">
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        signOut({ callbackUrl: '/' });
+                      }}
+                      role="menuitem"
+                      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50"
+                    >
+                      <LogOut size={16} /> Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <Link
