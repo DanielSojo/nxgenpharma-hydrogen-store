@@ -71,8 +71,10 @@ export default async function LandingPage() {
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,37,80,0.92),rgba(26,29,109,0.62),rgba(15,37,80,0.72))]" />
-        <div className="relative mx-auto w-full max-w-6xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-brand-aqua">
+        <div className="pointer-events-none absolute -bottom-px inset-x-0 h-24 bg-gradient-to-t from-[#faf8ff] to-transparent" />
+        <div className="animate-fade-up relative mx-auto w-full max-w-6xl">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-aqua backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-aqua" />
             Precision Pharmaceutical Innovation
           </p>
           <h1 className="max-w-3xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
@@ -85,7 +87,7 @@ export default async function LandingPage() {
             {isLoggedIn ? (
               <Link
                 href={catalogHref}
-                className="inline-flex items-center gap-2 rounded bg-white px-7 py-3.5 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-mist"
+                className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-lg shadow-black/10 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
               >
                 Browse Catalog
                 <ArrowRight size={16} />
@@ -93,7 +95,7 @@ export default async function LandingPage() {
             ) : (
               <Link
                 href={loginHref}
-                className="inline-flex items-center gap-2 rounded bg-white px-7 py-3.5 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-mist"
+                className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-lg shadow-black/10 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
               >
                 Provider Login
                 <ArrowRight size={16} />
@@ -102,7 +104,7 @@ export default async function LandingPage() {
             {!isLoggedIn && (
               <Link
                 href="/apply"
-                className="inline-flex items-center gap-2 rounded border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-brand-aqua hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-full border border-white/35 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-aqua hover:bg-white/10"
               >
                 Apply for Access
               </Link>
@@ -126,11 +128,11 @@ export default async function LandingPage() {
           </div>
 
           <div className="mt-12 grid gap-6 lg:grid-cols-[1.45fr_0.8fr]">
-            <article className="relative min-h-[360px] overflow-hidden rounded-lg border border-brand-line bg-white p-8">
+            <article className="group relative min-h-[360px] overflow-hidden rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.18)] transition-all duration-300 hover:shadow-[0_22px_48px_-20px_rgba(23,50,82,0.3)]">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGZpVlg8lUpfRQZUwgjAIBg98Ys4EBuc9jRD0GukJ7A2C5WorJD6wJCug18EQa02vFkxJliVSdaYrBXcUJxpvnA1DJ-x0MvD6_Y3V2Myqj8a5LSfLyRMGE2Uya3VGpIYtDqT20jO1B8C9RChKNhVS9Dfc4Mbaa1ib1JGyoEfBGp2WoJ8vOc4BV85JMXwISBaUO31NQj0SkKWzGJ7sn_JoBzpLfsoFZz8Nf7TTz7yUsOeoZf3EGmun-mT3Dq5z88zcpjffgduP-ys4J"
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-[0.12]"
+                className="absolute inset-0 h-full w-full object-cover opacity-[0.12] transition-transform duration-500 group-hover:scale-105"
               />
               <div className="relative flex h-full max-w-2xl flex-col justify-end">
                 <h3 className="text-2xl font-semibold text-brand-navy">Who We Are</h3>
@@ -140,10 +142,11 @@ export default async function LandingPage() {
               </div>
             </article>
 
-            <article className="flex min-h-[360px] flex-col justify-center rounded-lg border border-brand-navy bg-brand-navy p-8 text-white">
-              <Beaker className="mb-6 text-brand-aqua" size={44} />
-              <h3 className="text-2xl font-semibold">Our Mission</h3>
-              <p className="mt-4 leading-7 text-white/76">
+            <article className="bg-brand-gradient-navy relative flex min-h-[360px] flex-col justify-center overflow-hidden rounded-2xl p-8 text-white shadow-[0_22px_48px_-22px_rgba(26,29,109,0.55)]">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-aqua/20 blur-2xl" />
+              <Beaker className="relative mb-6 text-brand-aqua" size={44} />
+              <h3 className="relative text-2xl font-semibold">Our Mission</h3>
+              <p className="relative mt-4 leading-7 text-white/76">
                 To support provider access to peptide-focused products through a trusted platform designed for clarity, verification, and clinical professionalism.
               </p>
             </article>
@@ -159,8 +162,11 @@ export default async function LandingPage() {
           </p>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {advantageCards.map(({ title, description, icon: Icon }) => (
-              <article key={title} className="rounded-lg border border-brand-line bg-white p-8">
-                <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-brand-line text-brand-blue">
+              <article
+                key={title}
+                className="group rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.18)] transition-all duration-200 hover:-translate-y-1 hover:border-brand-blue/30 hover:shadow-[0_22px_48px_-20px_rgba(23,50,82,0.3)]"
+              >
+                <div className="bg-brand-gradient mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-md shadow-brand-blue/25 transition-transform duration-200 group-hover:scale-105">
                   <Icon size={24} />
                 </div>
                 <h3 className="text-xl font-semibold text-brand-navy">{title}</h3>
@@ -181,12 +187,14 @@ export default async function LandingPage() {
           </div>
           <div className="space-y-4">
             {faqs.map((faq) => (
-              <details key={faq.question} className="group rounded-lg border border-brand-line bg-white">
+              <details key={faq.question} className="group rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_10px_-6px_rgba(23,50,82,0.16)] transition-colors open:border-brand-blue/30 hover:border-brand-blue/30">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-left font-semibold text-brand-navy">
                   {faq.question}
-                  <ChevronDown className="shrink-0 transition-transform group-open:rotate-180" size={18} />
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-mist text-brand-blue transition-transform group-open:rotate-180">
+                    <ChevronDown size={16} />
+                  </span>
                 </summary>
-                <p className="border-t border-brand-line px-5 py-4 leading-7 text-brand-ink/70">
+                <p className="border-t border-brand-line/70 px-5 py-4 leading-7 text-brand-ink/70">
                   {faq.answer}
                 </p>
               </details>
@@ -196,11 +204,13 @@ export default async function LandingPage() {
       </section>
 
       <section className="px-6 pb-20">
-        <div className="mx-auto max-w-6xl rounded-lg bg-brand-ink px-6 py-14 text-center text-white sm:px-10">
-          <h2 className="text-3xl font-semibold leading-tight">
+        <div className="bg-brand-gradient-navy relative mx-auto max-w-6xl overflow-hidden rounded-3xl px-6 py-16 text-center text-white shadow-[0_30px_70px_-30px_rgba(26,29,109,0.6)] sm:px-10">
+          <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-brand-aqua/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-brand-blue/30 blur-3xl" />
+          <h2 className="relative text-3xl font-semibold leading-tight">
             Ready to access the professional catalog?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/76">
+          <p className="relative mx-auto mt-4 max-w-xl text-white/76">
             {isLoggedIn
               ? 'Continue to the catalog to browse products, manage quotes, and use the provider experience.'
               : 'Sign in to browse products, manage quotes, and continue through the verified provider experience.'}
@@ -208,7 +218,7 @@ export default async function LandingPage() {
           {isLoggedIn ? (
             <Link
               href={catalogHref}
-              className="mt-8 inline-flex items-center gap-2 rounded bg-brand-blue px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-teal"
+              className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
             >
               Browse Catalog
               <ArrowRight size={16} />
@@ -216,7 +226,7 @@ export default async function LandingPage() {
           ) : (
             <Link
               href={loginHref}
-              className="mt-8 inline-flex items-center gap-2 rounded bg-brand-blue px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-teal"
+              className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
             >
               Go to Login
               <ArrowRight size={16} />

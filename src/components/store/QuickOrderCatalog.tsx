@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CheckCircle2, ChevronDown, Loader2, Minus, Plus, Search, XCircle } from 'lucide-react';
+import { CheckCircle2, ChevronDown, LayoutGrid, List, Loader2, Minus, Plus, Search, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ShopifyProduct, ShopifyProductVariant } from '@/types';
 import { useCartStore } from '@/store/cart';
@@ -97,9 +97,9 @@ function getPreferredVariant(
   );
 }
 
-function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialFilter: string }) {
+function useProductOrder(product: ShopifyProduct, vialFilter: string) {
   const variants = product.variants.nodes;
-  const { addItem, isLoading } = useCartStore();
+  const cart = useCartStore();
   const { formatCalculatedPrice } = useCustomerPricing();
   const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id ?? '');
   const [quantity, setQuantity] = useState(1);
@@ -119,6 +119,38 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
     compareAtPrice > currentPrice && currentPrice > 0
       ? Math.round(((compareAtPrice - currentPrice) / compareAtPrice) * 100)
       : null;
+
+  return {
+    variants,
+    variant,
+    activeImage,
+    hasVariantOptions,
+    available,
+    discountPercent,
+    quantity,
+    setQuantity,
+    setSelectedVariantId,
+    addItem: cart.addItem,
+    isLoading: cart.isLoading,
+    formatCalculatedPrice,
+  };
+}
+
+function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialFilter: string }) {
+  const {
+    variants,
+    variant,
+    activeImage,
+    hasVariantOptions,
+    available,
+    discountPercent,
+    quantity,
+    setQuantity,
+    setSelectedVariantId,
+    addItem,
+    isLoading,
+    formatCalculatedPrice,
+  } = useProductOrder(product, vialFilter);
 
   return (
     <article className="group rounded-2xl border border-brand-line/70 bg-white px-4 py-4 shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/30 hover:shadow-[0_16px_36px_-16px_rgba(23,50,82,0.28)] sm:px-5">
@@ -252,6 +284,156 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
   );
 }
 
+function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vialFilter: string }) {
+  const {
+    variants,
+    variant,
+    activeImage,
+    hasVariantOptions,
+    available,
+    discountPercent,
+    quantity,
+    setQuantity,
+    setSelectedVariantId,
+    addItem,
+    isLoading,
+    formatCalculatedPrice,
+  } = useProductOrder(product, vialFilter);
+
+  return (
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-1 hover:border-brand-blue/30 hover:shadow-[0_22px_44px_-20px_rgba(23,50,82,0.3)]">
+      <Link
+        href={`/products/${product.handle}`}
+        className="relative block aspect-square overflow-hidden bg-brand-surface"
+        aria-label={`View ${product.title}`}
+      >
+        {activeImage ? (
+          <Image
+            src={activeImage.url}
+            alt={activeImage.altText ?? product.title}
+            fill
+            className="object-contain p-5 transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
+          />
+        ) : (
+          <span className="absolute inset-0 flex items-center justify-center text-xs text-brand-ink/35">
+            No image
+          </span>
+        )}
+
+        {discountPercent ? (
+          <span className="absolute left-3 top-3 rounded-full bg-brand-gradient px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
+            Save {discountPercent}%
+          </span>
+        ) : null}
+
+        <span
+          className={`absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm ${
+            available
+              ? 'bg-green-50/90 text-green-700 ring-1 ring-green-600/15'
+              : 'bg-red-50/90 text-red-600 ring-1 ring-red-500/15'
+          }`}
+        >
+          {available ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+          {available ? 'In stock' : 'Out'}
+        </span>
+      </Link>
+
+      <div className="flex flex-1 flex-col p-4">
+        <Link
+          href={`/products/${product.handle}`}
+          className="line-clamp-2 min-h-[2.6em] text-sm font-semibold leading-snug text-brand-ink transition-colors hover:text-brand-blue"
+        >
+          {product.title}
+        </Link>
+
+        <div className="mt-2 flex items-baseline gap-2">
+          {variant ? (
+            <>
+              <span className="text-lg font-bold text-brand-navy">
+                {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
+              </span>
+              {discountPercent ? (
+                <span className="text-xs text-brand-ink/45 line-through">
+                  {formatCalculatedPrice(
+                    variant.compareAtPrice!.amount,
+                    variant.compareAtPrice!.currencyCode
+                  )}
+                </span>
+              ) : null}
+            </>
+          ) : (
+            <span className="text-xs font-medium text-brand-ink/55">Price upon request</span>
+          )}
+        </div>
+
+        <div className="mt-auto flex flex-col gap-2 pt-3">
+          {hasVariantOptions ? (
+            <label className="relative block">
+              <span className="sr-only">Select variant for {product.title}</span>
+              <select
+                value={variant?.id ?? ''}
+                onChange={(event) => setSelectedVariantId(event.target.value)}
+                className="h-10 w-full appearance-none rounded-full border border-brand-line/70 bg-brand-surface pl-3.5 pr-9 text-xs font-semibold text-brand-ink outline-none transition-all hover:border-brand-blue/40 focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/10"
+              >
+                {variants.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {variantLabel(product, item)}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-brand-ink/60"
+                size={14}
+              />
+            </label>
+          ) : null}
+
+          <div className="flex items-center gap-2">
+            {available ? (
+              <div className="grid h-10 shrink-0 grid-cols-[34px_1fr_34px] items-center rounded-full border border-brand-line/70 bg-brand-surface text-brand-ink">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                  disabled={quantity <= 1}
+                  className="flex h-10 items-center justify-center rounded-l-full transition-colors hover:bg-brand-line/60 hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-35"
+                  aria-label={`Decrease quantity for ${product.title}`}
+                >
+                  <Minus size={14} />
+                </button>
+                <span className="text-center text-xs font-semibold tabular-nums">{quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((current) => current + 1)}
+                  className="flex h-10 items-center justify-center rounded-r-full transition-colors hover:bg-brand-line/60 hover:text-brand-blue"
+                  aria-label={`Increase quantity for ${product.title}`}
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+            ) : null}
+
+            <button
+              type="button"
+              onClick={() => variant && addItem(variant.id, quantity)}
+              disabled={!available || isLoading}
+              className="bg-brand-gradient flex h-10 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-bold uppercase tracking-wide text-white shadow-md shadow-brand-blue/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70 disabled:shadow-none"
+            >
+              {isLoading && available ? (
+                <Loader2 className="animate-spin" size={15} />
+              ) : available ? (
+                'Add'
+              ) : (
+                'Notify Me'
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function QuickOrderCatalog({
   products,
   collections,
@@ -265,6 +447,7 @@ export default function QuickOrderCatalog({
   const [stockFilter, setStockFilter] = useState<StockFilter>('all');
   const [vialFilter, setVialFilter] = useState('all');
   const [sort, setSort] = useState<SortOption>('alpha-az');
+  const [view, setView] = useState<'grid' | 'list'>('list');
 
   const vialOptions = useMemo(() => getVialValues(products), [products]);
 
@@ -309,38 +492,46 @@ export default function QuickOrderCatalog({
 
   return (
     <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
-      <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          {eyebrow ? (
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
-              {eyebrow}
-            </p>
-          ) : null}
-          <h1 className="text-4xl font-bold tracking-tight text-brand-navy sm:text-5xl">
-            {title}
-          </h1>
-          {description ? (
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-brand-ink/62">{description}</p>
-          ) : null}
-        </div>
+      <div className="relative mb-8 overflow-hidden rounded-3xl border border-brand-line/60 bg-gradient-to-br from-brand-mist via-white to-brand-surface px-6 py-9 shadow-[0_2px_18px_-10px_rgba(23,50,82,0.2)] sm:px-10">
+        <div className="pointer-events-none absolute -left-16 -top-16 h-60 w-60 rounded-full bg-brand-aqua/15 blur-3xl" />
+        <div className="pointer-events-none absolute left-1/3 -top-24 h-56 w-56 rounded-full bg-brand-navy/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 right-0 h-60 w-60 rounded-full bg-brand-blue/10 blur-3xl" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-line/70 bg-white/70 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
+              {eyebrow || 'Catalog'}
+            </span>
+            <h1 className="text-4xl font-bold tracking-tight text-brand-navy sm:text-5xl">
+              {title}
+            </h1>
+            {description ? (
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-brand-ink/62">{description}</p>
+            ) : (
+              <p className="mt-3 text-sm font-medium text-brand-ink/55">
+                {visibleProducts.length} product{visibleProducts.length === 1 ? '' : 's'} available
+              </p>
+            )}
+          </div>
 
-        <label className="relative w-full lg:mt-1 lg:max-w-sm">
-          <span className="sr-only">Search products</span>
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search products..."
-            className="h-12 w-full rounded-xl border border-brand-line bg-white px-4 pr-11 text-base text-brand-ink outline-none transition-all placeholder:text-brand-ink/40 hover:border-brand-blue/40 focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/10"
-          />
-          <Search
-            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/55"
-            size={20}
-          />
-        </label>
+          <label className="relative w-full lg:max-w-sm">
+            <span className="sr-only">Search products</span>
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search products..."
+              className="h-12 w-full rounded-full border border-brand-line bg-white/80 px-5 pr-11 text-base text-brand-ink outline-none backdrop-blur-sm transition-all placeholder:text-brand-ink/40 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+            />
+            <Search
+              className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-brand-ink/55"
+              size={20}
+            />
+          </label>
+        </div>
       </div>
 
-      <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-3 sm:gap-6">
+      <div className="sticky top-[72px] z-20 mb-8 flex flex-col gap-4 rounded-2xl border border-brand-line/70 bg-white/80 px-4 py-3 shadow-[0_8px_24px_-18px_rgba(23,50,82,0.4)] backdrop-blur-md lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-5">
           <span className="text-base font-semibold text-brand-ink">Filter:</span>
 
           <label className="relative">
@@ -407,6 +598,34 @@ export default function QuickOrderCatalog({
         </div>
 
         <div className="flex flex-wrap items-center gap-4 sm:justify-end">
+          <div className="flex items-center rounded-full border border-brand-line bg-brand-surface p-1">
+            <button
+              type="button"
+              onClick={() => setView('grid')}
+              aria-label="Grid view"
+              aria-pressed={view === 'grid'}
+              className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+                view === 'grid'
+                  ? 'bg-brand-gradient text-white shadow-sm'
+                  : 'text-brand-ink/55 hover:text-brand-blue'
+              }`}
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setView('list')}
+              aria-label="List view"
+              aria-pressed={view === 'list'}
+              className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+                view === 'list'
+                  ? 'bg-brand-gradient text-white shadow-sm'
+                  : 'text-brand-ink/55 hover:text-brand-blue'
+              }`}
+            >
+              <List size={16} />
+            </button>
+          </div>
           <span className="text-base font-semibold text-brand-ink">Sort by:</span>
           <label className="relative">
             <span className="sr-only">Sort products</span>
@@ -432,11 +651,19 @@ export default function QuickOrderCatalog({
       </div>
 
       {visibleProducts.length > 0 ? (
-        <div className="space-y-4">
-          {visibleProducts.map((product) => (
-            <QuickOrderRow key={product.id} product={product} vialFilter={vialFilter} />
-          ))}
-        </div>
+        view === 'grid' ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {visibleProducts.map((product) => (
+              <QuickOrderCard key={product.id} product={product} vialFilter={vialFilter} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {visibleProducts.map((product) => (
+              <QuickOrderRow key={product.id} product={product} vialFilter={vialFilter} />
+            ))}
+          </div>
+        )
       ) : (
         <div className="rounded-2xl border border-brand-line/70 bg-white px-6 py-20 text-center shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)]">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-mist text-brand-blue">

@@ -39,7 +39,7 @@ function TrackingCard({ fulfillments }: { fulfillments: any[] }) {
 
   if (!tracked?.length) {
     return (
-      <div className="rounded-2xl border border-brand-line bg-white p-5">
+      <div className="rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)] p-5">
         <div className="mb-3 flex items-center gap-2">
           <Truck size={15} className="text-brand-blue" />
           <h3 className="text-sm font-semibold text-brand-navy">Tracking</h3>
@@ -52,7 +52,7 @@ function TrackingCard({ fulfillments }: { fulfillments: any[] }) {
   }
 
   return (
-    <div className="rounded-2xl border border-brand-line bg-white p-5">
+    <div className="rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)] p-5">
       <div className="mb-3 flex items-center gap-2">
         <Truck size={15} className="text-brand-blue" />
         <h3 className="text-sm font-semibold text-brand-navy">Tracking</h3>
@@ -204,7 +204,7 @@ export default function OrderDetailPage() {
 
         {/* Products */}
         <div className="lg:col-span-2">
-          <div className="overflow-hidden rounded-2xl border border-brand-line bg-white">
+          <div className="overflow-hidden rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
             <div className="flex items-center gap-2 border-b border-brand-line px-6 py-4">
               <Package size={16} className="text-brand-blue" />
               <h2 className="font-semibold text-brand-navy">Products ({lineItems.length})</h2>
@@ -262,7 +262,7 @@ export default function OrderDetailPage() {
 
         {/* Sidebar */}
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-brand-line bg-white p-5">
+          <div className="rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)] p-5">
             <div className="mb-3 flex items-center gap-2">
               <Receipt size={15} className="text-brand-blue" />
               <h3 className="text-sm font-semibold text-brand-navy">Order Summary</h3>
@@ -294,7 +294,7 @@ export default function OrderDetailPage() {
           </div>
 
           {(shippingLines.length > 0 || discountCodes.length > 0 || order.note || tags.length > 0) && (
-            <div className="rounded-2xl border border-brand-line bg-white p-5">
+            <div className="rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)] p-5">
               <div className="mb-3 flex items-center gap-2">
                 <TicketPercent size={15} className="text-brand-blue" />
                 <h3 className="text-sm font-semibold text-brand-navy">Order Info</h3>
@@ -361,7 +361,7 @@ export default function OrderDetailPage() {
           )}
 
           {shippingAddress && (
-            <div className="rounded-2xl border border-brand-line bg-white p-5">
+            <div className="rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)] p-5">
               <div className="mb-3 flex items-center gap-2">
                 <MapPin size={15} className="text-brand-blue" />
                 <h3 className="text-sm font-semibold text-brand-navy">Ship To</h3>

@@ -49,14 +49,14 @@ export default function ShippingPolicyPage() {
     >
       <section className="grid gap-4">
         {shippingItems.map((item) => (
-          <article key={item.title} className="rounded-2xl border border-brand-line bg-white p-7">
+          <article key={item.title} className="rounded-2xl border border-brand-line/70 bg-white p-7 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
             <h2 className="text-lg font-bold text-brand-navy">{item.title}</h2>
             <p className="mt-3 text-[15px] leading-relaxed text-brand-ink/76">{item.body}</p>
           </article>
         ))}
       </section>
 
-      <section className="rounded-2xl border border-brand-line bg-brand-mist p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-gradient-to-br from-brand-mist to-brand-surface p-8">
         <h2 className="text-2xl font-bold text-brand-navy">Contact Us</h2>
         <p className="mt-4 text-[15px] leading-relaxed text-brand-ink/76">
           If you have questions regarding shipping or your order, please reach out to{' '}

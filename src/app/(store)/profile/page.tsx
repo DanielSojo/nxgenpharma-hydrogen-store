@@ -60,7 +60,7 @@ const Input = ({
     </label>
     <input
       {...props}
-      className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+      className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
     />
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
@@ -180,15 +180,20 @@ export default function ProfilePage() {
         <ArrowLeft size={16} /> Back to Store
       </Link>
 
-      <div className="mb-8 rounded-3xl bg-gradient-to-br from-brand-mist via-white to-brand-surface p-8 ring-1 ring-brand-line">
-        <div className="flex items-center gap-3">
-          <UserCircle2 size={24} className="text-brand-blue" />
+      <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-mist via-white to-brand-surface p-8 ring-1 ring-brand-line">
+        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-brand-aqua/15 blur-3xl" />
+        <div className="pointer-events-none absolute left-1/3 -top-24 h-52 w-52 rounded-full bg-brand-navy/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 right-0 h-56 w-56 rounded-full bg-brand-blue/10 blur-3xl" />
+        <div className="relative flex items-center gap-3">
+          <span className="bg-brand-gradient flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-md shadow-brand-blue/25">
+            <UserCircle2 size={24} />
+          </span>
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">Account</p>
-            <h1 className="mt-2 text-2xl font-bold text-brand-navy">Profile Settings</h1>
+            <h1 className="mt-1 text-2xl font-bold text-brand-navy">Profile Settings</h1>
           </div>
         </div>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-brand-ink/72">
+        <p className="relative mt-4 max-w-2xl text-sm leading-relaxed text-brand-ink/72">
           Keep your contact details and default shipping address up to date for quotes and orders.
         </p>
       </div>
@@ -216,13 +221,13 @@ export default function ProfilePage() {
                 <label className="text-[13px] font-medium text-brand-ink">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center rounded-xl border border-brand-line bg-brand-surface transition-all focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/10">
-                  <span className="pl-4 pr-2 text-sm text-brand-ink/55">+1</span>
+                <div className="flex items-center rounded-xl border border-brand-line bg-white/70 transition-all hover:border-brand-blue/40 focus-within:border-brand-blue focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-blue/10">
+                  <span className="border-r border-brand-line pl-4 pr-3 text-sm font-medium text-brand-ink/55">+1</span>
                   <input
                     type="tel"
                     placeholder="(555) 000-0000"
                     {...register('phone')}
-                    className="w-full rounded-xl bg-transparent py-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
+                    className="w-full rounded-xl bg-transparent py-3 pl-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
                   />
                 </div>
                 {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}
@@ -261,7 +266,7 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={isSubmitting || !isDirty}
-            className="inline-flex items-center gap-2 rounded-full bg-brand-navy px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-brand-gradient-navy inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-md shadow-brand-navy/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
           >
             {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
             Save Changes

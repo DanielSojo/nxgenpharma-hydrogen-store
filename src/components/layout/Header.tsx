@@ -15,7 +15,7 @@ export default function Header() {
   const isSeller = ((session?.user as any)?.role ?? '').toLowerCase() === 'seller';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-brand-line/80 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-brand-line/60 bg-white/80 shadow-[0_8px_30px_-22px_rgba(23,50,82,0.45)] backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
@@ -66,7 +66,7 @@ export default function Header() {
           {/* User menu */}
           {session?.user ? (
             <div className="hidden md:flex items-center gap-2">
-              <Link href={isSeller ? '/seller-dashboard' : '/profile'} className="flex items-center gap-2 rounded-lg bg-brand-mist px-3 py-1.5 transition-colors hover:bg-brand-surface">
+              <Link href={isSeller ? '/seller-dashboard' : '/profile'} className="flex items-center gap-2 rounded-full border border-brand-line/70 bg-brand-mist px-3 py-1.5 transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:bg-white hover:shadow-sm">
                 <User size={14} className="text-brand-blue" />
                 <span className="text-sm text-brand-ink">
                   {(session.user as any).firstName || session.user.email}
@@ -79,7 +79,7 @@ export default function Header() {
                 .includes((session.user.email ?? '').toLowerCase()) && (
                 <Link
                   href="/admin"
-                  className="rounded-lg bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-brand-blue"
+                  className="bg-brand-gradient rounded-full px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   Admin
                 </Link>
@@ -95,7 +95,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login?callbackUrl=/collections/all"
-              className="hidden rounded bg-brand-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-blue md:inline-flex"
+              className="bg-brand-gradient hidden rounded-full px-5 py-2 text-sm font-semibold text-white shadow-md shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg md:inline-flex"
             >
               Login
             </Link>

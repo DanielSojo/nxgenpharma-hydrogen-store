@@ -47,10 +47,11 @@ export default function ContactPage() {
 
       {/* Header */}
       <div className="mb-12">
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
+        <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-line/70 bg-brand-mist px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
           Get in Touch
-        </p>
-        <h1 className="mb-3 text-3xl font-bold text-brand-navy">Contact Us</h1>
+        </span>
+        <h1 className="mb-3 text-4xl font-bold tracking-tight text-brand-navy">Contact Us</h1>
         <p className="max-w-xl text-base leading-relaxed text-brand-ink/72">
           Have questions about our products, pricing, or becoming a B2B partner?
           Our team responds within 24 hours on business days.
@@ -145,7 +146,7 @@ export default function ContactPage() {
         {/* ── Right: Form ── */}
         <div className="lg:col-span-3">
           {submitted ? (
-            <div className="rounded-2xl border border-brand-line bg-white p-12 text-center">
+            <div className="rounded-2xl border border-brand-line/70 bg-white p-12 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.16)] text-center">
               <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
                 <CheckCircle className="text-green-600" size={28} />
               </div>
@@ -157,7 +158,7 @@ export default function ContactPage() {
           ) : (
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-5 rounded-2xl border border-brand-line bg-white p-8"
+              className="flex flex-col gap-5 rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.16)]"
             >
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
@@ -167,7 +168,7 @@ export default function ContactPage() {
                   <input
                     {...register('name')}
                     placeholder="John Doe"
-                    className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                    className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                   />
                   {errors.name && (
                     <p className="text-xs text-red-500">{errors.name.message}</p>
@@ -179,7 +180,7 @@ export default function ContactPage() {
                   <input
                     {...register('company')}
                     placeholder="Acme Corp (optional)"
-                    className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                    className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                   />
                 </div>
               </div>
@@ -192,7 +193,7 @@ export default function ContactPage() {
                   {...register('email')}
                   type="email"
                   placeholder="you@company.com"
-                  className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                  className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 />
                 {errors.email && (
                   <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -205,7 +206,7 @@ export default function ContactPage() {
                 </label>
                 <select
                   {...register('subject')}
-                  className="w-full appearance-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                  className="w-full appearance-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 >
                   <option value="">Select a subject...</option>
                   <option value="Product Inquiry">Product Inquiry</option>
@@ -229,7 +230,7 @@ export default function ContactPage() {
                   {...register('message')}
                   placeholder="Tell us how we can help you..."
                   rows={5}
-                  className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                  className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 />
                 {errors.message && (
                   <p className="text-xs text-red-500">{errors.message.message}</p>
@@ -245,7 +246,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-navy py-4 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-brand-blue disabled:opacity-60"
+                className="bg-brand-gradient flex w-full items-center justify-center gap-2 rounded-full py-4 text-[13px] font-bold uppercase tracking-wider text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 disabled:translate-y-0 disabled:opacity-60"
               >
                 {isSubmitting && <Loader2 size={15} className="animate-spin" />}
                 Send Message

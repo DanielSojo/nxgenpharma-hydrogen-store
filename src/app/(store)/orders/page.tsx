@@ -68,26 +68,30 @@ export default function OrdersPage() {
   }, [session]);
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
-      <div className="flex items-center gap-3 mb-8">
-        <ShoppingBag size={24} className="text-[#111]" />
-        <h1 className="text-2xl font-bold text-[#111]">My Orders</h1>
+    <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mb-8 flex items-center gap-3">
+        <span className="bg-brand-gradient flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-md shadow-brand-blue/25">
+          <ShoppingBag size={22} />
+        </span>
+        <h1 className="text-2xl font-bold tracking-tight text-brand-navy">My Orders</h1>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-6 h-6 border-2 border-[#3296d2] border-t-transparent rounded-full animate-spin" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-blue border-t-transparent" />
         </div>
       ) : error ? (
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600 text-sm">{error}</div>
       ) : orders.length === 0 ? (
-        <div className="bg-white border border-[#eeebe6] rounded-2xl p-16 text-center">
-          <ShoppingBag size={40} className="text-[#ddd] mx-auto mb-4" />
-          <p className="text-[#999] font-medium mb-2">No orders yet</p>
-          <p className="text-[#bbb] text-sm mb-6">Your completed orders will appear here</p>
+        <div className="rounded-2xl border border-brand-line/70 bg-white p-16 text-center shadow-[0_2px_12px_-6px_rgba(23,50,82,0.16)]">
+          <span className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-mist text-brand-blue">
+            <ShoppingBag size={30} />
+          </span>
+          <p className="mb-2 font-semibold text-brand-navy">No orders yet</p>
+          <p className="mb-6 text-sm text-brand-ink/55">Your completed orders will appear here</p>
           <Link
             href="/quotes"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#191b4e] text-white rounded-full text-sm font-semibold hover:bg-[#3296d2] transition-colors"
+            className="bg-brand-gradient-navy inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-md shadow-brand-navy/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
           >
             View Quotes <ArrowRight size={15} />
           </Link>
@@ -111,18 +115,18 @@ export default function OrdersPage() {
               <Link
                 key={order.id}
                 href={`/orders/${order.orderNumber}`}
-                className="bg-white border border-[#eeebe6] rounded-2xl px-6 py-5 flex items-center justify-between hover:border-[#3296d2] hover:shadow-sm transition-all group"
+                className="group flex items-center justify-between rounded-2xl border border-brand-line/70 bg-white px-6 py-5 shadow-[0_1px_8px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/30 hover:shadow-[0_16px_36px_-18px_rgba(23,50,82,0.28)]"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#f0ece4] rounded-xl flex items-center justify-center flex-shrink-0">
-                    <ShoppingBag size={18} className="text-[#666]" />
+                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist text-brand-blue transition-transform duration-200 group-hover:scale-105">
+                    <ShoppingBag size={18} />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <p className="font-semibold text-[#111]">Order #{order.orderNumber}</p>
+                    <div className="mb-0.5 flex items-center gap-2">
+                      <p className="font-semibold text-brand-navy">Order #{order.orderNumber}</p>
                       <StatusBadge status={order.financialStatus} />
                     </div>
-                    <p className="text-sm text-[#666]">
+                    <p className="text-sm text-brand-ink/60">
                       {new Date(order.processedAt).toLocaleDateString('en-US', {
                         month: 'short', day: 'numeric', year: 'numeric',
                       })}
@@ -130,10 +134,10 @@ export default function OrdersPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-bold text-[#111]">
+                  <span className="text-sm font-bold text-brand-navy">
                     {formatPrice(String(displayTotal), currency)}
                   </span>
-                  <ChevronRight size={18} className="text-[#ccc] group-hover:text-[#3296d2] transition-colors" />
+                  <ChevronRight size={18} className="text-brand-ink/30 transition-all group-hover:translate-x-0.5 group-hover:text-brand-blue" />
                 </div>
               </Link>
             );

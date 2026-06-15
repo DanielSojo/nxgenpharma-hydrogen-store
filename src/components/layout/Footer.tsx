@@ -19,16 +19,19 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="mt-8 bg-brand-navy px-6 py-16 text-white">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-4">
+    <footer className="bg-brand-gradient-navy relative mt-8 overflow-hidden px-6 py-16 text-white">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-aqua/60 to-transparent" />
+      <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-aqua/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-brand-blue/20 blur-3xl" />
+      <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-4">
         <div>
-          <Image src="/nxgenpharma-logo.png" width={200} height={100} alt="NexGen Pharma Logo" />
+          <Image src="/nxgenpharma-logo.png" width={200} height={100} alt="NexGen Pharma Logo" className="brightness-0 invert" />
           <p className="mt-4 text-sm leading-relaxed text-white/65">
             {siteConfig.slogan}
           </p>
           <a
             href={`mailto:${siteConfig.supportEmail}`}
-            className="mt-4 inline-block text-sm font-semibold text-brand-aqua hover:text-white"
+            className="mt-4 inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-brand-aqua backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-brand-aqua/50 hover:text-white"
           >
             {siteConfig.supportEmail}
           </a>
@@ -75,7 +78,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-10 max-w-6xl border-t border-white/10 pt-8 text-center text-sm text-white/45">
+      <div className="relative mx-auto mt-10 max-w-6xl border-t border-white/10 pt-8 text-center text-sm text-white/45">
         © {new Date().getFullYear()} {siteConfig.shortName}. All rights reserved.
       </div>
     </footer>

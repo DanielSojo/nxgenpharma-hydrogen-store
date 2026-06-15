@@ -14,7 +14,7 @@ export default function AboutPage() {
       title="Innovating at the forefront of peptide-based healthcare"
       description={`${siteConfig.shortName} is focused on advancing the next generation of science through peptide innovation, personalized therapies, and a commitment to better health outcomes.`}
     >
-      <section className="rounded-2xl border border-brand-line bg-white p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
         <h2 className="text-2xl font-bold text-brand-navy">Who We Are</h2>
         <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-brand-ink/76">
           <p>{aboutContent.intro}</p>
@@ -23,14 +23,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-brand-line bg-brand-mist p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-gradient-to-br from-brand-mist to-brand-surface p-8">
         <p className="text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">Our Mission</p>
         <p className="mt-4 text-[15px] leading-relaxed text-brand-ink/76">
           {aboutContent.mission}
         </p>
       </section>
 
-      <section className="rounded-2xl border border-brand-line bg-white p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
         <p className="text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">Slogan</p>
         <h2 className="mt-3 text-3xl font-bold text-brand-navy">{siteConfig.slogan}</h2>
       </section>

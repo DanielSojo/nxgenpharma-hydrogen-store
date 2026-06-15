@@ -14,7 +14,7 @@ export default function TermsOfServicePage() {
       title="Terms of Service"
       description={`These terms govern your use of ${siteConfig.domain} and the information, products, and services made available through the website.`}
     >
-      <section className="rounded-2xl border border-brand-line bg-white p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
         <h2 className="text-2xl font-bold text-brand-navy">Use of Website</h2>
         <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-brand-ink/76">
           <p>
@@ -26,7 +26,7 @@ export default function TermsOfServicePage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-brand-line bg-brand-mist p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-gradient-to-br from-brand-mist to-brand-surface p-8">
         <h2 className="text-2xl font-bold text-brand-navy">Product and Information Use</h2>
         <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-brand-ink/76">
           <p>
@@ -38,14 +38,14 @@ export default function TermsOfServicePage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-brand-line bg-white p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
         <h2 className="text-2xl font-bold text-brand-navy">Limitation of Liability</h2>
         <p className="mt-4 text-[15px] leading-relaxed text-brand-ink/76">
           In no event will NexGen Pharmaceuticals be liable for any loss or damage, including without limitation indirect or consequential loss or damage, arising from the use of or reliance on any information presented on this website.
         </p>
       </section>
 
-      <section className="rounded-2xl border border-brand-line bg-white p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
         <h2 className="text-2xl font-bold text-brand-navy">Contact</h2>
         <p className="mt-4 text-[15px] leading-relaxed text-brand-ink/76">
           If you have questions about these Terms of Service, contact us at{' '}

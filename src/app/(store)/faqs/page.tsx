@@ -17,7 +17,7 @@ export default function FAQsPage() {
     >
       <section className="space-y-4">
         {faqItems.map((item) => (
-          <article key={item.question} className="rounded-2xl border border-brand-line bg-white p-7">
+          <article key={item.question} className="rounded-2xl border border-brand-line/70 bg-white p-7 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
             <h2 className="text-lg font-bold text-brand-navy">{item.question}</h2>
             <p className="mt-3 text-[15px] leading-relaxed text-brand-ink/76">{item.answer}</p>
           </article>
@@ -26,7 +26,7 @@ export default function FAQsPage() {
 
       <NewsletterCallout />
 
-      <section className="rounded-2xl border border-brand-line bg-white p-8">
+      <section className="rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
         <h2 className="text-2xl font-bold text-brand-navy">Still need help?</h2>
         <p className="mt-3 text-[15px] leading-relaxed text-brand-ink/76">
           For additional questions, product inquiries, or support, email us at{' '}

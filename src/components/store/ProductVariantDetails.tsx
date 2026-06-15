@@ -51,13 +51,13 @@ export default function ProductVariantDetails({ product }: Props) {
   return (
     <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
       <div className="flex flex-col gap-4">
-        <div className="relative aspect-square overflow-hidden rounded-2xl bg-brand-mist">
+        <div className="group relative aspect-square overflow-hidden rounded-3xl border border-brand-line/70 bg-brand-mist shadow-[0_18px_50px_-24px_rgba(23,50,82,0.3)]">
           {activeImage ? (
             <Image
               src={activeImage.url}
               alt={activeImage.altText ?? product.title}
               fill
-              className="object-contain"
+              className="object-contain p-6 transition-transform duration-300 group-hover:scale-105"
               priority
             />
           ) : (
@@ -72,7 +72,7 @@ export default function ProductVariantDetails({ product }: Props) {
             {galleryImages.slice(1).map((image) => (
               <div
                 key={image.url}
-                className="relative aspect-square overflow-hidden rounded-xl bg-brand-mist"
+                className="relative aspect-square overflow-hidden rounded-xl border border-brand-line/70 bg-brand-mist transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-md"
               >
                 <Image
                   src={image.url}
@@ -95,8 +95,8 @@ export default function ProductVariantDetails({ product }: Props) {
 
         <h1 className="mb-4 text-3xl font-bold text-brand-navy">{product.title}</h1>
 
-        <div className="mb-4 rounded-2xl border border-brand-line bg-white p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand-ink/50">
+        <div className="mb-4 rounded-2xl border border-brand-line/70 bg-gradient-to-br from-white to-brand-surface p-4 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.16)]">
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand-blue">
             Selected Variant
           </p>
           <p className="mt-2 text-lg font-semibold text-brand-navy">
@@ -150,10 +150,10 @@ export default function ProductVariantDetails({ product }: Props) {
                           [option.name]: value,
                         }))
                       }
-                      className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
+                      className={`rounded-xl border px-4 py-2 text-sm font-medium transition-all duration-200 ${
                         isSelected
-                          ? 'border-brand-blue bg-brand-blue text-white'
-                          : 'border-brand-line text-brand-ink hover:border-brand-blue hover:text-brand-blue'
+                          ? 'bg-brand-gradient border-transparent text-white shadow-md shadow-brand-blue/25'
+                          : 'border-brand-line text-brand-ink hover:-translate-y-0.5 hover:border-brand-blue hover:text-brand-blue'
                       }`}
                     >
                       {value}
@@ -186,10 +186,10 @@ export default function ProductVariantDetails({ product }: Props) {
 
                       setSelectedOptions(nextSelection);
                     }}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                    className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all duration-200 ${
                       isActive
-                        ? 'border-brand-navy bg-brand-navy text-white'
-                        : 'border-brand-line text-brand-ink/70 hover:border-brand-navy hover:text-brand-navy'
+                        ? 'bg-brand-gradient-navy border-transparent text-white shadow-sm'
+                        : 'border-brand-line text-brand-ink/70 hover:-translate-y-0.5 hover:border-brand-navy hover:text-brand-navy'
                     }`}
                   >
                     {variant.title === 'Default Title' ? product.title : variant.title}
