@@ -1,9 +1,10 @@
-import { getProductByHandle } from '@/lib/shopify';
+import { getProductByHandle, getSimilarProducts } from '@/lib/shopify';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import ProductVariantDetails from '@/components/store/ProductVariantDetails';
+import SimilarProducts from '@/components/store/SimilarProducts';
 
 interface Props {
   params: Promise<{ handle: string }>;
@@ -21,6 +22,8 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProductByHandle(handle);
   if (!product) notFound();
 
+  const similar = await getSimilarProducts(product.id, product.handle);
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <Link
@@ -30,6 +33,7 @@ export default async function ProductPage({ params }: Props) {
         <ArrowLeft size={16} /> Back to catalog
       </Link>
       <ProductVariantDetails product={product} />
+      <SimilarProducts products={similar} />
     </div>
   );
 }

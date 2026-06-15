@@ -91,6 +91,15 @@ export const GET_PRODUCT_BY_HANDLE = `
   ${PRICE_FRAGMENT}
 `;
 
+export const GET_PRODUCT_RECOMMENDATIONS = `
+  query GetProductRecommendations($productId: ID!) {
+    productRecommendations(productId: $productId) {
+      ...ProductCardFragment
+    }
+  }
+  ${PRODUCT_CARD_FRAGMENT}
+`;
+
 // ─── Collections ──────────────────────────────────────────────────────────────
 
 export const GET_COLLECTIONS = `

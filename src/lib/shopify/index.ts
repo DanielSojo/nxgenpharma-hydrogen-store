@@ -2,6 +2,7 @@ import { shopifyClient } from './client';
 import {
   GET_PRODUCTS,
   GET_PRODUCT_BY_HANDLE,
+  GET_PRODUCT_RECOMMENDATIONS,
   GET_COLLECTIONS,
   GET_COLLECTION_BY_HANDLE,
   GET_CART,
@@ -50,6 +51,23 @@ export async function getProductByHandle(handle: string) {
     variables: { handle },
   });
   return data?.productByHandle as ShopifyProduct | null;
+}
+
+// Native Shopify "similar products". Falls back to best-sellers (excluding the
+// current product) so the section always has something to show.
+export async function getSimilarProducts(productId: string, currentHandle: string, limit = 4) {
+  const { data } = await shopifyClient.request(GET_PRODUCT_RECOMMENDATIONS, {
+    variables: { productId },
+  });
+
+  let products = (data?.productRecommendations ?? []) as ShopifyProduct[];
+
+  if (products.length === 0) {
+    const fallback = await getProducts({ first: limit + 6 });
+    products = (fallback?.nodes ?? []).filter((item) => item.handle !== currentHandle);
+  }
+
+  return products.slice(0, limit);
 }
 
 // ─── Collections ──────────────────────────────────────────────────────────────
