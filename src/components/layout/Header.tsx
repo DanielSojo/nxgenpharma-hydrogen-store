@@ -60,6 +60,7 @@ export default function Header() {
                 <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
                 <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
                 <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
+                <Link href="/coa" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">COAs</Link>
                 <Link href="/faqs" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">FAQs</Link>
                 <Link href="/contact" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Contact</Link>
               </>
@@ -190,6 +191,7 @@ export default function Header() {
               <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Home</Link>
               <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Catalog</Link>
               <Link href="/about" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">About</Link>
+              <Link href="/coa" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">COAs</Link>
               <Link href="/faqs" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">FAQs</Link>
               <Link href="/quotes" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Quotes</Link>
               <Link href="/orders" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Orders</Link>

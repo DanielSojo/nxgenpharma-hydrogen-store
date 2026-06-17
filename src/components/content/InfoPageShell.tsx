@@ -12,6 +12,7 @@ interface InfoPageShellProps {
 
 const quickLinks = [
   { href: '/about', label: 'About Us' },
+  { href: '/coa', label: 'Certificate of Analysis' },
   { href: '/faqs', label: 'FAQs' },
   { href: '/terms-of-service', label: 'Terms of Service' },
   { href: '/privacy-policy', label: 'Privacy Policy' },
