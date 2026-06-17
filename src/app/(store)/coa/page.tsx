@@ -23,7 +23,7 @@ export default function CoaPage() {
         <p className="mt-3 text-[15px] leading-relaxed text-brand-ink/76">
           The lot (or batch) number is printed on the product label or vial, typically near the
           expiry date. It usually starts with{' '}
-          <span className="font-semibold text-brand-navy">NGP-</span>. If you can&apos;t locate it
+          <span className="font-semibold text-brand-navy">Nexg</span>. If you can&apos;t locate it
           or your certificate isn&apos;t showing up, email{' '}
           <a
             href={`mailto:${siteConfig.supportEmail}`}

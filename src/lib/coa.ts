@@ -1,7 +1,7 @@
 // Certificate of Analysis (COA) lookup, backed by Shopify Files.
 //
 // Certificates are stored as PDF files in Shopify (admin → Content → Files),
-// named by their product lot/batch number, e.g. "NGP-2406-0117.pdf". Customers
+// named by their product lot/batch number, e.g. "Nexg24060117.pdf". Customers
 // look up a certificate from the public COA page by entering the lot number
 // printed on their product label; we search Shopify Files for a matching name
 // (or alt text) and return its CDN URL.

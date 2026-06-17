@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findCoaByLot } from '@/lib/coa';
 
-// GET /api/coa?lot=NGP-2406-0117 — look up a Certificate of Analysis (PDF) by
+// GET /api/coa?lot=Nexg24060117 — look up a Certificate of Analysis (PDF) by
 // lot number, sourced from Shopify Files.
 export async function GET(req: NextRequest) {
   const lot = req.nextUrl.searchParams.get('lot')?.trim() ?? '';
