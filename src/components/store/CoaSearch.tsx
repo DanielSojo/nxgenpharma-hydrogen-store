@@ -60,7 +60,7 @@ export default function CoaSearch() {
               type="text"
               value={lot}
               onChange={(e) => setLot(e.target.value)}
-              placeholder="e.g. NGP-2406-0117"
+              placeholder="e.g. Nexg0123456789"
               autoComplete="off"
               spellCheck={false}
               className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-11 pr-4 text-sm text-brand-ink placeholder:text-brand-ink/40 transition-colors focus:border-brand-blue focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
