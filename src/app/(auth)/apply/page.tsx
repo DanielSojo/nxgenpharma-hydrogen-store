@@ -23,8 +23,13 @@ const applicationSchema = z.object({
   businessType: z.string().min(1, 'Required'),
   taxId: z.string().regex(/^\d{10}$/, 'Enter a valid 10-digit NPI'),
   website: z.string().optional(),
+  referralSource: z.string().min(1, 'Required'),
+  referralSourceOther: z.string().optional(),
   message: z.string().optional(),
-});
+}).refine(
+  (data) => data.referralSource !== 'Other' || (data.referralSourceOther?.trim().length ?? 0) > 0,
+  { path: ['referralSourceOther'], message: 'Please tell us how you heard about us' },
+);
 
 type ApplicationForm = z.infer<typeof applicationSchema>;
 
@@ -89,17 +94,24 @@ export default function ApplyPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ApplicationForm>({
     resolver: zodResolver(applicationSchema),
     defaultValues: { country: 'US' },
   });
 
+  const showReferralOther = watch('referralSource') === 'Other';
+
   const onSubmit = async (data: ApplicationForm) => {
     setServerError('');
     const payload = {
       ...data,
       phone: `+1${data.phone.replace(/\D/g, '')}`,
+      referralSource:
+        data.referralSource === 'Other' && data.referralSourceOther?.trim()
+          ? `Other: ${data.referralSourceOther.trim()}`
+          : data.referralSource,
     };
     const res = await fetch('/api/apply', {
       method: 'POST',
@@ -249,6 +261,28 @@ export default function ApplyPage() {
               </Select>
             </div>
           </div>
+
+          {/* How did you hear about us */}
+          <Select label="How did you hear about us?" required error={errors.referralSource?.message} {...register('referralSource')}>
+            <option value="">Select an option...</option>
+            <option value="Search Engine">Search Engine (Google, Bing)</option>
+            <option value="Social Media">Social Media</option>
+            <option value="Referral / Word of Mouth">Referral / Word of Mouth</option>
+            <option value="Conference / Trade Show">Conference / Trade Show</option>
+            <option value="Email">Email</option>
+            <option value="Advertisement">Advertisement</option>
+            <option value="Other">Other</option>
+          </Select>
+
+          {showReferralOther && (
+            <Input
+              label="Please specify"
+              required
+              placeholder="How did you hear about us?"
+              error={errors.referralSourceOther?.message}
+              {...register('referralSourceOther')}
+            />
+          )}
 
           {/* Message */}
           <div className="flex flex-col gap-1.5">

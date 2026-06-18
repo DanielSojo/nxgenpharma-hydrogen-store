@@ -17,6 +17,7 @@ const applicationSchema = z.object({
   businessType: z.string().min(1),
   taxId: z.string().regex(/^\d{10}$/),
   website: z.string().optional(),
+  referralSource: z.string().min(1),
   message: z.string().optional(),
 });
 
@@ -168,6 +169,7 @@ export async function POST(req: NextRequest) {
           `Business Type: ${data.businessType}`,
           `NPI: ${data.taxId}`,
           data.website ? `Website: ${data.website}` : '',
+          `How did you hear about us: ${data.referralSource}`,
           data.message ? `Message: ${data.message}` : '',
         ].filter(Boolean).join('\n');
 
