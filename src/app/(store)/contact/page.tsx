@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -17,6 +18,7 @@ const contactSchema = z.object({
 type ContactForm = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
+  const { data: session } = useSession();
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState('');
 
@@ -124,22 +126,24 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Apply CTA */}
-          <div className="rounded-2xl bg-gradient-to-br from-brand-navy via-brand-ink to-brand-blue p-6 text-white">
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-aqua">
-              New Customer?
-            </p>
-            <h3 className="text-lg font-bold mb-2">Apply for B2B Access</h3>
-            <p className="mb-5 text-sm leading-relaxed text-white/72">
-              Get access to our full catalog and B2B pricing by applying for an account.
-            </p>
-            <a
-              href="/apply"
-              className="inline-block w-full rounded-full bg-white py-3 text-center text-[13px] font-bold text-brand-navy transition-colors hover:bg-brand-mist"
-            >
-              Apply for an Account
-            </a>
-          </div>
+          {/* Apply CTA — only for visitors who aren't signed in */}
+          {!session?.user && (
+            <div className="rounded-2xl bg-gradient-to-br from-brand-navy via-brand-ink to-brand-blue p-6 text-white">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-aqua">
+                New Customer?
+              </p>
+              <h3 className="text-lg font-bold mb-2">Apply for B2B Access</h3>
+              <p className="mb-5 text-sm leading-relaxed text-white/72">
+                Get access to our full catalog and B2B pricing by applying for an account.
+              </p>
+              <a
+                href="/apply"
+                className="inline-block w-full rounded-full bg-white py-3 text-center text-[13px] font-bold text-brand-navy transition-colors hover:bg-brand-mist"
+              >
+                Apply for an Account
+              </a>
+            </div>
+          )}
 
         </div>
 
@@ -211,6 +215,7 @@ export default function ContactPage() {
                   <option value="">Select a subject...</option>
                   <option value="Product Inquiry">Product Inquiry</option>
                   <option value="Quote Request">Quote Request</option>
+                  <option value="White Label Program">White Label Program</option>
                   <option value="Account Application">Account Application</option>
                   <option value="Order Support">Order Support</option>
                   <option value="Shipping Question">Shipping Question</option>

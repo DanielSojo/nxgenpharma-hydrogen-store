@@ -5,6 +5,7 @@ import { siteConfig } from '@/lib/site-content';
 const footerLinks = {
   company: [
     { href: '/about', label: 'About Us' },
+    { href: '/white-label', label: 'White Label' },
     { href: '/faqs', label: 'FAQs' },
     { href: '/contact', label: 'Contact' },
   ],
