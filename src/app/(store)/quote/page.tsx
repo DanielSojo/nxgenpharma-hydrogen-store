@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ClipboardList, Loader2, CheckCircle, Trash2, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Loader2, CheckCircle, Trash2, Plus, Minus, BadgePercent } from 'lucide-react';
 
 const quoteSchema = z.object({
   addressMode: z.enum(['saved', 'new']),
@@ -513,6 +513,16 @@ export default function QuotePage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Zelle discount */}
+              <div className="border-t border-brand-line px-6 py-4">
+                <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+                  <BadgePercent size={15} className="flex-shrink-0 text-emerald-600" />
+                  <p className="text-[12px] leading-snug text-emerald-800">
+                    <span className="font-semibold">Pay with Zelle and save 3%</span> &mdash; let us know in the notes and we&apos;ll apply the discount to your final invoice.
+                  </p>
+                </div>
               </div>
 
               {/* Customer info */}

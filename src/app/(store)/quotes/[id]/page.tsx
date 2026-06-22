@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, ClipboardList, Package, MapPin, FileText, Download } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, MapPin, FileText, Download, BadgePercent } from 'lucide-react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 
 export default function QuoteDetailPage() {
@@ -61,6 +61,13 @@ export default function QuoteDetailPage() {
   const taxWithMarkup = hasTax ? calculatePrice(quote.total_tax) : 0;
   const shippingWithMarkup = hasShipping ? calculatePrice(quote.shipping_line.price) : 0;
   const totalWithMarkup = subtotalWithMarkup + taxWithMarkup + shippingWithMarkup;
+
+  // Zelle payments receive 3% off the total
+  const ZELLE_DISCOUNT = 0.03;
+  const zelleTotal = totalWithMarkup * (1 - ZELLE_DISCOUNT);
+  const zelleSavings = totalWithMarkup - zelleTotal;
+  const fmtCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(amount);
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
@@ -180,8 +187,43 @@ export default function QuoteDetailPage() {
               <div className="flex justify-between items-center mt-3 pt-3 border-t border-brand-line/70">
                 <span className="font-bold text-brand-navy">Total</span>
                 <span className="text-lg font-bold text-brand-blue">
-                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(totalWithMarkup)}
+                  {fmtCurrency(totalWithMarkup)}
                 </span>
+              </div>
+
+              {/* Zelle discount */}
+              <div className="relative mt-4 overflow-hidden rounded-2xl border border-emerald-300/60 bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/70 p-5 shadow-[0_8px_28px_-12px_rgba(5,150,105,0.5)]">
+                {/* glow accents */}
+                <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-400/20 blur-2xl" />
+                <div className="pointer-events-none absolute -bottom-12 -left-8 h-32 w-32 rounded-full bg-teal-400/15 blur-2xl" />
+
+                <div className="relative flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-600/30">
+                      <BadgePercent size={18} />
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold text-emerald-900">Pay with Zelle</p>
+                      <span className="inline-flex items-center rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
+                        Save 3%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-medium text-emerald-700/70 line-through">
+                      {fmtCurrency(totalWithMarkup)}
+                    </p>
+                    <p className="text-xl font-extrabold text-emerald-700">
+                      {fmtCurrency(zelleTotal)}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="relative mt-3 text-xs leading-relaxed text-emerald-800/90">
+                  Skip the card fees &mdash; pay this quote with Zelle and instantly save{' '}
+                  <span className="font-bold text-emerald-900">{fmtCurrency(zelleSavings)}</span>.
+                  Just mention &ldquo;Zelle&rdquo; when confirming your order and our team will share the payment details.
+                </p>
               </div>
             </div>
           </div>

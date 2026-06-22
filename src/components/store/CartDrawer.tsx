@@ -1,7 +1,7 @@
 'use client';
 
 import { useCartStore } from '@/store/cart';
-import { X, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { X, ShoppingCart, Plus, Minus, Trash2, BadgePercent } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
@@ -136,6 +136,12 @@ export default function CartDrawer() {
             <p className="-mt-2 text-[12px] text-brand-ink/50">
               Taxes and shipping calculated at checkout
             </p>
+            <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+              <BadgePercent size={15} className="flex-shrink-0 text-emerald-600" />
+              <p className="text-[12px] leading-snug text-emerald-800">
+                <span className="font-semibold">Pay with Zelle and save 3%</span> &mdash; select Zelle at checkout or mention it when confirming your order.
+              </p>
+            </div>
             <a
               href={cart.checkoutUrl}
               className="bg-brand-gradient w-full rounded-full py-4 text-center text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
