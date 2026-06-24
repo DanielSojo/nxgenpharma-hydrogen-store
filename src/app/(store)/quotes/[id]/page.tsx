@@ -54,18 +54,18 @@ export default function QuoteDetailPage() {
   const hasTax = parseFloat(quote.total_tax ?? '0') > 0;
   const hasShipping = quote.shipping_line && parseFloat(quote.shipping_line.price ?? '0') > 0;
 
-  // Calculate totals with markup
-  const subtotalWithMarkup = lineItems.reduce((sum: number, item: any) => {
+  // Order totals
+  const subtotal = lineItems.reduce((sum: number, item: any) => {
     return sum + calculatePrice(item.price) * item.quantity;
   }, 0);
-  const taxWithMarkup = hasTax ? calculatePrice(quote.total_tax) : 0;
-  const shippingWithMarkup = hasShipping ? calculatePrice(quote.shipping_line.price) : 0;
-  const totalWithMarkup = subtotalWithMarkup + taxWithMarkup + shippingWithMarkup;
+  const tax = hasTax ? calculatePrice(quote.total_tax) : 0;
+  const shipping = hasShipping ? calculatePrice(quote.shipping_line.price) : 0;
+  const total = subtotal + tax + shipping;
 
   // Zelle payments receive 3% off the total
   const ZELLE_DISCOUNT = 0.03;
-  const zelleTotal = totalWithMarkup * (1 - ZELLE_DISCOUNT);
-  const zelleSavings = totalWithMarkup - zelleTotal;
+  const zelleTotal = total * (1 - ZELLE_DISCOUNT);
+  const zelleSavings = total - zelleTotal;
   const fmtCurrency = (amount: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(amount);
 
@@ -103,7 +103,7 @@ export default function QuoteDetailPage() {
           <div className="relative text-right">
             <p className="mb-1 text-sm text-white/60">Total</p>
             <p className="text-2xl font-bold text-brand-aqua">
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(totalWithMarkup)}
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(total)}
             </p>
           </div>
         </div>
@@ -165,14 +165,14 @@ export default function QuoteDetailPage() {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-brand-ink/60">Subtotal</span>
                 <span className="font-bold text-brand-navy">
-                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(subtotalWithMarkup)}
+                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(subtotal)}
                 </span>
               </div>
               {hasShipping && (
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-sm text-brand-ink/60">Shipping — {quote.shipping_line.title}</span>
                   <span className="text-sm text-brand-ink">
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(shippingWithMarkup)}
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(shipping)}
                   </span>
                 </div>
               )}
@@ -180,14 +180,14 @@ export default function QuoteDetailPage() {
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-sm text-brand-ink/60">Tax</span>
                   <span className="text-sm text-brand-ink">
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(taxWithMarkup)}
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(tax)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between items-center mt-3 pt-3 border-t border-brand-line/70">
                 <span className="font-bold text-brand-navy">Total</span>
                 <span className="text-lg font-bold text-brand-blue">
-                  {fmtCurrency(totalWithMarkup)}
+                  {fmtCurrency(total)}
                 </span>
               </div>
 
@@ -211,7 +211,7 @@ export default function QuoteDetailPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-medium text-emerald-700/70 line-through">
-                      {fmtCurrency(totalWithMarkup)}
+                      {fmtCurrency(total)}
                     </p>
                     <p className="text-xl font-extrabold text-emerald-700">
                       {fmtCurrency(zelleTotal)}

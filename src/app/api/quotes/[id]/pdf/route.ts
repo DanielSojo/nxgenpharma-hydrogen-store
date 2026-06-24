@@ -12,7 +12,6 @@ export async function GET(
   }
 
   const customerId = (session.user as any).id;
-  const markup: number = (session.user as any).markup ?? 0;
   const { id: draftOrderId } = await params;
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2026-01';
 
@@ -61,21 +60,14 @@ export async function GET(
     const customerNotesMatch = order.note?.match(/Customer Notes: (.+)/);
     const customerNotes = customerNotesMatch?.[1];
 
-    // Helper to apply markup to a price string
-    const applyMarkup = (price: string): string =>
-      markup > 0
-        ? (parseFloat(price) * (1 + markup / 100)).toFixed(2)
-        : price;
-
-    // Apply markup to line items
+    // Line items at their original price
     const lineItems = order.line_items.map((item: any) => ({
       title: item.title,
-      price: applyMarkup(item.price),
+      price: item.price,
       quantity: item.quantity,
     }));
 
-    // Recalculate totals with markup
-    const subtotalWithMarkup = lineItems
+    const subtotal = lineItems
       .reduce((sum: number, item: any) => sum + parseFloat(item.price) * item.quantity, 0)
       .toFixed(2);
 
@@ -83,28 +75,28 @@ export async function GET(
     const hasShipping =
       order.shipping_line && parseFloat(order.shipping_line?.price ?? '0') > 0;
 
-    const taxWithMarkup = hasTax ? applyMarkup(order.total_tax) : undefined;
-    const shippingWithMarkup = hasShipping
-      ? { title: order.shipping_line.title, price: applyMarkup(order.shipping_line.price) }
+    const tax = hasTax ? order.total_tax : undefined;
+    const shipping = hasShipping
+      ? { title: order.shipping_line.title, price: order.shipping_line.price }
       : undefined;
 
-    const totalWithMarkup = (
-      parseFloat(subtotalWithMarkup) +
-      parseFloat(taxWithMarkup ?? '0') +
-      parseFloat(shippingWithMarkup?.price ?? '0')
+    const total = (
+      parseFloat(subtotal) +
+      parseFloat(tax ?? '0') +
+      parseFloat(shipping?.price ?? '0')
     ).toFixed(2);
 
-    // Generate PDF with marked-up prices
+    // Generate PDF
     const pdfBuffer = await generateQuotePDF({
       id: order.id,
       name: order.name,
       quoteNumber,
       createdAt: order.created_at,
       currency: order.currency,
-      subtotal_price: subtotalWithMarkup,
-      total_tax: taxWithMarkup,
-      total_price: totalWithMarkup,
-      shipping_line: shippingWithMarkup,
+      subtotal_price: subtotal,
+      total_tax: tax,
+      total_price: total,
+      shipping_line: shipping,
       line_items: lineItems,
       shipping_address: order.shipping_address,
       customer: order.customer

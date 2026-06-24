@@ -1,12 +1,6 @@
-import { useSession } from 'next-auth/react';
-
 export function useCustomerPricing() {
-  const { data: session } = useSession();
-  const markup: number = (session?.user as any)?.markup ?? 0;
-
   function calculatePrice(basePrice: string | number): number {
-    const base = typeof basePrice === 'string' ? parseFloat(basePrice) : basePrice;
-    return markup > 0 ? base * (1 + markup / 100) : base;
+    return typeof basePrice === 'string' ? parseFloat(basePrice) : basePrice;
   }
 
   function formatCalculatedPrice(basePrice: string | number, currencyCode = 'USD'): string {
@@ -16,5 +10,5 @@ export function useCustomerPricing() {
     }).format(calculatePrice(basePrice));
   }
 
-  return { markup, calculatePrice, formatCalculatedPrice };
+  return { calculatePrice, formatCalculatedPrice };
 }
