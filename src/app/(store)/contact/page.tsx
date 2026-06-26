@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Phone, Clock, MapPin, Loader2, CheckCircle } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -45,20 +46,13 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12">
-
-      {/* Header */}
-      <div className="mb-12">
-        <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-line/70 bg-brand-mist px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
-          Get in Touch
-        </span>
-        <h1 className="mb-3 text-4xl font-bold tracking-tight text-brand-navy">Contact Us</h1>
-        <p className="max-w-xl text-base leading-relaxed text-brand-ink/72">
-          Have questions about our products, pricing, or becoming a B2B partner?
-          Our team responds within 24 hours on business days.
-        </p>
-      </div>
+    <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
+      <PageHeader
+        eyebrow="Get in Touch"
+        title="Contact Us"
+        icon={Mail}
+        description="Have questions about our products, pricing, or becoming a B2B partner? Our team responds within 24 hours on business days."
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ClipboardList, ArrowRight, Clock, ChevronRight } from 'lucide-react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface Quote {
   id: number;
@@ -34,13 +35,13 @@ export default function QuotesPage() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
-      <div className="mb-8 flex items-center gap-3">
-        <span className="bg-brand-gradient flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-md shadow-brand-blue/25">
-          <ClipboardList size={22} />
-        </span>
-        <h1 className="text-2xl font-bold tracking-tight text-brand-navy">My Quotes</h1>
-      </div>
+    <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
+      <PageHeader
+        eyebrow="Quotes"
+        title="My Quotes"
+        icon={ClipboardList}
+        description="Track your quote requests, review pricing, and continue toward placing an order."
+      />
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

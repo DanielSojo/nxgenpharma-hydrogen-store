@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { ClipboardList, User, LogOut, Menu, X, ChevronDown, UserCircle2, ShoppingBag, TrendingUp } from 'lucide-react';
+import { ClipboardList, User, LogOut, Menu, X, ChevronDown, UserCircle2, ShoppingBag, TrendingUp, LayoutDashboard } from 'lucide-react';
 import { useQuoteStore } from '@/store/quote';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -40,12 +40,16 @@ export default function Header() {
   const accountName =
     (session?.user as any)?.firstName || session?.user?.email || 'Account';
 
+  // Logo destination follows the same routing as the landing redirect: guests
+  // get the marketing page, sellers their dashboard, everyone else /dashboard.
+  const homeHref = !session?.user ? '/' : isSeller ? '/seller-dashboard' : '/dashboard';
+
   return (
     <header className="sticky top-0 z-40 border-b border-brand-line/60 bg-white/80 shadow-[0_8px_30px_-22px_rgba(23,50,82,0.45)] backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
+        <Link href={homeHref} className="flex items-center gap-3">
           <Image src="/nxgenpharma-logo.png" width={70} height={40} alt="NexGen Pharma Logo" />
           <span className="hidden text-lg font-bold text-brand-navy sm:block">NexGen Pharma</span>
         </Link>
@@ -57,7 +61,7 @@ export default function Header() {
               <Link href="/seller-dashboard" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Dashboard</Link>
             ) : (
               <>
-                <Link href="/" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Home</Link>
+                <Link href="/dashboard" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Dashboard</Link>
                 <Link href="/collections/all" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">Catalog</Link>
                 <Link href="/white-label" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">White Label</Link>
                 <Link href="/about" className="text-sm text-brand-ink/70 transition-colors hover:text-brand-navy">About</Link>
@@ -124,6 +128,9 @@ export default function Header() {
                       </Link>
                     ) : (
                       <>
+                        <Link href="/dashboard" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-brand-ink/80 transition-colors hover:bg-brand-mist hover:text-brand-navy">
+                          <LayoutDashboard size={16} className="text-brand-blue" /> Dashboard
+                        </Link>
                         <Link href="/profile" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-brand-ink/80 transition-colors hover:bg-brand-mist hover:text-brand-navy">
                           <UserCircle2 size={16} className="text-brand-blue" /> Profile
                         </Link>
@@ -163,7 +170,7 @@ export default function Header() {
             </div>
           ) : (
             <Link
-              href="/login?callbackUrl=/collections/all"
+              href="/login?callbackUrl=/dashboard"
               className="bg-brand-gradient hidden rounded-full px-5 py-2 text-sm font-semibold text-white shadow-md shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg md:inline-flex"
             >
               Login
@@ -189,7 +196,7 @@ export default function Header() {
             <Link href="/seller-dashboard" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Dashboard</Link>
           ) : (
             <>
-              <Link href="/" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Home</Link>
+              <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Dashboard</Link>
               <Link href="/collections/all" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">Catalog</Link>
               <Link href="/white-label" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">White Label</Link>
               <Link href="/about" onClick={() => setMobileOpen(false)} className="text-sm text-brand-ink/70">About</Link>

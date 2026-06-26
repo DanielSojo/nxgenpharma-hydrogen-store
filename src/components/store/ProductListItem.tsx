@@ -34,7 +34,7 @@ export default function ProductListItem({ product }: Props) {
       <div className="grid gap-4 md:grid-cols-[112px_minmax(0,1fr)_minmax(220px,260px)] md:items-center">
         <Link
           href={`/products/${product.handle}`}
-          className="relative h-28 w-full overflow-hidden rounded-lg bg-brand-mist md:h-28 md:w-28"
+          className="bg-catalog-hero relative h-28 w-full overflow-hidden rounded-lg ring-1 ring-white/10 md:h-28 md:w-28"
           aria-label={`View ${product.title}`}
         >
           {activeImage ? (
@@ -42,11 +42,11 @@ export default function ProductListItem({ product }: Props) {
               src={activeImage.url}
               alt={activeImage.altText ?? product.title}
               fill
-              className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+              className="object-contain p-2 transition-transform duration-300 group-hover:scale-105 [filter:drop-shadow(0_8px_10px_rgba(0,0,0,0.55))]"
               sizes="(min-width: 768px) 112px, 100vw"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-xs text-brand-ink/35">
+            <div className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
               No image
             </div>
           )}

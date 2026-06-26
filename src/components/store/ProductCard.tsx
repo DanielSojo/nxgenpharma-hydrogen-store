@@ -31,16 +31,16 @@ export default function ProductCard({ product }: Props) {
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line bg-white transition-all hover:-translate-y-1 hover:border-brand-aqua hover:shadow-lg">
       <Link href={`/products/${product.handle}`} className="flex flex-1 flex-col">
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-brand-mist">
+        <div className="bg-catalog-hero relative aspect-square overflow-hidden">
           {activeImage ? (
             <Image
               src={activeImage.url}
               alt={activeImage.altText ?? product.title}
               fill
-              className="object-contain transition-transform duration-500 group-hover:scale-105"
+              className="object-contain p-5 transition-transform duration-500 group-hover:scale-105 [filter:drop-shadow(0_12px_16px_rgba(0,0,0,0.5))]"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-xs text-brand-ink/35">
+            <div className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
               No image
             </div>
           )}

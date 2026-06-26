@@ -3,11 +3,12 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CheckCircle2, ChevronDown, LayoutGrid, List, Loader2, Minus, Plus, Search, XCircle } from 'lucide-react';
+import { Boxes, CheckCircle2, ChevronDown, LayoutGrid, List, Loader2, Minus, Plus, Search, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ShopifyProduct, ShopifyProductVariant } from '@/types';
 import { useCartStore } from '@/store/cart';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface CollectionOption {
   id: string;
@@ -155,10 +156,10 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
   return (
     <article className="group rounded-2xl border border-brand-line/70 bg-white px-4 py-4 shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/30 hover:shadow-[0_16px_36px_-16px_rgba(23,50,82,0.28)] sm:px-5">
       <div className="grid gap-4 lg:grid-cols-[minmax(260px,1.35fr)_minmax(180px,0.85fr)_minmax(360px,1.35fr)] lg:items-center">
-        <div className="grid min-w-0 grid-cols-[92px_minmax(0,1fr)] items-center gap-4">
+        <div className="grid min-w-0 grid-cols-[56px_minmax(0,1fr)] items-center gap-4">
           <Link
             href={`/products/${product.handle}`}
-            className="relative h-20 w-20 overflow-hidden rounded-xl bg-brand-surface ring-1 ring-brand-line/60 transition-transform duration-200 group-hover:scale-[1.03] sm:h-24 sm:w-24"
+            className="bg-catalog-hero relative h-14 w-14 overflow-hidden rounded-lg ring-1 ring-white/10 transition-transform duration-200 group-hover:scale-[1.03] sm:h-14 sm:w-14"
             aria-label={`View ${product.title}`}
           >
             {activeImage ? (
@@ -166,11 +167,11 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
                 src={activeImage.url}
                 alt={activeImage.altText ?? product.title}
                 fill
-                className="object-contain p-2"
-                sizes="96px"
+                className="object-contain p-1.5 [filter:drop-shadow(0_5px_7px_rgba(0,0,0,0.55))]"
+                sizes="56px"
               />
             ) : (
-              <span className="absolute inset-0 flex items-center justify-center text-xs text-brand-ink/35">
+              <span className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
                 No image
               </span>
             )}
@@ -301,10 +302,10 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
   } = useProductOrder(product, vialFilter);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-1 hover:border-brand-blue/30 hover:shadow-[0_22px_44px_-20px_rgba(23,50,82,0.3)]">
+    <article className="group flex flex-col rounded-2xl border border-brand-line/70 bg-white p-2.5 shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-1 hover:border-brand-blue/30 hover:shadow-[0_22px_44px_-20px_rgba(23,50,82,0.3)]">
       <Link
         href={`/products/${product.handle}`}
-        className="relative block aspect-square overflow-hidden bg-brand-surface"
+        className="bg-catalog-hero relative block aspect-square overflow-hidden rounded-xl ring-1 ring-white/10"
         aria-label={`View ${product.title}`}
       >
         {activeImage ? (
@@ -312,45 +313,45 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
             src={activeImage.url}
             alt={activeImage.altText ?? product.title}
             fill
-            className="object-contain p-5 transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
+            className="object-contain p-4 transition-transform duration-500 group-hover:scale-110 [filter:drop-shadow(0_12px_16px_rgba(0,0,0,0.55))]"
+            sizes="(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 20vw"
           />
         ) : (
-          <span className="absolute inset-0 flex items-center justify-center text-xs text-brand-ink/35">
+          <span className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
             No image
           </span>
         )}
 
         {discountPercent ? (
-          <span className="absolute left-3 top-3 rounded-full bg-brand-gradient px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-brand-gradient px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
             Save {discountPercent}%
           </span>
         ) : null}
 
         <span
-          className={`absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm ${
+          className={`absolute right-2.5 top-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-md ${
             available
-              ? 'bg-green-50/90 text-green-700 ring-1 ring-green-600/15'
-              : 'bg-red-50/90 text-red-600 ring-1 ring-red-500/15'
+              ? 'bg-white/10 text-white ring-1 ring-white/25'
+              : 'bg-red-500/20 text-red-50 ring-1 ring-red-300/30'
           }`}
         >
-          {available ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+          <span className={`h-1.5 w-1.5 rounded-full ${available ? 'bg-green-400' : 'bg-red-400'}`} />
           {available ? 'In stock' : 'Out'}
         </span>
       </Link>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col px-1 pt-2.5">
         <Link
           href={`/products/${product.handle}`}
-          className="line-clamp-2 min-h-[2.6em] text-sm font-semibold leading-snug text-brand-ink transition-colors hover:text-brand-blue"
+          className="line-clamp-2 min-h-[2.6em] text-[13px] font-semibold leading-snug text-brand-ink transition-colors hover:text-brand-blue"
         >
           {product.title}
         </Link>
 
-        <div className="mt-2 flex items-baseline gap-2">
+        <div className="mt-1.5 flex items-baseline gap-1.5">
           {variant ? (
             <>
-              <span className="text-lg font-bold text-brand-navy">
+              <span className="text-lg font-extrabold tracking-tight text-brand-navy">
                 {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
               </span>
               {discountPercent ? (
@@ -492,43 +493,30 @@ export default function QuickOrderCatalog({
 
   return (
     <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
-      <div className="relative mb-8 overflow-hidden rounded-3xl border border-brand-line/60 bg-gradient-to-br from-brand-mist via-white to-brand-surface px-6 py-9 shadow-[0_2px_18px_-10px_rgba(23,50,82,0.2)] sm:px-10">
-        <div className="pointer-events-none absolute -left-16 -top-16 h-60 w-60 rounded-full bg-brand-aqua/15 blur-3xl" />
-        <div className="pointer-events-none absolute left-1/3 -top-24 h-56 w-56 rounded-full bg-brand-navy/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 right-0 h-60 w-60 rounded-full bg-brand-blue/10 blur-3xl" />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-line/70 bg-white/70 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
-              {eyebrow || 'Catalog'}
-            </span>
-            <h1 className="text-4xl font-bold tracking-tight text-brand-navy sm:text-5xl">
-              {title}
-            </h1>
-            {description ? (
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-brand-ink/62">{description}</p>
-            ) : (
-              <p className="mt-3 text-sm font-medium text-brand-ink/55">
-                {visibleProducts.length} product{visibleProducts.length === 1 ? '' : 's'} available
-              </p>
-            )}
-          </div>
-
-          <label className="relative w-full lg:max-w-sm">
+      <PageHeader
+        eyebrow={eyebrow || 'Catalog'}
+        title={title}
+        icon={Boxes}
+        description={
+          description ||
+          `${visibleProducts.length} product${visibleProducts.length === 1 ? '' : 's'} available`
+        }
+        actions={
+          <label className="relative block w-full">
             <span className="sr-only">Search products</span>
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search products..."
-              className="h-12 w-full rounded-full border border-brand-line bg-white/80 px-5 pr-11 text-base text-brand-ink outline-none backdrop-blur-sm transition-all placeholder:text-brand-ink/40 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+              className="h-12 w-full rounded-full border border-white/20 bg-white/95 px-5 pr-11 text-base text-brand-ink outline-none backdrop-blur-sm transition-all placeholder:text-brand-ink/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/20"
             />
             <Search
               className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-brand-ink/55"
               size={20}
             />
           </label>
-        </div>
-      </div>
+        }
+      />
 
       <div className="sticky top-[72px] z-20 mb-8 flex flex-col gap-4 rounded-2xl border border-brand-line/70 bg-white/80 px-4 py-3 shadow-[0_8px_24px_-18px_rgba(23,50,82,0.4)] backdrop-blur-md lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
@@ -652,7 +640,7 @@ export default function QuickOrderCatalog({
 
       {visibleProducts.length > 0 ? (
         view === 'grid' ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {visibleProducts.map((product) => (
               <QuickOrderCard key={product.id} product={product} vialFilter={vialFilter} />
             ))}

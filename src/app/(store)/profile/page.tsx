@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeft, Loader2, MapPin, Save, UserCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import PageHeader from '@/components/layout/PageHeader';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'Required'),
@@ -163,7 +164,7 @@ export default function ProfilePage() {
 
   if (status === 'unauthenticated') {
     return (
-      <div className="mx-auto max-w-3xl px-6 py-12">
+      <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-600">
           Please sign in to view your profile.
         </div>
@@ -172,31 +173,20 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
+    <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
       <Link
-        href="/"
+        href="/dashboard"
         className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
       >
         <ArrowLeft size={16} /> Back to Store
       </Link>
 
-      <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-mist via-white to-brand-surface p-8 ring-1 ring-brand-line">
-        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-brand-aqua/15 blur-3xl" />
-        <div className="pointer-events-none absolute left-1/3 -top-24 h-52 w-52 rounded-full bg-brand-navy/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 right-0 h-56 w-56 rounded-full bg-brand-blue/10 blur-3xl" />
-        <div className="relative flex items-center gap-3">
-          <span className="bg-brand-gradient flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-md shadow-brand-blue/25">
-            <UserCircle2 size={24} />
-          </span>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">Account</p>
-            <h1 className="mt-1 text-2xl font-bold text-brand-navy">Profile Settings</h1>
-          </div>
-        </div>
-        <p className="relative mt-4 max-w-2xl text-sm leading-relaxed text-brand-ink/72">
-          Keep your contact details and default shipping address up to date for quotes and orders.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Account"
+        title="Profile Settings"
+        icon={UserCircle2}
+        description="Keep your contact details and default shipping address up to date for quotes and orders."
+      />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 rounded-3xl border border-brand-line bg-white p-8 shadow-sm">
         {serverError && (

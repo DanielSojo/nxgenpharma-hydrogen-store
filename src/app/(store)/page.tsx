@@ -9,7 +9,7 @@ import {
   Users,
 } from 'lucide-react';
 
-const loginHref = '/login?callbackUrl=/collections/all';
+const loginHref = '/login?callbackUrl=/dashboard';
 const catalogHref = '/collections/all';
 
 const advantageCards = [
@@ -64,20 +64,26 @@ export default async function LandingPage() {
 
   return (
     <div className="bg-[#faf8ff] text-brand-ink">
-      <section className="relative flex min-h-[620px] items-center overflow-hidden bg-brand-navy px-6 py-24 text-white">
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1qHSraPg15tUPNZBI7gubhf6HiPUlDjshBwS7nVzDvP7lkAUsUhzeCLAnxWuZrz97QsidkjkPgZEgRnmNvHXf4X7vALMOow3KJ7JmibZix6SNi6XRfp1ltoesQxVqwcZpZesAz_LtD92KxwlzYtNpDc1vzNRvE5_nkQEguNX4UlUu_Hj-TVB9Gp471oualHnKXmqbHP1436cx5zgM0ciFkR4KCNEyySSEvKmE65ZgrtnPa-FaruvASUUeB0jQVT3GvA7TS0Kg_xO-"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-40"
+      <section className="bg-catalog-hero relative flex min-h-[620px] items-center overflow-hidden px-6 py-24 text-white">
+        <video
+          className="absolute inset-0 h-full w-full object-fill opacity-50"
+          src="/nexgenpharmacy.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,37,80,0.92),rgba(26,29,109,0.62),rgba(15,37,80,0.72))]" />
-        <div className="pointer-events-none absolute -bottom-px inset-x-0 h-24 bg-gradient-to-t from-[#faf8ff] to-transparent" />
+        <div className="catalog-vignette pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(8,11,45,0.88),rgba(8,11,45,0.55)_45%,rgba(8,11,45,0.25))]" />
+        <div className="pointer-events-none absolute -bottom-px inset-x-0 h-12 bg-gradient-to-t from-[#faf8ff] to-transparent" />
         <div className="animate-fade-up relative mx-auto w-full max-w-6xl">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-aqua backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-aqua" />
             Precision Pharmaceutical Innovation
           </p>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+          <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-[4rem]">
             Advancing the Next Generation of Science
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82">
@@ -142,7 +148,7 @@ export default async function LandingPage() {
               </div>
             </article>
 
-            <article className="bg-brand-gradient-navy relative flex min-h-[360px] flex-col justify-center overflow-hidden rounded-2xl p-8 text-white shadow-[0_22px_48px_-22px_rgba(26,29,109,0.55)]">
+            <article className="bg-catalog-hero relative flex min-h-[360px] flex-col justify-center overflow-hidden rounded-2xl p-8 text-white shadow-[0_22px_48px_-22px_rgba(26,29,109,0.55)]">
               <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-aqua/20 blur-2xl" />
               <Beaker className="relative mb-6 text-brand-aqua" size={44} />
               <h3 className="relative text-2xl font-semibold">Our Mission</h3>
@@ -204,7 +210,7 @@ export default async function LandingPage() {
       </section>
 
       <section className="px-6 pb-20">
-        <div className="bg-brand-gradient-navy relative mx-auto max-w-6xl overflow-hidden rounded-3xl px-6 py-16 text-center text-white shadow-[0_30px_70px_-30px_rgba(26,29,109,0.6)] sm:px-10">
+        <div className="bg-catalog-hero relative mx-auto max-w-6xl overflow-hidden rounded-3xl px-6 py-16 text-center text-white shadow-[0_30px_70px_-30px_rgba(26,29,109,0.6)] sm:px-10">
           <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-brand-aqua/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-brand-blue/30 blur-3xl" />
           <h2 className="relative text-3xl font-semibold leading-tight">

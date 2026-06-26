@@ -88,7 +88,7 @@ export default function QuoteDetailPage() {
       </div>
 
       {/* Header */}
-      <div className="bg-brand-gradient-navy relative mb-6 overflow-hidden rounded-3xl p-8 text-white shadow-[0_22px_48px_-22px_rgba(26,29,109,0.55)]">
+      <div className="bg-catalog-hero relative mb-6 overflow-hidden rounded-3xl p-8 text-white shadow-[0_22px_48px_-22px_rgba(26,29,109,0.55)]">
         <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-brand-aqua/20 blur-3xl" />
         <div className="relative flex items-start justify-between">
           <div>
@@ -127,14 +127,14 @@ export default function QuoteDetailPage() {
                 return (
                   <div key={index} className="px-6 py-4 flex gap-4">
                     {/* Image */}
-                    <div className="w-14 h-14 bg-brand-mist rounded-xl flex-shrink-0 overflow-hidden border border-brand-line/70">
+                    <div className="bg-catalog-hero w-14 h-14 rounded-xl flex-shrink-0 overflow-hidden border border-white/10">
                       {item._image ? (
                         <Image
                           src={item._image}
                           alt={item.title}
                           width={56}
                           height={56}
-                          className="object-cover w-full h-full"
+                          className="w-full h-full object-contain p-1 [filter:drop-shadow(0_5px_7px_rgba(0,0,0,0.55))]"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">

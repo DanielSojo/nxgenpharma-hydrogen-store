@@ -20,7 +20,7 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-gradient-navy relative mt-8 overflow-hidden px-6 py-16 text-white">
+    <footer className="bg-catalog-hero relative mt-8 overflow-hidden px-6 py-16 text-white">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-aqua/60 to-transparent" />
       <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-aqua/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-brand-blue/20 blur-3xl" />

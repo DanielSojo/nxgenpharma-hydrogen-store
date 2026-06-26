@@ -458,17 +458,17 @@ export default function QuotePage() {
                 {items.map((item) => (
                   <div key={item.variantId} className="px-6 py-4 flex gap-3">
                     {/* Image */}
-                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-brand-mist">
+                    <div className="bg-catalog-hero h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg border border-white/10">
                       {item.image ? (
                         <Image
                           src={item.image}
                           alt={item.productTitle}
                           width={56}
                           height={56}
-                          className="object-contain w-full h-full"
+                          className="w-full h-full object-contain p-1 [filter:drop-shadow(0_5px_7px_rgba(0,0,0,0.55))]"
                         />
                       ) : (
-                        <div className="h-full w-full bg-brand-mist" />
+                        <div className="h-full w-full" />
                       )}
                     </div>
 

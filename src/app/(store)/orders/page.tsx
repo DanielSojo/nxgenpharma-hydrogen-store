@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ShoppingBag, ArrowRight, ChevronRight, CheckCircle, Clock, Truck } from 'lucide-react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface Order {
   id: string;
@@ -68,13 +69,13 @@ export default function OrdersPage() {
   }, [session]);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
-      <div className="mb-8 flex items-center gap-3">
-        <span className="bg-brand-gradient flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-md shadow-brand-blue/25">
-          <ShoppingBag size={22} />
-        </span>
-        <h1 className="text-2xl font-bold tracking-tight text-brand-navy">My Orders</h1>
-      </div>
+    <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
+      <PageHeader
+        eyebrow="Orders"
+        title="My Orders"
+        icon={ShoppingBag}
+        description="Review your completed orders, track fulfillment status, and revisit past purchases."
+      />
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

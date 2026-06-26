@@ -51,17 +51,17 @@ export default function ProductVariantDetails({ product }: Props) {
   return (
     <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
       <div className="flex flex-col gap-4">
-        <div className="group relative aspect-square overflow-hidden rounded-3xl border border-brand-line/70 bg-brand-mist shadow-[0_18px_50px_-24px_rgba(23,50,82,0.3)]">
+        <div className="bg-catalog-hero group relative aspect-square overflow-hidden rounded-3xl border border-white/10 shadow-[0_18px_50px_-24px_rgba(23,50,82,0.3)]">
           {activeImage ? (
             <Image
               src={activeImage.url}
               alt={activeImage.altText ?? product.title}
               fill
-              className="object-contain p-6 transition-transform duration-300 group-hover:scale-105"
+              className="object-contain p-6 transition-transform duration-300 group-hover:scale-105 [filter:drop-shadow(0_18px_22px_rgba(0,0,0,0.5))]"
               priority
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-brand-ink/35">
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-white/40">
               No image
             </div>
           )}
@@ -72,13 +72,13 @@ export default function ProductVariantDetails({ product }: Props) {
             {galleryImages.slice(1).map((image) => (
               <div
                 key={image.url}
-                className="relative aspect-square overflow-hidden rounded-xl border border-brand-line/70 bg-brand-mist transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-md"
+                className="bg-catalog-hero relative aspect-square overflow-hidden rounded-xl border border-white/10 transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-md"
               >
                 <Image
                   src={image.url}
                   alt={image.altText ?? product.title}
                   fill
-                  className="object-cover"
+                  className="object-contain p-2 [filter:drop-shadow(0_6px_8px_rgba(0,0,0,0.5))]"
                 />
               </div>
             ))}

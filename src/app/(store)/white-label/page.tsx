@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import WhiteLabelFAQ from '@/components/content/WhiteLabelFAQ';
 import { siteConfig } from '@/lib/site-content';
+import PageHeader from '@/components/layout/PageHeader';
 
 export const metadata: Metadata = {
   title: 'White Label Program',
@@ -166,29 +167,19 @@ export default function WhiteLabelPage() {
   return (
     <div className="bg-brand-surface">
       {/* Hero */}
-      <section className="relative flex min-h-[520px] items-center overflow-hidden bg-brand-navy px-6 py-24 text-white">
-        <div className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-brand-aqua/20 blur-3xl" />
-        <div className="pointer-events-none absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-brand-blue/25 blur-3xl" />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,rgba(15,37,80,0.95),rgba(26,29,109,0.55),rgba(62,151,218,0.35))]" />
-        <div className="animate-fade-up relative mx-auto w-full max-w-6xl">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-aqua backdrop-blur-sm">
-            <Sparkles size={13} />
-            White Label Program
-          </p>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            Launch your own peptide brand
-          </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/78">
-            Offer high-quality lyophilized peptides under your own brand without the complexity of
-            manufacturing. The {siteConfig.shortName} White Label Program gives clinics,
-            practitioners, and businesses a professional, compliant path to a private-label product
-            line.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+      <section className="px-5 pt-10 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-[1480px]">
+          <PageHeader
+            eyebrow="White Label Program"
+            title="Launch your own peptide brand"
+            icon={Sparkles}
+            description={`Offer high-quality lyophilized peptides under your own brand without the complexity of manufacturing. The ${siteConfig.shortName} White Label Program gives clinics, practitioners, and businesses a professional, compliant path to a private-label product line.`}
+          />
+          <div className="-mt-2 mb-2 flex flex-wrap items-center gap-4">
             <PrimaryCTA />
             <Link
               href="#program-investment"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-brand-line px-7 py-3.5 text-sm font-semibold text-brand-navy transition-colors hover:border-brand-blue/40 hover:bg-brand-mist"
             >
               View pricing
             </Link>
@@ -198,7 +189,7 @@ export default function WhiteLabelPage() {
 
       {/* Program Investment */}
       <section id="program-investment" className="px-6 py-20">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1480px]">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl">
               Program Investment
@@ -258,7 +249,7 @@ export default function WhiteLabelPage() {
 
       {/* Ordering Process */}
       <section className="bg-brand-mist/60 px-6 py-20">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1480px]">
           <h2 className="text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl">
             Ordering Process
           </h2>
@@ -325,7 +316,7 @@ export default function WhiteLabelPage() {
 
       {/* Artwork Guidelines */}
       <section className="px-6 py-20">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1480px]">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl">
               White Label Artwork Guidelines
@@ -456,7 +447,7 @@ export default function WhiteLabelPage() {
 
       {/* Final CTA */}
       <section className="px-6 pb-24">
-        <div className="bg-brand-gradient relative mx-auto max-w-6xl overflow-hidden rounded-3xl px-8 py-16 text-center text-white shadow-[0_24px_50px_-24px_rgba(26,29,109,0.6)]">
+        <div className="bg-catalog-hero relative mx-auto max-w-[1480px] overflow-hidden rounded-3xl px-8 py-16 text-center text-white shadow-[0_24px_50px_-24px_rgba(26,29,109,0.6)]">
           <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-16 right-0 h-56 w-56 rounded-full bg-brand-aqua/25 blur-3xl" />
           <h2 className="relative text-3xl font-bold tracking-tight sm:text-4xl">

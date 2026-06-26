@@ -162,7 +162,7 @@ export default function ApplyPage() {
             <ArrowLeft size={16} /> Back to Sign In
           </Link>
           <div className="overflow-hidden rounded-3xl border border-white/70 bg-white/70 shadow-[0_24px_70px_-20px_rgba(23,50,82,0.3)] ring-1 ring-white/40 backdrop-blur-xl">
-            <div className="bg-brand-gradient-navy px-10 pb-10 pt-8 text-white">
+            <div className="bg-catalog-hero px-10 pb-10 pt-8 text-white">
               <Image src="/nxgenpharma-logo.png" width={88} height={88} alt='NexGen Pharma Logo' className="mb-4 brightness-0 invert" />
               <h1 className="mb-2 text-2xl font-bold tracking-tight">Apply for a B2B Account</h1>
               <p className="max-w-md text-[14px] leading-relaxed text-white/75">

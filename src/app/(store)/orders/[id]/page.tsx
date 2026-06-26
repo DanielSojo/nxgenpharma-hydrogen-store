@@ -176,20 +176,21 @@ export default function OrderDetailPage() {
       </Link>
 
       {/* Header */}
-      <div className="mb-6 rounded-2xl bg-gradient-to-br from-brand-mist via-white to-brand-surface p-8 ring-1 ring-brand-line">
-        <div className="flex items-start justify-between gap-4">
+      <div className="bg-catalog-hero relative mb-6 overflow-hidden rounded-2xl p-8 text-white ring-1 ring-brand-line">
+        <div className="catalog-vignette pointer-events-none absolute inset-0" />
+        <div className="relative flex items-start justify-between gap-4">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-blue">Order Detail</p>
-            <h1 className="text-2xl font-bold text-brand-navy">Order #{order.orderNumber}</h1>
-            <p className="mt-1 text-sm text-brand-ink/65">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-aqua">Order Detail</p>
+            <h1 className="text-2xl font-bold">Order #{order.orderNumber}</h1>
+            <p className="mt-1 text-sm text-white/65">
               {new Date(order.processedAt).toLocaleDateString('en-US', {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
               })}
             </p>
           </div>
           <div className="text-right">
-            <p className="mb-1 text-sm text-brand-ink/65">Total</p>
-            <p className="text-2xl font-bold text-brand-navy">
+            <p className="mb-1 text-sm text-white/65">Total</p>
+            <p className="text-2xl font-bold">
               {formatMoney(orderTotal, currency)}
             </p>
             <div className="mt-3 flex justify-end gap-2">
@@ -217,14 +218,14 @@ export default function OrderDetailPage() {
                   : 0;
                 return (
                   <div key={`${item.title}-${index}`} className="flex gap-4 px-6 py-4">
-                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-brand-line bg-brand-mist">
+                    <div className="bg-catalog-hero h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
                       {item.variant?.image?.url ? (
                         <Image
                           src={item.variant.image.url}
                           alt={item.variant.image.altText ?? item.title}
                           width={56}
                           height={56}
-                          className="h-full w-full object-contain"
+                          className="h-full w-full object-contain p-1 [filter:drop-shadow(0_5px_7px_rgba(0,0,0,0.55))]"
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center">

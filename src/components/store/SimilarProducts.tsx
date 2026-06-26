@@ -32,17 +32,17 @@ export default function SimilarProducts({ products }: { products: ShopifyProduct
               href={`/products/${product.handle}`}
               className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_10px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-1 hover:border-brand-blue/30 hover:shadow-[0_22px_44px_-20px_rgba(23,50,82,0.3)]"
             >
-              <div className="relative aspect-square overflow-hidden bg-brand-surface">
+              <div className="bg-catalog-hero relative aspect-square overflow-hidden">
                 {image ? (
                   <Image
                     src={image.url}
                     alt={image.altText ?? product.title}
                     fill
-                    className="object-contain p-5 transition-transform duration-300 group-hover:scale-105"
+                    className="object-contain p-5 transition-transform duration-300 group-hover:scale-105 [filter:drop-shadow(0_12px_16px_rgba(0,0,0,0.5))]"
                     sizes="(max-width: 1024px) 50vw, 25vw"
                   />
                 ) : (
-                  <span className="absolute inset-0 flex items-center justify-center text-xs text-brand-ink/35">
+                  <span className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
                     No image
                   </span>
                 )}

@@ -59,7 +59,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
     <div className="auth-aurora flex min-h-screen items-center justify-center p-5">
       <div className="animate-fade-up grid w-full max-w-[1080px] overflow-hidden rounded-[32px] border border-white/70 bg-white/70 shadow-[0_30px_90px_-20px_rgba(23,50,82,0.35)] ring-1 ring-white/40 backdrop-blur-xl md:grid-cols-2">
 
-        <div className="relative hidden overflow-hidden bg-brand-navy md:block">
+        <div className="bg-catalog-hero relative hidden overflow-hidden md:block">
           <video
             className="absolute inset-0 h-full w-full object-contain object-center"
             src="/nexgenpharmacy.mp4"

@@ -61,17 +61,17 @@ export default function CartDrawer() {
             lines.map((line) => (
               <div key={line.id} className="flex gap-4 rounded-2xl border border-brand-line/60 bg-white p-3 shadow-[0_1px_8px_-4px_rgba(23,50,82,0.12)] transition-shadow hover:shadow-md">
                 {/* Image */}
-                <div className="relative h-18 w-18 flex-shrink-0 overflow-hidden rounded-xl border border-brand-line/60 bg-brand-mist">
+                <div className="bg-catalog-hero relative h-18 w-18 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
                   {line.merchandise.product.featuredImage ? (
                     <Image
                       src={line.merchandise.product.featuredImage.url}
                       alt={line.merchandise.product.title}
                       width={72}
                       height={72}
-                      className="object-cover w-full h-full"
+                      className="h-full w-full object-contain p-1.5 [filter:drop-shadow(0_6px_8px_rgba(0,0,0,0.55))]"
                     />
                   ) : (
-                    <div className="h-full w-full bg-brand-mist" />
+                    <div className="h-full w-full" />
                   )}
                 </div>
 

@@ -57,6 +57,19 @@
     background-image: linear-gradient(120deg, #1a1d6d 0%, #243ca8 55%, #3e97da 100%);
   }
 
+  /* Catalog-cover backdrop: deep navy vignette with a centered teal/blue spotlight */
+  .bg-catalog-hero {
+    background-color: #12164a;
+    background-image:
+      radial-gradient(58% 48% at 50% 16%, rgba(73, 195, 200, 0.22) 0%, transparent 60%),
+      radial-gradient(82% 72% at 50% 26%, rgba(62, 151, 218, 0.22) 0%, transparent 66%),
+      radial-gradient(140% 130% at 50% 50%, #1c2170 0%, #141a52 46%, #0b0f33 100%);
+  }
+  /* Soft inner vignette to darken the corners like the cover */
+  .catalog-vignette {
+    background: radial-gradient(120% 90% at 50% 30%, transparent 40%, rgba(8, 11, 45, 0.55) 100%);
+  }
+
   /* Entrance animations */
   .animate-fade-up {
     animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;

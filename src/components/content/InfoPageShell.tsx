@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { siteConfig } from '@/lib/site-content';
+import PageHeader from '@/components/layout/PageHeader';
 
 interface InfoPageShellProps {
   eyebrow: string;
@@ -29,26 +30,10 @@ export default function InfoPageShell({
 }: InfoPageShellProps) {
   return (
     <div className="bg-brand-surface">
-      <section className="relative overflow-hidden border-b border-brand-line/60 bg-gradient-to-br from-brand-mist via-white to-brand-surface px-6 py-20">
-        <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-brand-aqua/15 blur-3xl" />
-        <div className="pointer-events-none absolute left-1/3 -top-28 h-64 w-64 rounded-full bg-brand-navy/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-brand-blue/10 blur-3xl" />
-        <div className="animate-fade-up relative mx-auto max-w-6xl">
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-line/70 bg-white/70 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-brand-blue backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
-            {eyebrow}
-          </span>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-brand-navy sm:text-5xl">
-            {title}
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-brand-ink/72">
-            {description}
-          </p>
-        </div>
-      </section>
+      <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
+        <PageHeader eyebrow={eyebrow} title={title} description={description} />
 
-      <section className="px-6 py-14">
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div className="space-y-8">{children}</div>
 
           <aside className="h-fit lg:sticky lg:top-24">
@@ -88,7 +73,7 @@ export default function InfoPageShell({
             </div>
           </aside>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

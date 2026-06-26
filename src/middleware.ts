@@ -42,7 +42,18 @@ export default auth((req) => {
     return NextResponse.redirect(new URL('/seller-dashboard', req.url));
   }
 
+  // Landing page is for guests. Logged-in users are routed to their dashboard
+  // (honoring the same refused/pending gating applied to other routes below).
   if (pathname === '/') {
+    if (req.auth?.user) {
+      if (user?.b2bStatus === 'b2b-refused') {
+        return NextResponse.redirect(new URL('/refused', req.url));
+      }
+      if (user?.approved !== true) {
+        return NextResponse.redirect(new URL('/pending', req.url));
+      }
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
     return NextResponse.next();
   }
 
