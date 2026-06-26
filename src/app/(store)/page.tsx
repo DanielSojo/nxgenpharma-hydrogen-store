@@ -84,7 +84,11 @@ export default async function LandingPage() {
             Precision Pharmaceutical Innovation
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-[4rem]">
-            Advancing the Next Generation of Science
+            Advancing the{' '}
+            <span className="bg-gradient-to-r from-brand-aqua via-brand-teal to-brand-blue bg-clip-text text-transparent">
+              Next Generation
+            </span>{' '}
+            of Science
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/82">
             NexGen Pharma brings peptide-focused supply, provider verification, and professional purchasing tools into one streamlined B2B platform.
