@@ -84,10 +84,10 @@ export default function ContactPage() {
               <div>
                 <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">Phone</p>
                 <a
-                  href="tel:+18444962712"
+                  href="tel:+17863036129"
                   className="text-sm text-brand-blue transition-opacity hover:opacity-70"
                 >
-                  +1 (844) 496-2712
+                  +1 (786) 303-6129
                 </a>
               </div>
             </div>
