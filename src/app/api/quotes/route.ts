@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { shopifyAdminRequest } from '@/lib/shopify/admin';
+import { z } from 'zod';
+import {
+  createShopifyDraftOrder,
+  generateQuoteNumber,
+  getCustomerDefaultShipping,
+  hasAdminAccess,
+} from '@/lib/quotes';
 
 // GET /api/quotes — fetch all draft orders for logged in customer
 export async function GET(req: NextRequest) {
@@ -90,5 +96,72 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Quotes fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch quotes' }, { status: 500 });
+  }
+}
+
+// POST /api/quotes — turn the current cart into a draft-order quote and return its id
+const createQuoteSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        variantId: z.string(),
+        quantity: z.number().int().positive(),
+      })
+    )
+    .min(1),
+  notes: z.string().optional(),
+});
+
+export async function POST(req: NextRequest) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (!hasAdminAccess()) {
+    return NextResponse.json({ error: 'Quote system not configured.' }, { status: 503 });
+  }
+
+  try {
+    const body = await req.json();
+    const { items, notes } = createQuoteSchema.parse(body);
+
+    const customerId = (session.user as any).id as string | undefined;
+    const customer = {
+      name: `${(session.user as any).firstName ?? ''} ${(session.user as any).lastName ?? ''}`.trim(),
+      email: session.user.email ?? '',
+    };
+
+    // Pre-fill shipping from the customer's default address when available.
+    const shipping = customerId ? await getCustomerDefaultShipping(customerId) : null;
+
+    const quoteNumber = generateQuoteNumber();
+    const draftOrder = await createShopifyDraftOrder({
+      items,
+      customer,
+      shipping,
+      notes,
+      quoteNumber,
+      customerId,
+    });
+
+    if (!draftOrder) {
+      return NextResponse.json(
+        { error: 'Failed to create quote. Please try again or contact support.' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      id: draftOrder.numericId,
+      name: draftOrder.name,
+      quoteNumber,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
+    }
+    console.error('Quote create error:', error);
+    return NextResponse.json({ error: 'Failed to create quote.' }, { status: 500 });
   }
 }

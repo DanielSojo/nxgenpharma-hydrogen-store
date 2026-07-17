@@ -1,15 +1,51 @@
 'use client';
 
 import { useCartStore } from '@/store/cart';
-import { X, ShoppingCart, Plus, Minus, Trash2, BadgePercent } from 'lucide-react';
+import { X, ShoppingCart, Plus, Minus, Trash2, BadgePercent, Loader2, ClipboardList } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 
 export default function CartDrawer() {
-  const { cart, isOpen, closeCart, updateItem, removeItem } = useCartStore();
+  const { cart, isOpen, closeCart, clearCart, updateItem, removeItem } = useCartStore();
   const { formatCalculatedPrice } = useCustomerPricing();
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const lines = cart?.lines.nodes ?? [];
+
+  const requestQuote = async () => {
+    if (submitting || lines.length === 0) return;
+    setSubmitting(true);
+    setError('');
+    try {
+      const res = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: lines.map((line) => ({
+            variantId: line.merchandise.id,
+            quantity: line.quantity,
+          })),
+        }),
+      });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setError(json.error ?? 'Could not create your quote. Please try again.');
+        return;
+      }
+
+      clearCart();
+      router.push(`/quotes/${json.id}`);
+    } catch {
+      setError('Could not create your quote. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -134,20 +170,34 @@ export default function CartDrawer() {
               </span>
             </div>
             <p className="-mt-2 text-[12px] text-brand-ink/50">
-              Taxes and shipping calculated at checkout
+              Final pricing and shipping confirmed on your quote
             </p>
             <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
               <BadgePercent size={15} className="flex-shrink-0 text-emerald-600" />
               <p className="text-[12px] leading-snug text-emerald-800">
-                <span className="font-semibold">Pay with Zelle and save 3%</span> &mdash; select Zelle at checkout or mention it when confirming your order.
+                <span className="font-semibold">Pay with Zelle and save 3%</span> &mdash; mention it when confirming your order.
               </p>
             </div>
-            <a
-              href={cart.checkoutUrl}
-              className="bg-brand-gradient w-full rounded-full py-4 text-center text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+            {error && (
+              <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-600">
+                {error}
+              </p>
+            )}
+            <button
+              onClick={requestQuote}
+              disabled={submitting}
+              className="bg-brand-gradient flex w-full items-center justify-center gap-2 rounded-full py-4 text-center text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Checkout
-            </a>
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" /> Creating quote...
+                </>
+              ) : (
+                <>
+                  <ClipboardList size={16} /> Request Quote
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>

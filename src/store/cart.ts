@@ -11,6 +11,11 @@ export const useCartStore = create<CartState>((set, get) => ({
   openCart: () => set({ isOpen: true }),
   closeCart: () => set({ isOpen: false }),
 
+  clearCart: () => {
+    localStorage.removeItem('cartId');
+    set({ cart: null, isOpen: false });
+  },
+
   fetchCart: async (cartId: string) => {
     const res = await fetch(`/api/shopify/cart?cartId=${cartId}`);
     if (res.ok) {

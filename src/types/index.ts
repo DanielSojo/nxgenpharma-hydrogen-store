@@ -130,6 +130,7 @@ export interface CartState {
   updateItem: (lineId: string, quantity: number) => Promise<void>;
   openCart: () => void;
   closeCart: () => void;
+  clearCart: () => void;
   fetchCart: (cartId: string) => Promise<void>;
 }
 

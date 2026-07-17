@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { shopifyAdminRequest, shopifyAdminRestRequest } from '@/lib/shopify/admin';
+import { createShopifyDraftOrder, generateQuoteNumber, hasAdminAccess } from '@/lib/quotes';
 import { z } from 'zod';
 
 const quoteSchema = z.object({
@@ -29,171 +29,6 @@ const quoteSchema = z.object({
   }),
   notes: z.string().optional(),
 });
-
-function generateQuoteNumber(): string {
-  const date = new Date();
-  const year = date.getFullYear().toString().slice(-2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const random = Math.floor(Math.random() * 9000 + 1000);
-  return `Q${year}${month}${day}-${random}`;
-}
-
-function formatPrice(amount: string, currency: string) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-  }).format(parseFloat(amount));
-}
-
-// ─── Fetch customer markup metafield ─────────────────────────────────────────
-async function getCustomerMarkup(customerId: string): Promise<number> {
-  try {
-    const query = `
-      query GetCustomerMarkup($id: ID!) {
-        customer(id: $id) {
-          metafield(namespace: "custom", key: "price_markup") {
-            value
-          }
-        }
-      }
-    `;
-
-    let data: any;
-    const hasAdminOAuth =
-      process.env.SHOPIFY_ADMIN_CLIENT_ID && process.env.SHOPIFY_ADMIN_CLIENT_SECRET;
-
-    if (hasAdminOAuth) {
-      data = await shopifyAdminRequest<any>(query, { id: customerId });
-    } else if (process.env.SHOPIFY_ADMIN_TOKEN) {
-      const response = await fetch(
-        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${process.env.SHOPIFY_ADMIN_API_VERSION ?? '2026-01'}/graphql.json`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_TOKEN,
-          },
-          body: JSON.stringify({ query, variables: { id: customerId } }),
-        }
-      );
-      const json = await response.json();
-      data = json.data;
-    }
-
-    const value = data?.customer?.metafield?.value;
-    const markup = value ? parseFloat(value) : 0;
-    console.log(`[Quote] Customer markup: ${markup}%`);
-    return markup;
-  } catch (err) {
-    console.warn('[Quote] Could not fetch markup:', err);
-    return 0;
-  }
-}
-
-// ─── Create Draft Order in Shopify ───────────────────────────────────────────
-async function createShopifyDraftOrder(
-  data: z.infer<typeof quoteSchema>,
-  quoteNumber: string,
-  customerId?: string
-) {
-  const hasAdminOAuth =
-    process.env.SHOPIFY_ADMIN_CLIENT_ID && process.env.SHOPIFY_ADMIN_CLIENT_SECRET;
-  const hasAdminToken = process.env.SHOPIFY_ADMIN_TOKEN;
-
-  if (!hasAdminOAuth && !hasAdminToken) return null;
-
-  // Fetch markup to note on draft order (for admin reference)
-  let markup = 0;
-  if (customerId) {
-    markup = await getCustomerMarkup(customerId);
-  }
-
-  const numericCustomerId = customerId?.includes('gid://')
-    ? customerId.split('/').pop()
-    : customerId;
-
-  // Use variant_id so Shopify shows real product images in Admin
-  // Base prices are stored — markup is only shown on customer-facing quote page
-  const lineItems = data.items.map((item) => {
-    const variantIdNumeric = item.variantId.includes('gid://')
-      ? item.variantId.split('/').pop()
-      : item.variantId;
-
-    return {
-      variant_id: variantIdNumeric,
-      quantity: item.quantity,
-    };
-  });
-
-  const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION ?? '2026-01';
-
-  const restBody: Record<string, any> = {
-    draft_order: {
-      line_items: lineItems,
-      note: [
-        `Quote Number: ${quoteNumber}`,
-        `Requested by: ${data.customer.name} (${data.customer.email})`,
-        markup > 0 ? `Markup Applied: ${markup}%` : '',
-        data.notes ? `Customer Notes: ${data.notes}` : '',
-      ].filter(Boolean).join('\n'),
-      tags: `b2b-quote,${quoteNumber}`,
-      shipping_address: {
-        address1: data.shipping.address,
-        city: data.shipping.city,
-        province: data.shipping.state,
-        zip: data.shipping.zip,
-        country: data.shipping.country,
-        first_name: data.customer.name.split(' ')[0] ?? '',
-        last_name: data.customer.name.split(' ').slice(1).join(' ') ?? '',
-      },
-      ...(numericCustomerId
-        ? { customer: { id: numericCustomerId } }
-        : { email: data.customer.email }),
-    },
-  };
-
-  try {
-    let responseJson: any;
-
-    if (hasAdminOAuth) {
-      responseJson = await shopifyAdminRestRequest('draft_orders.json', {
-        method: 'POST',
-        body: JSON.stringify(restBody),
-      });
-    } else {
-      const response = await fetch(
-        `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${apiVersion}/draft_orders.json`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_TOKEN!,
-          },
-          body: JSON.stringify(restBody),
-        }
-      );
-      responseJson = await response.json();
-      if (!response.ok) throw new Error(JSON.stringify(responseJson));
-    }
-
-    const draft = responseJson?.draft_order;
-    if (!draft) return null;
-
-    console.log(`✅ Draft order: ${draft.name}`);
-
-    return {
-      id: `gid://shopify/DraftOrder/${draft.id}`,
-      name: draft.name,
-      invoiceUrl: draft.invoice_url,
-      status: draft.status,
-      totalPrice: draft.total_price,
-    };
-  } catch (error) {
-    console.error('Draft order creation failed:', error);
-    return null;
-  }
-}
 
 // ─── Build Email HTML ─────────────────────────────────────────────────────────
 function buildEmailHtml(
@@ -316,14 +151,17 @@ export async function POST(req: NextRequest) {
 
     // ── Create Draft Order ────────────────────────────────────────────────────
     let draftOrder = null;
-    const hasAdminAccess =
-      process.env.SHOPIFY_ADMIN_CLIENT_ID ||
-      process.env.SHOPIFY_ADMIN_CLIENT_SECRET ||
-      process.env.SHOPIFY_ADMIN_TOKEN;
 
-    if (hasAdminAccess) {
+    if (hasAdminAccess()) {
       const customerId = (session.user as any).id;
-      draftOrder = await createShopifyDraftOrder(data, quoteNumber, customerId);
+      draftOrder = await createShopifyDraftOrder({
+        items: data.items,
+        customer: data.customer,
+        shipping: data.shipping,
+        notes: data.notes,
+        quoteNumber,
+        customerId,
+      });
 
       if (!draftOrder) {
         return NextResponse.json(
