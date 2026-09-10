@@ -116,6 +116,81 @@ curl -X PATCH https://your-site.com/api/apply \
 
 ---
 
+## Checkout
+
+The cart lives in Shopify (Storefront Cart API) and payment happens on Shopify's
+hosted checkout. The flow:
+
+1. Buyer adds items — `POST /api/shopify/cart` creates/updates a Shopify cart,
+   and the cart id is kept in `localStorage` under `cartId`.
+2. Buyer clicks **Checkout** — `POST /api/shopify/checkout` attaches the
+   signed-in B2B customer to the cart (`cartBuyerIdentityUpdate`, so checkout is
+   pre-filled and the order files under their account) and stamps two cart
+   attributes:
+   - `checkout_ref` — a unique id for this checkout attempt
+   - `return_url` — where Shopify should send the buyer afterwards
+3. The browser navigates to the cart's `checkoutUrl` on the Shopify domain.
+4. After payment the buyer returns to `/checkout/success`, which polls
+   `GET /api/orders/lookup` until the matching order appears on their account,
+   then clears the cart and renders the confirmation.
+
+Cart attributes carry through to the order, so the success page matches on
+`checkout_ref`. If that attribute doesn't survive (some express payment paths),
+it falls back to the newest order processed since checkout began.
+
+The cart is **only** cleared once Shopify confirms the order — an abandoned
+checkout leaves it intact.
+
+### Required: a Shopify-served checkout domain
+
+Shopify builds `checkoutUrl` on the store's **primary domain**. In a headless
+setup that domain must *not* be the one serving this Next.js app — otherwise the
+checkout link resolves to Vercel and the buyer gets this app's 404 page.
+
+Shopify also 301-redirects any other store domain (including
+`*.myshopify.com`) to the primary domain, so this cannot be worked around in
+code by rewriting the host. It has to be fixed in **Shopify Admin → Settings →
+Domains**:
+
+- Give Shopify its own subdomain — e.g. `shop.nxgenpharma.com`, CNAME'd to
+  `shops.myshopify.com` — and set it as the **primary** domain, or
+- set the primary domain back to `<store>.myshopify.com`.
+
+Either way, the host serving this app (`www.nxgenpharma.com`) must not be
+Shopify's primary domain. A subdomain of the same registrable domain is the
+better option: it keeps checkout branded and cookies on the same site.
+
+`POST /api/shopify/checkout` guards against this — if Shopify hands back a
+checkout URL pointing at this app's own host, it returns a 502 and logs the
+misconfiguration instead of sending the buyer to a dead link.
+
+### Returning from checkout
+
+Shopify's hosted thank-you page cannot redirect off-domain on its own, so the
+return trip is configured store-side. In **Shopify Admin → Settings → Checkout →
+Order status page → Additional scripts**, add:
+
+```html
+<script>
+  var returnUrl = {{ checkout.attributes.return_url | json }};
+  if (returnUrl) {
+    document.write(
+      '<a href="' + returnUrl + '" style="display:inline-block;padding:12px 24px;' +
+      'border-radius:999px;background:#1d4ed8;color:#fff;font-weight:700;' +
+      'text-decoration:none">Back to NexGen Pharma</a>'
+    );
+  }
+</script>
+```
+
+Swap `document.write(...)` for `window.location.replace(returnUrl)` if you'd
+rather skip Shopify's thank-you page entirely. On Shopify Plus, the same thing
+can be done with a post-purchase redirect in the checkout profile.
+
+This step is a convenience, not a requirement: `/checkout/success` also reads the
+pending checkout from `localStorage`, so a buyer who simply navigates back to the
+site still gets their confirmation.
+
 ## Deployment
 
 ### Vercel (recommended)

@@ -74,10 +74,21 @@ export interface ShopifyCartLine {
   };
 }
 
+export interface ShopifyCartAttribute {
+  key: string;
+  value: string | null;
+}
+
 export interface ShopifyCart {
   id: string;
   checkoutUrl: string;
   totalQuantity: number;
+  attributes: ShopifyCartAttribute[];
+  buyerIdentity: {
+    email: string | null;
+    countryCode: string | null;
+    customer: { id: string; email: string } | null;
+  } | null;
   lines: { nodes: ShopifyCartLine[] };
   cost: {
     subtotalAmount: ShopifyPrice;
@@ -132,6 +143,10 @@ export interface CartState {
   closeCart: () => void;
   clearCart: () => void;
   fetchCart: (cartId: string) => Promise<void>;
+  /** Rehydrates the cart from the id persisted in localStorage. */
+  hydrate: () => Promise<void>;
+  /** Attaches the buyer, stamps a checkout ref, and returns the Shopify checkout URL. */
+  startCheckout: () => Promise<{ checkoutUrl: string; ref: string }>;
 }
 
 // ─── Quote Types ──────────────────────────────────────────────────────────────
@@ -158,4 +173,47 @@ export interface QuoteState {
   openQuote: () => void;
   closeQuote: () => void;
   totalItems: () => number;
+}
+
+// ─── Checkout Types ───────────────────────────────────────────────────────────
+
+/** What we persist locally while the buyer is away on Shopify's checkout. */
+export interface PendingCheckout {
+  ref: string;
+  cartId: string;
+  startedAt: string;
+}
+
+export interface CheckoutOrderLineItem {
+  title: string;
+  quantity: number;
+  variant: {
+    title: string | null;
+    price: ShopifyPrice;
+    image: { url: string; altText: string | null } | null;
+  } | null;
+}
+
+export interface CheckoutOrder {
+  id: string;
+  orderNumber: number;
+  name: string;
+  processedAt: string;
+  financialStatus: string | null;
+  fulfillmentStatus: string | null;
+  statusUrl: string;
+  currentSubtotalPrice: ShopifyPrice;
+  currentTotalShippingPrice: ShopifyPrice;
+  currentTotalTax: ShopifyPrice;
+  currentTotalPrice: ShopifyPrice;
+  shippingAddress: {
+    firstName: string | null;
+    lastName: string | null;
+    address1: string | null;
+    city: string | null;
+    province: string | null;
+    zip: string | null;
+    country: string | null;
+  } | null;
+  lineItems: { nodes: CheckoutOrderLineItem[] };
 }

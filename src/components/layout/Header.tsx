@@ -2,18 +2,25 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { ClipboardList, User, LogOut, Menu, X, ChevronDown, UserCircle2, ShoppingBag, TrendingUp, LayoutDashboard } from 'lucide-react';
+import { ClipboardList, User, LogOut, Menu, X, ChevronDown, UserCircle2, ShoppingBag, ShoppingCart, TrendingUp, LayoutDashboard } from 'lucide-react';
 import { useQuoteStore } from '@/store/quote';
+import { useCartStore } from '@/store/cart';
+import { canUseCheckout } from '@/lib/checkout';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 export default function Header() {
   const { data: session } = useSession();
   const { openQuote, totalItems } = useQuoteStore();
+  const { cart, openCart } = useCartStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const itemCount = totalItems();
+  const cartCount = cart?.totalQuantity ?? 0;
+  // The cart icon rides along with the checkout pilot; everyone else works from
+  // the quote flow, so the drawer only surfaces when they add an item.
+  const showCart = canUseCheckout(session?.user?.email);
   const isSeller = ((session?.user as any)?.role ?? '').toLowerCase() === 'seller';
 
   // Close the account dropdown on outside click or Escape.
@@ -75,6 +82,22 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+
+          {/* Cart button */}
+          {session?.user && !isSeller && showCart && (
+            <button
+              onClick={openCart}
+              className="relative rounded-full p-2 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
+              aria-label="Open cart"
+            >
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-blue text-[10px] font-bold text-white">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* Quote button */}
           {session?.user && !isSeller && (

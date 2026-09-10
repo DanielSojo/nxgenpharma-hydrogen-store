@@ -39,3 +39,27 @@ export const REMOVE_CART_LINES = `
   }
   ${CART_FRAGMENT}
 `;
+
+// Attaches the signed-in customer to the cart so Shopify checkout opens
+// pre-authenticated and the resulting order is filed under their account.
+export const CART_BUYER_IDENTITY_UPDATE = `
+  mutation CartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+      cart { ...CartFragment }
+      userErrors { field message }
+    }
+  }
+  ${CART_FRAGMENT}
+`;
+
+// Cart attributes carry through to the order as custom attributes, which is how
+// the success page ties a completed checkout back to the cart that started it.
+export const CART_ATTRIBUTES_UPDATE = `
+  mutation CartAttributesUpdate($cartId: ID!, $attributes: [AttributeInput!]!) {
+    cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
+      cart { ...CartFragment }
+      userErrors { field message }
+    }
+  }
+  ${CART_FRAGMENT}
+`;

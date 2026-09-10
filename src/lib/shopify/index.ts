@@ -9,12 +9,15 @@ import {
   CUSTOMER_LOGIN,
   GET_CUSTOMER,
   GET_CUSTOMER_TAGS,
+  GET_CUSTOMER_ORDERS_FOR_CHECKOUT,
 } from './queries';
 import {
   CREATE_CART,
   ADD_CART_LINES,
   UPDATE_CART_LINES,
   REMOVE_CART_LINES,
+  CART_BUYER_IDENTITY_UPDATE,
+  CART_ATTRIBUTES_UPDATE,
 } from './mutations';
 import { getShopifyStoreDomain } from './env';
 import type {
@@ -138,6 +141,53 @@ export async function removeCartLines(cartId: string, lineId: string) {
     variables: { cartId, lineIds: [lineId] },
   });
   return data?.cartLinesRemove.cart as ShopifyCart;
+}
+
+export async function updateCartBuyerIdentity(
+  cartId: string,
+  buyerIdentity: { email?: string; customerAccessToken?: string; countryCode?: string }
+) {
+  const { data } = await shopifyClient.request(CART_BUYER_IDENTITY_UPDATE, {
+    variables: { cartId, buyerIdentity },
+  });
+
+  const result = data?.cartBuyerIdentityUpdate;
+  if (result?.userErrors?.length) {
+    throw new Error(result.userErrors[0].message);
+  }
+
+  return result?.cart as ShopifyCart;
+}
+
+export async function updateCartAttributes(
+  cartId: string,
+  attributes: { key: string; value: string }[]
+) {
+  const { data } = await shopifyClient.request(CART_ATTRIBUTES_UPDATE, {
+    variables: { cartId, attributes },
+  });
+
+  const result = data?.cartAttributesUpdate;
+  if (result?.userErrors?.length) {
+    throw new Error(result.userErrors[0].message);
+  }
+
+  return result?.cart as ShopifyCart;
+}
+
+// ─── Checkout Reconciliation ──────────────────────────────────────────────────
+
+export async function getCustomerOrdersForCheckout(accessToken: string, first = 10) {
+  const { data, errors } = await shopifyClient.request(GET_CUSTOMER_ORDERS_FOR_CHECKOUT, {
+    variables: { accessToken, first },
+  });
+
+  if (errors) {
+    console.error('[getCustomerOrdersForCheckout] GraphQL errors:', errors);
+    return [];
+  }
+
+  return (data?.customer?.orders?.nodes ?? []) as any[];
 }
 
 // ─── Customer Auth ────────────────────────────────────────────────────────────

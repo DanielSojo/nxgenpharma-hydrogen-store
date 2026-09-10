@@ -141,6 +141,12 @@ export const CART_FRAGMENT = `
     id
     checkoutUrl
     totalQuantity
+    attributes { key value }
+    buyerIdentity {
+      email
+      countryCode
+      customer { id email }
+    }
     lines(first: 100) {
       nodes {
         id
@@ -341,6 +347,49 @@ export const GET_CUSTOMER_ORDERS = `
         pageInfo {
           hasNextPage
           endCursor
+        }
+      }
+    }
+  }
+`;
+
+// ─── Checkout Reconciliation ──────────────────────────────────────────────────
+
+// Recent orders for the signed-in customer, including the `checkout_ref` custom
+// attribute we stamp on the cart before sending the buyer to Shopify checkout.
+// The success page uses this to resolve which order the buyer just paid for.
+export const GET_CUSTOMER_ORDERS_FOR_CHECKOUT = `
+  query GetCustomerOrdersForCheckout($accessToken: String!, $first: Int!) {
+    customer(customerAccessToken: $accessToken) {
+      orders(first: $first, sortKey: PROCESSED_AT, reverse: true) {
+        nodes {
+          id
+          orderNumber
+          name
+          processedAt
+          financialStatus
+          fulfillmentStatus
+          statusUrl
+          customAttributes { key value }
+          currentSubtotalPrice { amount currencyCode }
+          currentTotalShippingPrice { amount currencyCode }
+          currentTotalTax { amount currencyCode }
+          currentTotalPrice { amount currencyCode }
+          shippingAddress {
+            firstName lastName address1
+            city province zip country
+          }
+          lineItems(first: 50) {
+            nodes {
+              title
+              quantity
+              variant {
+                title
+                price { amount currencyCode }
+                image { url altText }
+              }
+            }
+          }
         }
       }
     }
