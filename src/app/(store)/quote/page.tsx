@@ -264,7 +264,7 @@ export default function QuotePage() {
         {/* Back */}
         <Link
           href="/"
-          className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
+          className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/70 transition-colors hover:text-brand-navy"
         >
           <ArrowLeft size={16} /> Continue Browsing
         </Link>
@@ -287,7 +287,7 @@ export default function QuotePage() {
                 </h2>
                 <div className="flex flex-col gap-4">
                   {loadingAddress ? (
-                    <div className="rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink/60">
+                    <div className="rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink/70">
                       Loading saved address...
                     </div>
                   ) : savedAddress ? (
@@ -325,7 +325,7 @@ export default function QuotePage() {
                       </label>
                     </div>
                   ) : (
-                    <div className="rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink/60">
+                    <div className="rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink/70">
                       No saved address was found on your account. Enter a shipping address below.
                     </div>
                   )}
@@ -345,14 +345,14 @@ export default function QuotePage() {
                     <input
                       {...register('shippingAddress')}
                       placeholder="123 Main St"
-                      className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                      className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
                     {errors.shippingAddress && (
                       <p className="text-xs text-red-500">{errors.shippingAddress.message}</p>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[13px] font-medium text-brand-ink">
                         City <span className="text-red-500">*</span>
@@ -360,7 +360,7 @@ export default function QuotePage() {
                       <input
                         {...register('shippingCity')}
                         placeholder="Miami"
-                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingCity && (
                         <p className="text-xs text-red-500">{errors.shippingCity.message}</p>
@@ -373,7 +373,7 @@ export default function QuotePage() {
                       <input
                         {...register('shippingState')}
                         placeholder="FL"
-                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingState && (
                         <p className="text-xs text-red-500">{errors.shippingState.message}</p>
@@ -381,7 +381,7 @@ export default function QuotePage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[13px] font-medium text-brand-ink">
                         ZIP Code <span className="text-red-500">*</span>
@@ -389,7 +389,7 @@ export default function QuotePage() {
                       <input
                         {...register('shippingZip')}
                         placeholder="33101"
-                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingZip && (
                         <p className="text-xs text-red-500">{errors.shippingZip.message}</p>
@@ -402,7 +402,7 @@ export default function QuotePage() {
                       <input
                         {...register('shippingCountry')}
                         placeholder="United States"
-                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                        className="w-full rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                       />
                       {errors.shippingCountry && (
                         <p className="text-xs text-red-500">{errors.shippingCountry.message}</p>
@@ -423,7 +423,7 @@ export default function QuotePage() {
                   {...register('notes')}
                   placeholder="Special requirements, preferred delivery timeframe, bulk pricing questions..."
                   rows={4}
-                  className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                  className="w-full resize-none rounded-xl border border-brand-line bg-brand-surface px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                 />
               </div>
 
@@ -478,9 +478,9 @@ export default function QuotePage() {
                         {item.productTitle}
                       </p>
                       {item.variantTitle !== 'Default Title' && (
-                        <p className="mt-0.5 text-xs text-brand-ink/50">{item.variantTitle}</p>
+                        <p className="mt-0.5 text-xs text-brand-ink/70">{item.variantTitle}</p>
                       )}
-                      <p className="mt-0.5 text-xs text-brand-ink/65">
+                      <p className="mt-0.5 text-xs text-brand-ink/70">
                         Qty: {item.quantity}
                       </p>
 
@@ -527,13 +527,13 @@ export default function QuotePage() {
 
               {/* Customer info */}
               <div className="border-t border-brand-line bg-brand-surface px-6 py-4">
-                <p className="mb-1 text-[12px] font-medium uppercase tracking-wider text-brand-ink/50">
+                <p className="mb-1 text-[12px] font-medium uppercase tracking-wider text-brand-ink/70">
                   Sending as
                 </p>
                 <p className="text-sm font-semibold text-brand-ink">
                   {(session?.user as any)?.firstName} {(session?.user as any)?.lastName}
                 </p>
-                <p className="text-sm text-brand-ink/65">{session?.user?.email}</p>
+                <p className="text-sm text-brand-ink/70">{session?.user?.email}</p>
               </div>
 
             </div>

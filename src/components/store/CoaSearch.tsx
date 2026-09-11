@@ -49,12 +49,12 @@ export default function CoaSearch() {
         <label htmlFor="coa-lot" className="text-sm font-semibold text-brand-navy">
           Lot / Batch number
         </label>
-        <p className="mt-1 text-[13px] leading-relaxed text-brand-ink/60">
+        <p className="mt-1 text-[13px] leading-relaxed text-brand-ink/70">
           Enter the lot number exactly as printed on your product label or vial.
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/40" />
+            <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60" />
             <input
               id="coa-lot"
               type="text"
@@ -63,7 +63,7 @@ export default function CoaSearch() {
               placeholder="e.g. Nexg0123456789"
               autoComplete="off"
               spellCheck={false}
-              className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-11 pr-4 text-sm text-brand-ink placeholder:text-brand-ink/40 transition-colors focus:border-brand-blue focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+              className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-11 pr-4 text-sm text-brand-ink placeholder:text-brand-ink/60 transition-colors focus:border-brand-blue focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
             />
           </div>
           <button
@@ -119,7 +119,7 @@ function CoaResult({ record }: { record: CoaRecord }) {
             <FileCheck2 size={22} />
           </span>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-ink/45">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-ink/70">
               Certificate found
             </p>
             <h3 className="mt-1 text-lg font-bold text-brand-navy">Lot {record.lotNumber}</h3>

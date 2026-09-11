@@ -61,7 +61,7 @@ const Input = ({
     </label>
     <input
       {...props}
-      className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+      className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
     />
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
@@ -176,7 +176,7 @@ export default function ProfilePage() {
     <div className="mx-auto max-w-[1480px] px-5 py-10 sm:px-8 lg:px-10">
       <Link
         href="/dashboard"
-        className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
+        className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/70 transition-colors hover:text-brand-navy"
       >
         <ArrowLeft size={16} /> Back to Store
       </Link>
@@ -212,12 +212,12 @@ export default function ProfilePage() {
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <div className="flex items-center rounded-xl border border-brand-line bg-white/70 transition-all hover:border-brand-blue/40 focus-within:border-brand-blue focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-blue/10">
-                  <span className="border-r border-brand-line pl-4 pr-3 text-sm font-medium text-brand-ink/55">+1</span>
+                  <span className="border-r border-brand-line pl-4 pr-3 text-sm font-medium text-brand-ink/70">+1</span>
                   <input
                     type="tel"
                     placeholder="(555) 000-0000"
                     {...register('phone')}
-                    className="w-full rounded-xl bg-transparent py-3 pl-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
+                    className="w-full rounded-xl bg-transparent py-3 pl-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/60"
                   />
                 </div>
                 {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}

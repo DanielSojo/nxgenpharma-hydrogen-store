@@ -107,7 +107,7 @@ function ResetPasswordContent() {
               <p className="mb-2 text-[14px] leading-relaxed text-brand-ink/72">
                 Your password has been reset successfully.
               </p>
-              <p className="text-[13px] text-brand-ink/50">Redirecting you to sign in...</p>
+              <p className="text-[13px] text-brand-ink/70">Redirecting you to sign in...</p>
             </div>
           ) : (
             <>
@@ -129,17 +129,17 @@ function ResetPasswordContent() {
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-brand-ink">New Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35" size={15} />
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60" size={15} />
                     <input
                       {...register('password')}
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Min. 8 characters"
-                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35 hover:text-brand-ink/65"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/70 hover:text-brand-ink/70"
                     >
                       {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
@@ -153,17 +153,17 @@ function ResetPasswordContent() {
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-brand-ink">Confirm Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35" size={15} />
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60" size={15} />
                     <input
                       {...register('confirmPassword')}
                       type={showConfirm ? 'text' : 'password'}
                       placeholder="Repeat your password"
-                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35 hover:text-brand-ink/65"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/70 hover:text-brand-ink/70"
                     >
                       {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
@@ -184,7 +184,7 @@ function ResetPasswordContent() {
 
                 <Link
                   href="/login"
-                  className="text-center text-[13px] text-brand-ink/55 transition-colors hover:text-brand-navy"
+                  className="text-center text-[13px] text-brand-ink/70 transition-colors hover:text-brand-navy"
                 >
                   Back to Sign In
                 </Link>

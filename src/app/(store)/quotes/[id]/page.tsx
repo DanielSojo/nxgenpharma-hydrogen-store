@@ -39,7 +39,7 @@ export default function QuoteDetailPage() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-600 text-sm">
           {error || 'Quote not found'}
         </div>
-        <Link href="/quotes" className="inline-flex items-center gap-2 mt-4 text-sm text-brand-ink/60 hover:text-brand-navy">
+        <Link href="/quotes" className="inline-flex items-center gap-2 mt-4 text-sm text-brand-ink/70 hover:text-brand-navy">
           <ArrowLeft size={16} /> Back to Quotes
         </Link>
       </div>
@@ -74,7 +74,7 @@ export default function QuoteDetailPage() {
 
       {/* Back + Download */}
       <div className="flex items-center justify-between mb-8">
-        <Link href="/quotes" className="inline-flex items-center gap-2 text-brand-ink/55 hover:text-brand-navy text-sm transition-colors">
+        <Link href="/quotes" className="inline-flex items-center gap-2 text-brand-ink/70 hover:text-brand-navy text-sm transition-colors">
           <ArrowLeft size={16} /> Back to Quotes
         </Link>
         <a
@@ -138,7 +138,7 @@ export default function QuoteDetailPage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package size={20} className="text-brand-ink/30" />
+                          <Package size={20} className="text-brand-ink/60" />
                         </div>
                       )}
                     </div>
@@ -147,7 +147,7 @@ export default function QuoteDetailPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-brand-navy text-sm">{item.title}</p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-sm text-brand-ink/60">
+                        <span className="text-sm text-brand-ink/70">
                           Qty: {item.quantity} × {formatCalculatedPrice(item.price, quote.currency)}
                         </span>
                         <span className="font-bold text-brand-navy text-sm">
@@ -163,14 +163,14 @@ export default function QuoteDetailPage() {
             {/* Totals */}
             <div className="px-6 py-4 bg-brand-surface border-t border-brand-line/70">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-brand-ink/60">Subtotal</span>
+                <span className="text-sm text-brand-ink/70">Subtotal</span>
                 <span className="font-bold text-brand-navy">
                   {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(subtotal)}
                 </span>
               </div>
               {hasShipping && (
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-brand-ink/60">Shipping — {quote.shipping_line.title}</span>
+                  <span className="text-sm text-brand-ink/70">Shipping — {quote.shipping_line.title}</span>
                   <span className="text-sm text-brand-ink">
                     {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(shipping)}
                   </span>
@@ -178,7 +178,7 @@ export default function QuoteDetailPage() {
               )}
               {hasTax && (
                 <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-brand-ink/60">Tax</span>
+                  <span className="text-sm text-brand-ink/70">Tax</span>
                   <span className="text-sm text-brand-ink">
                     {new Intl.NumberFormat('en-US', { style: 'currency', currency: quote.currency }).format(tax)}
                   </span>
@@ -237,7 +237,7 @@ export default function QuoteDetailPage() {
                 <MapPin size={15} className="text-brand-ink/60" />
                 <h3 className="font-semibold text-brand-navy text-sm">Ship To</h3>
               </div>
-              <p className="text-sm text-brand-ink/65 leading-relaxed">
+              <p className="text-sm text-brand-ink/70 leading-relaxed">
                 {shippingAddress.first_name} {shippingAddress.last_name}<br />
                 {shippingAddress.address1}<br />
                 {shippingAddress.city}, {shippingAddress.province} {shippingAddress.zip}<br />
@@ -252,7 +252,7 @@ export default function QuoteDetailPage() {
                 <FileText size={15} className="text-brand-ink/60" />
                 <h3 className="font-semibold text-brand-navy text-sm">Your Notes</h3>
               </div>
-              <p className="text-sm text-brand-ink/65 leading-relaxed">{customerNotes}</p>
+              <p className="text-sm text-brand-ink/70 leading-relaxed">{customerNotes}</p>
             </div>
           )}
 
@@ -265,7 +265,7 @@ export default function QuoteDetailPage() {
           </div>
 
           <div className="bg-white border border-brand-line/70 rounded-2xl shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)] p-5 text-center">
-            <p className="text-sm text-brand-ink/65 mb-3">Questions about this quote?</p>
+            <p className="text-sm text-brand-ink/70 mb-3">Questions about this quote?</p>
             <Link
               href="/contact"
               className="inline-block w-full rounded-full border-2 border-brand-navy/80 py-2.5 text-sm font-semibold text-brand-navy transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-navy hover:bg-brand-navy hover:text-white"

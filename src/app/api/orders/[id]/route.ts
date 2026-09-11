@@ -26,7 +26,9 @@ const GET_CUSTOMER_ORDER_DETAIL = `
               title
               quantity
               variant {
+                id
                 title
+                availableForSale
                 price { amount currencyCode }
                 image { url altText }
               }

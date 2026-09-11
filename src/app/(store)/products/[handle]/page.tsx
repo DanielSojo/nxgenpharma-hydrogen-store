@@ -28,7 +28,7 @@ export default async function ProductPage({ params }: Props) {
     <div className="mx-auto max-w-6xl px-6 py-10">
       <Link
         href="/collections/all"
-        className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-brand-ink/55 transition-colors hover:text-brand-navy"
+        className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-brand-ink/70 transition-colors hover:text-brand-navy"
       >
         <ArrowLeft size={16} /> Back to catalog
       </Link>

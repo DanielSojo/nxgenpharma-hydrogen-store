@@ -135,8 +135,19 @@ export interface CustomerSession {
 export interface CartState {
   cart: ShopifyCart | null;
   isOpen: boolean;
+  /** Reserved for cart-wide operations (currently only checkout). */
   isLoading: boolean;
-  addItem: (variantId: string, quantity: number) => Promise<void>;
+  /**
+   * In-flight line operations, keyed by variant id (adds) or line id
+   * (updates/removals) so a single row can spin without disabling the rest.
+   */
+  pending: Record<string, boolean>;
+  /** Resolves to whether the line was added; surfaces its own error toast. */
+  addItem: (
+    variantId: string,
+    quantity: number,
+    options?: { label?: string; silent?: boolean }
+  ) => Promise<boolean>;
   removeItem: (lineId: string) => Promise<void>;
   updateItem: (lineId: string, quantity: number) => Promise<void>;
   openCart: () => void;

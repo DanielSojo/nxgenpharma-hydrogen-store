@@ -36,7 +36,7 @@ export default function QuoteDrawer() {
           </div>
           <button
             onClick={closeQuote}
-            className="rounded-full p-1.5 text-brand-ink/45 transition-colors hover:bg-brand-mist hover:text-brand-navy"
+            className="rounded-full p-1.5 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
           >
             <X size={18} />
           </button>
@@ -49,7 +49,7 @@ export default function QuoteDrawer() {
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-mist text-brand-blue">
                 <ClipboardList size={28} />
               </span>
-              <p className="text-sm text-brand-ink/50">Your quote is empty</p>
+              <p className="text-sm text-brand-ink/70">Your quote is empty</p>
               <button
                 onClick={closeQuote}
                 className="rounded-full border border-brand-line px-5 py-2 text-sm font-semibold text-brand-navy transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-sm"
@@ -88,9 +88,9 @@ export default function QuoteDrawer() {
                     {item.productTitle}
                   </Link>
                   {item.variantTitle !== 'Default Title' && (
-                    <p className="text-xs text-brand-ink/50">{item.variantTitle}</p>
+                    <p className="text-xs text-brand-ink/70">{item.variantTitle}</p>
                   )}
-                  <p className="text-sm text-brand-ink/65">
+                  <p className="text-sm text-brand-ink/70">
                     Qty: {item.quantity}
                   </p>
 
@@ -129,11 +129,11 @@ export default function QuoteDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="flex flex-col gap-3 border-t border-brand-line/70 bg-brand-surface px-6 py-5">
-            <div className="flex items-center justify-between text-sm text-brand-ink/65">
+            <div className="flex items-center justify-between text-sm text-brand-ink/70">
               <span>Total items</span>
               <span className="text-lg font-bold text-brand-navy">{totalItems}</span>
             </div>
-            <p className="text-[12px] text-brand-ink/50">
+            <p className="text-[12px] text-brand-ink/70">
               Pricing will be confirmed after quote review
             </p>
             <Link

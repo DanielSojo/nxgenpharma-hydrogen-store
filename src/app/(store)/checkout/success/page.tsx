@@ -110,7 +110,7 @@ function CheckoutSuccess() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <Loader2 size={28} className="animate-spin text-brand-blue" />
-        <p className="text-sm text-brand-ink/60">Confirming your order with Shopify…</p>
+        <p className="text-sm text-brand-ink/70">Confirming your order with Shopify…</p>
       </div>
     );
   }
@@ -145,7 +145,7 @@ function CheckoutSuccess() {
             <Clock size={26} />
           </span>
           <h1 className="text-xl font-bold text-brand-navy">{copy.title}</h1>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-brand-ink/60">{copy.body}</p>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-brand-ink/70">{copy.body}</p>
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/orders"
@@ -222,9 +222,9 @@ function CheckoutSuccess() {
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
                   <p className="text-sm font-semibold text-brand-navy">{line.title}</p>
                   {line.variant?.title && line.variant.title !== 'Default Title' && (
-                    <p className="text-xs text-brand-ink/50">{line.variant.title}</p>
+                    <p className="text-xs text-brand-ink/70">{line.variant.title}</p>
                   )}
-                  <p className="text-xs text-brand-ink/55">Qty {line.quantity}</p>
+                  <p className="text-xs text-brand-ink/70">Qty {line.quantity}</p>
                 </div>
                 {line.variant?.price && (
                   <p className="self-center text-sm font-bold text-brand-navy">
@@ -245,7 +245,7 @@ function CheckoutSuccess() {
             </div>
             <dl className="flex flex-col gap-2.5 text-sm">
               <div className="flex justify-between">
-                <dt className="text-brand-ink/60">Subtotal</dt>
+                <dt className="text-brand-ink/70">Subtotal</dt>
                 <dd className="font-medium text-brand-ink">
                   {formatCalculatedPrice(
                     order.currentSubtotalPrice.amount,
@@ -254,7 +254,7 @@ function CheckoutSuccess() {
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-brand-ink/60">Shipping</dt>
+                <dt className="text-brand-ink/70">Shipping</dt>
                 <dd className="font-medium text-brand-ink">
                   {formatCalculatedPrice(
                     order.currentTotalShippingPrice.amount,
@@ -263,7 +263,7 @@ function CheckoutSuccess() {
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-brand-ink/60">Tax</dt>
+                <dt className="text-brand-ink/70">Tax</dt>
                 <dd className="font-medium text-brand-ink">
                   {formatCalculatedPrice(
                     order.currentTotalTax.amount,
@@ -321,7 +321,7 @@ function CheckoutSuccess() {
             href={order.statusUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-brand-ink/60 transition-colors hover:text-brand-navy"
+            className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-brand-ink/70 transition-colors hover:text-brand-navy"
           >
             Shopify receipt <ExternalLink size={14} />
           </a>

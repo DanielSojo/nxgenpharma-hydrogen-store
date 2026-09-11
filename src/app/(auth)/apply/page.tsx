@@ -49,7 +49,7 @@ const Input = ({
     </label>
     <input
       {...props}
-      className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+      className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
     />
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
@@ -78,7 +78,7 @@ const Select = ({
         {children}
       </select>
       <ChevronDown
-        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/40 transition-colors group-focus-within:text-brand-blue"
+        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60 transition-colors group-focus-within:text-brand-blue"
         size={16}
       />
     </div>
@@ -135,7 +135,7 @@ export default function ApplyPage() {
             <CheckCircle className="text-green-600" size={36} />
           </div>
           <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Received!</h1>
-          <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/65">
+          <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/70">
             Thank you for applying. We'll review your application and respond within 24 hours to the email you provided.
           </p>
           <Link
@@ -157,7 +157,7 @@ export default function ApplyPage() {
         <div className="mb-6">
           <Link
             href="/login"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm text-brand-ink/70 transition-colors hover:text-brand-navy"
           >
             <ArrowLeft size={16} /> Back to Sign In
           </Link>
@@ -186,24 +186,24 @@ export default function ApplyPage() {
             <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
               Personal Information
             </h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input label="First Name" required placeholder="John" error={errors.firstName?.message} {...register('firstName')} />
               <Input label="Last Name" required placeholder="Doe" error={errors.lastName?.message} {...register('lastName')} />
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <Input label="Email Address" required type="email" placeholder="john@company.com" error={errors.email?.message} {...register('email')} />
               </div>
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-brand-ink">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center rounded-xl border border-brand-line bg-white/70 transition-all hover:border-brand-blue/40 focus-within:border-brand-blue focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-blue/10">
-                    <span className="border-r border-brand-line pl-4 pr-3 text-sm font-medium text-brand-ink/55">+1</span>
+                    <span className="border-r border-brand-line pl-4 pr-3 text-sm font-medium text-brand-ink/70">+1</span>
                     <input
                       type="tel"
                       placeholder="(555) 000-0000"
                       {...register('phone')}
-                      className="w-full rounded-xl bg-transparent py-3 pl-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/35"
+                      className="w-full rounded-xl bg-transparent py-3 pl-3 pr-4 text-sm text-brand-ink outline-none placeholder:text-brand-ink/60"
                     />
                   </div>
                   {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}
@@ -217,11 +217,11 @@ export default function ApplyPage() {
             <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
               Business Information
             </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
                 <Input label="Company Name" required placeholder="Acme Corp" error={errors.company?.message} {...register('company')} />
               </div>
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <Select label="Business Type" required error={errors.businessType?.message} {...register('businessType')}>
                   <option value="">Select business type...</option>
                   <option value="pharmacy">Pharmacy</option>
@@ -233,10 +233,10 @@ export default function ApplyPage() {
                   <option value="other">Other</option>
                 </Select>
               </div>
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <Input label="NPI" required placeholder="1234567890" error={errors.taxId?.message} {...register('taxId')} />
               </div>
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <Input label="Website" type="url" placeholder="https://yourcompany.com (optional)" error={errors.website?.message} {...register('website')} />
               </div>
             </div>
@@ -247,8 +247,8 @@ export default function ApplyPage() {
             <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
               Business Address
             </h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
                 <Input label="Street Address" required placeholder="123 Main St" error={errors.address?.message} {...register('address')} />
               </div>
               <Input label="City" required placeholder="Miami" error={errors.city?.message} {...register('city')} />
@@ -287,13 +287,13 @@ export default function ApplyPage() {
           {/* Message */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[13px] font-medium text-brand-ink">
-              Additional Information <span className="text-brand-ink/50">(optional)</span>
+              Additional Information <span className="text-brand-ink/70">(optional)</span>
             </label>
             <textarea
               {...register('message')}
               placeholder="Tell us more about your business and purchasing needs..."
               rows={4}
-              className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+              className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
             />
           </div>
 

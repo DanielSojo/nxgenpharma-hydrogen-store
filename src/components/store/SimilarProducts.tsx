@@ -42,7 +42,7 @@ export default function SimilarProducts({ products }: { products: ShopifyProduct
                     sizes="(max-width: 1024px) 50vw, 25vw"
                   />
                 ) : (
-                  <span className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
+                  <span className="absolute inset-0 flex items-center justify-center text-xs text-white/55">
                     No image
                   </span>
                 )}
@@ -61,7 +61,7 @@ export default function SimilarProducts({ products }: { products: ShopifyProduct
 
               <div className="flex flex-1 flex-col p-4">
                 {product.vendor ? (
-                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-brand-ink/45">
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-brand-ink/70">
                     {product.vendor}
                   </p>
                 ) : null}

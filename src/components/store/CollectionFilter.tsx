@@ -26,7 +26,7 @@ export default function CollectionFilter({
           <p className="text-xs font-bold uppercase tracking-widest text-brand-blue">
             Filter By Collection
           </p>
-          <p className="mt-1 text-sm text-brand-ink/65">
+          <p className="mt-1 text-sm text-brand-ink/70">
             Switch between the full catalog and individual collections.
           </p>
         </div>

@@ -11,7 +11,7 @@ import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 import { canUseCheckout } from '@/lib/checkout';
 
 export default function CartDrawer() {
-  const { cart, isOpen, closeCart, clearCart, updateItem, removeItem, hydrate, startCheckout } =
+  const { cart, isOpen, closeCart, clearCart, updateItem, removeItem, hydrate, startCheckout, pending } =
     useCartStore();
   const { formatCalculatedPrice } = useCustomerPricing();
   const { data: session } = useSession();
@@ -102,7 +102,7 @@ export default function CartDrawer() {
               Cart ({cart?.totalQuantity ?? 0})
             </h2>
           </div>
-          <button onClick={closeCart} className="rounded-full p-1.5 text-brand-ink/45 transition-colors hover:bg-brand-mist hover:text-brand-navy">
+          <button onClick={closeCart} className="rounded-full p-1.5 text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy">
             <X size={18} />
           </button>
         </div>
@@ -114,7 +114,7 @@ export default function CartDrawer() {
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-mist text-brand-blue">
                 <ShoppingCart size={28} />
               </span>
-              <p className="text-sm text-brand-ink/50">Your cart is empty</p>
+              <p className="text-sm text-brand-ink/70">Your cart is empty</p>
               <button
                 onClick={closeCart}
                 className="rounded-full border border-brand-line px-5 py-2 text-sm font-semibold text-brand-navy transition-all hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-sm"
@@ -150,7 +150,7 @@ export default function CartDrawer() {
                     {line.merchandise.product.title}
                   </Link>
                   {line.merchandise.title !== 'Default Title' && (
-                    <p className="text-xs text-brand-ink/50">{line.merchandise.title}</p>
+                    <p className="text-xs text-brand-ink/70">{line.merchandise.title}</p>
                   )}
                   <p className="text-sm font-bold text-brand-navy">
                     {formatCalculatedPrice(
@@ -166,18 +166,34 @@ export default function CartDrawer() {
                         ? updateItem(line.id, line.quantity - 1)
                         : removeItem(line.id)
                       }
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-mist text-brand-ink/70 transition-colors hover:bg-brand-line hover:text-brand-blue"
+                      disabled={pending[line.id]}
+                      aria-label={line.quantity === 1 ? 'Remove item' : 'Decrease quantity'}
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-mist text-brand-ink/70 transition-colors hover:bg-brand-line hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {line.quantity === 1 ? <Trash2 size={12} /> : <Minus size={12} />}
                     </button>
                     <span className="w-5 text-center text-sm font-semibold text-brand-ink tabular-nums">
-                      {line.quantity}
+                      {pending[line.id] ? (
+                        <Loader2 size={12} className="mx-auto animate-spin text-brand-blue" />
+                      ) : (
+                        line.quantity
+                      )}
                     </span>
                     <button
                       onClick={() => updateItem(line.id, line.quantity + 1)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-mist text-brand-ink/70 transition-colors hover:bg-brand-line hover:text-brand-blue"
+                      disabled={pending[line.id]}
+                      aria-label="Increase quantity"
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-mist text-brand-ink/70 transition-colors hover:bg-brand-line hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Plus size={11} />
+                    </button>
+                    <button
+                      onClick={() => removeItem(line.id)}
+                      disabled={pending[line.id]}
+                      aria-label={`Remove ${line.merchandise.product.title} from cart`}
+                      className="ml-auto rounded-full p-1.5 text-brand-ink/70 transition-colors hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
@@ -190,7 +206,7 @@ export default function CartDrawer() {
         {lines.length > 0 && cart && (
           <div className="flex flex-col gap-4 border-t border-brand-line/70 bg-brand-surface px-6 py-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-brand-ink/65">Subtotal</span>
+              <span className="text-sm text-brand-ink/70">Subtotal</span>
               <span className="text-lg font-bold text-brand-navy">
                 {formatCalculatedPrice(
                   cart.cost.subtotalAmount.amount,
@@ -198,7 +214,7 @@ export default function CartDrawer() {
                 )}
               </span>
             </div>
-            <p className="-mt-2 text-[12px] text-brand-ink/50">
+            <p className="-mt-2 text-[12px] text-brand-ink/70">
               {checkoutEnabled
                 ? 'Taxes and shipping calculated at checkout'
                 : 'Final pricing and shipping confirmed on your quote'}

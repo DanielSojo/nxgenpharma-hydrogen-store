@@ -332,6 +332,8 @@ export const GET_CUSTOMER_ORDERS = `
               title
               quantity
               variant {
+                id
+                availableForSale
                 price {
                   amount
                   currencyCode

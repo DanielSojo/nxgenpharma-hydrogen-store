@@ -46,13 +46,13 @@ export default function ProductListItem({ product }: Props) {
               sizes="(min-width: 768px) 112px, 100vw"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
+            <div className="absolute inset-0 flex items-center justify-center text-xs text-white/55">
               No image
             </div>
           )}
           {!product.availableForSale && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/75">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-ink/45">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-ink/70">
                 Sold Out
               </span>
             </div>
@@ -86,7 +86,7 @@ export default function ProductListItem({ product }: Props) {
               />
             </div>
           ) : (
-            <p className="mt-3 text-sm font-medium text-brand-ink/55">
+            <p className="mt-3 text-sm font-medium text-brand-ink/70">
               Price available upon request
             </p>
           )}
@@ -97,7 +97,7 @@ export default function ProductListItem({ product }: Props) {
             disabled={!hasVariantOptions}
             value={variant?.id ?? ''}
             onChange={(event) => setSelectedVariantId(event.target.value)}
-            className="min-w-0 rounded-xl border border-brand-line bg-brand-surface px-3 py-2.5 text-sm text-brand-ink outline-none transition-colors focus:border-brand-blue disabled:cursor-not-allowed disabled:text-brand-ink/55"
+            className="min-w-0 rounded-xl border border-brand-line bg-brand-surface px-3 py-2.5 text-sm text-brand-ink outline-none transition-colors focus:border-brand-blue disabled:cursor-not-allowed disabled:text-brand-ink/70"
           >
             {variants.map((item) => {
               const label =

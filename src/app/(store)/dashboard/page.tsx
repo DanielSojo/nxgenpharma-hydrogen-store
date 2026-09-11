@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
       {/* Quick links */}
       <div className="mt-8">
-        <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.22em] text-brand-ink/55">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.22em] text-brand-ink/70">
           Quick Actions
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

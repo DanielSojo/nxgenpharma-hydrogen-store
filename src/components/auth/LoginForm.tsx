@@ -13,7 +13,6 @@ import Image from 'next/image';
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
   password: z.string().min(1, 'Password is required'),
-  rememberMe: z.boolean().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -115,7 +114,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight text-brand-navy">Welcome back</h1>
-          <p className="mb-5 mt-1 text-[14px] leading-relaxed text-brand-ink/60">
+          <p className="mb-5 mt-1 text-[14px] leading-relaxed text-brand-ink/70">
             Sign in to access your B2B platform.
           </p>
 
@@ -123,13 +122,13 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-brand-ink">Email</label>
               <div className="group relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35 transition-colors group-focus-within:text-brand-blue" size={15} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60 transition-colors group-focus-within:text-brand-blue" size={15} />
                 <input
                   {...register('email')}
                   type="email"
                   placeholder="example@mail.com"
                   autoComplete="email"
-                  className="w-full rounded-xl border border-brand-line bg-white/70 py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+                  className="w-full rounded-xl border border-brand-line bg-white/70 py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 />
               </div>
               {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
@@ -138,18 +137,18 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-brand-ink">Password</label>
               <div className="group relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35 transition-colors group-focus-within:text-brand-blue" size={15} />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60 transition-colors group-focus-within:text-brand-blue" size={15} />
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Password"
                   autoComplete="current-password"
-                  className="w-full rounded-xl border border-brand-line bg-white/70 py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+                  className="w-full rounded-xl border border-brand-line bg-white/70 py-3 pl-10 pr-10 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35 transition-colors hover:text-brand-blue"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/70 transition-colors hover:text-brand-blue"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -157,15 +156,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
               {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex cursor-pointer items-center gap-2 text-[13px] text-brand-ink/75">
-                <input
-                  {...register('rememberMe')}
-                  type="checkbox"
-                  className="h-4 w-4 accent-brand-blue"
-                />
-                Remember me
-              </label>
+            <div className="flex items-center justify-end">
               <Link
                 href="/forgot-password"
                 className="text-[13px] text-brand-blue transition-opacity hover:opacity-70"
@@ -186,7 +177,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
 
           <div className="my-5 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent to-brand-line" />
-            <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-brand-ink/40">New here</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-brand-ink/70">New here</span>
             <div className="h-px flex-1 bg-gradient-to-l from-transparent to-brand-line" />
           </div>
 
@@ -194,7 +185,7 @@ export default function LoginForm({ callbackUrl }: LoginFormProps) {
             <p className="mb-1.5 text-[17px] font-bold text-brand-navy">
               Open an account with us
             </p>
-            <p className="mb-4 text-[13.5px] leading-relaxed text-brand-ink/65">
+            <p className="mb-4 text-[13.5px] leading-relaxed text-brand-ink/70">
               Apply for a B2B account below — we respond within 24 hours.
             </p>
             <div className="flex flex-wrap gap-3">

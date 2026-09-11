@@ -48,7 +48,7 @@ export default function InfoPageShell({
                     href={link.href}
                     className="group flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
                   >
-                    <ChevronRight size={14} className="text-brand-ink/30 transition-all group-hover:translate-x-0.5 group-hover:text-brand-blue" />
+                    <ChevronRight size={14} className="text-brand-ink/60 transition-all group-hover:translate-x-0.5 group-hover:text-brand-blue" />
                     {link.label}
                   </Link>
                 ))}

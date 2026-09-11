@@ -61,7 +61,7 @@ export default function ProductVariantDetails({ product }: Props) {
               priority
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-white/40">
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-white/55">
               No image
             </div>
           )}
@@ -126,7 +126,7 @@ export default function ProductVariantDetails({ product }: Props) {
               compareAtAmount={selectedVariant.compareAtPrice?.amount}
             />
           ) : (
-            <span className="text-lg font-semibold text-brand-teal">
+            <span className="text-lg font-semibold text-brand-tealDeep">
               Price available upon quote request
             </span>
           )}
@@ -203,7 +203,7 @@ export default function ProductVariantDetails({ product }: Props) {
         {selectedVariant && <AddToQuoteButton product={product} selectedVariant={selectedVariant} />}
 
         {!selectedVariant?.availableForSale && (
-          <p className="mt-3 text-sm text-brand-ink/55">
+          <p className="mt-3 text-sm text-brand-ink/70">
             This variant is currently unavailable. Choose another option to continue.
           </p>
         )}
@@ -213,7 +213,7 @@ export default function ProductVariantDetails({ product }: Props) {
             {product.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-brand-mist px-3 py-1 text-xs text-brand-ink/65"
+                className="rounded-full bg-brand-mist px-3 py-1 text-xs text-brand-ink/70"
               >
                 {tag}
               </span>

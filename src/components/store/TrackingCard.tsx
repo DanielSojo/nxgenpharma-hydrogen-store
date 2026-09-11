@@ -10,7 +10,7 @@ export function TrackingCard({ fulfillments }: { fulfillments: any[] }) {
           <Truck size={15} className="text-brand-blue" />
           <h3 className="text-sm font-semibold text-brand-navy">Tracking</h3>
         </div>
-        <p className="text-sm text-brand-ink/55">
+        <p className="text-sm text-brand-ink/70">
           No tracking information yet. Check back once your order ships.
         </p>
       </div>
@@ -27,7 +27,7 @@ export function TrackingCard({ fulfillments }: { fulfillments: any[] }) {
         {tracked.map((fulfillment, i) => (
           <div key={i} className="flex flex-col gap-2">
             {fulfillment.trackingCompany && (
-              <p className="text-xs font-semibold uppercase tracking-wider text-brand-ink/50">
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-ink/70">
                 {fulfillment.trackingCompany}
               </p>
             )}

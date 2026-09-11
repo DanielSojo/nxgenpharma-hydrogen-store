@@ -16,6 +16,7 @@ import {
   Truck,
 } from 'lucide-react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import ReorderButton from '@/components/store/ReorderButton';
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; color: string; icon: any }> = {
@@ -24,7 +25,13 @@ function StatusBadge({ status }: { status: string }) {
     FULFILLED:   { label: 'Fulfilled',  color: 'bg-blue-100 text-blue-700',   icon: Truck },
     UNFULFILLED: { label: 'Processing', color: 'bg-gray-100 text-gray-600',   icon: Clock },
   };
-  const config = map[status] ?? { label: status, color: 'bg-gray-100 text-gray-600', icon: Clock };
+  const config = map[status] ?? {
+    label: status
+      ? status.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase())
+      : 'Unknown',
+    color: 'bg-gray-100 text-gray-600',
+    icon: Clock,
+  };
   const Icon = config.icon;
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${config.color}`}>
@@ -44,7 +51,7 @@ function TrackingCard({ fulfillments }: { fulfillments: any[] }) {
           <Truck size={15} className="text-brand-blue" />
           <h3 className="text-sm font-semibold text-brand-navy">Tracking</h3>
         </div>
-        <p className="text-sm text-brand-ink/55">
+        <p className="text-sm text-brand-ink/70">
           No tracking information yet. Check back once your order ships.
         </p>
       </div>
@@ -61,7 +68,7 @@ function TrackingCard({ fulfillments }: { fulfillments: any[] }) {
         {tracked.map((fulfillment, i) => (
           <div key={i} className="flex flex-col gap-2">
             {fulfillment.trackingCompany && (
-              <p className="text-xs font-semibold uppercase tracking-wider text-brand-ink/50">
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-ink/70">
                 {fulfillment.trackingCompany}
               </p>
             )}
@@ -128,7 +135,7 @@ export default function OrderDetailPage() {
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-600">
           {error || 'Order not found'}
         </div>
-        <Link href="/orders" className="mt-4 inline-flex items-center gap-2 text-sm text-brand-ink/65 hover:text-brand-navy">
+        <Link href="/orders" className="mt-4 inline-flex items-center gap-2 text-sm text-brand-ink/70 hover:text-brand-navy">
           <ArrowLeft size={16} /> Back to Orders
         </Link>
       </div>
@@ -168,12 +175,15 @@ export default function OrderDetailPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <Link
-        href="/orders"
-        className="mb-8 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
-      >
-        <ArrowLeft size={16} /> Back to Orders
-      </Link>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <Link
+          href="/orders"
+          className="inline-flex items-center gap-2 text-sm text-brand-ink/70 transition-colors hover:text-brand-navy"
+        >
+          <ArrowLeft size={16} /> Back to Orders
+        </Link>
+        <ReorderButton lineItems={lineItems} />
+      </div>
 
       {/* Header */}
       <div className="bg-catalog-hero relative mb-6 overflow-hidden rounded-2xl p-8 text-white ring-1 ring-brand-line">
@@ -229,17 +239,17 @@ export default function OrderDetailPage() {
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center">
-                          <ShoppingBag size={20} className="text-brand-ink/30" />
+                          <ShoppingBag size={20} className="text-brand-ink/60" />
                         </div>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-brand-navy">{item.title}</p>
                       {item.variant?.title && item.variant.title !== 'Default Title' && (
-                        <p className="mt-0.5 text-xs text-brand-ink/50">{item.variant.title}</p>
+                        <p className="mt-0.5 text-xs text-brand-ink/70">{item.variant.title}</p>
                       )}
                       <div className="mt-2 flex items-center justify-between">
-                        <span className="text-sm text-brand-ink/65">
+                        <span className="text-sm text-brand-ink/70">
                           Qty: {item.quantity}
                         </span>
                         {variantPrice && (
@@ -247,7 +257,7 @@ export default function OrderDetailPage() {
                             <p className="text-sm font-bold text-brand-navy">
                               {formatMoney(lineTotal, variantPrice.currencyCode)}
                             </p>
-                            <p className="text-xs text-brand-ink/50">
+                            <p className="text-xs text-brand-ink/70">
                               {formatMoney(calculatePrice(variantPrice.amount), variantPrice.currencyCode)} each
                             </p>
                           </div>
@@ -303,13 +313,13 @@ export default function OrderDetailPage() {
               <div className="flex flex-col gap-4 text-sm text-brand-ink/72">
                 {shippingLines.length > 0 && (
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Shipping Method</p>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/70">Shipping Method</p>
                     <div className="flex flex-col gap-2">
                       {shippingLines.map((line: any, index: number) => (
                         <div key={`${line.title}-${index}`} className="flex items-center justify-between gap-3 rounded-xl bg-brand-mist px-4 py-3">
                           <div>
                             <p className="font-semibold text-brand-navy">{line.title}</p>
-                            {line.code && <p className="text-xs text-brand-ink/55">{line.code}</p>}
+                            {line.code && <p className="text-xs text-brand-ink/70">{line.code}</p>}
                           </div>
                           <span className="font-semibold text-brand-navy">{formatMoney(line.price, currency)}</span>
                         </div>
@@ -320,7 +330,7 @@ export default function OrderDetailPage() {
 
                 {discountCodes.length > 0 && (
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Discounts</p>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/70">Discounts</p>
                     <div className="flex flex-col gap-2">
                       {discountCodes.map((discount: any, index: number) => (
                         <div key={`${discount.code}-${index}`} className="rounded-xl bg-emerald-50 px-4 py-3">
@@ -340,14 +350,14 @@ export default function OrderDetailPage() {
 
                 {order.note && (
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Order Note</p>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/70">Order Note</p>
                     <p className="rounded-xl bg-brand-mist px-4 py-3 leading-relaxed text-brand-ink/72">{order.note}</p>
                   </div>
                 )}
 
                 {tags.length > 0 && (
                   <div>
-                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/45">Tags</p>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wider text-brand-ink/70">Tags</p>
                     <div className="flex flex-wrap gap-2">
                       {tags.map((tag: string) => (
                         <span key={tag} className="rounded-full bg-brand-mist px-3 py-1 text-xs font-semibold text-brand-navy">
@@ -384,7 +394,7 @@ export default function OrderDetailPage() {
               <StatusBadge status={order.financialStatus} />
               <StatusBadge status={order.fulfillmentStatus} />
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-brand-ink/65">
+            <p className="mt-3 text-xs leading-relaxed text-brand-ink/70">
               Review payment and fulfillment progress for this order here.
             </p>
           </div>

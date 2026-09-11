@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ClipboardList, ArrowRight, Clock, ChevronRight } from 'lucide-react';
+import { ClipboardList, ArrowRight, Clock, ChevronRight, CheckCircle, FileText } from 'lucide-react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 import PageHeader from '@/components/layout/PageHeader';
 
@@ -15,6 +15,32 @@ interface Quote {
   createdAt: string;
   lineItemsCount: number;
   note: string;
+}
+
+/**
+ * Shopify draft-order status, in the buyer's language. The API was already
+ * returning this field; the list just never showed it, so a buyer couldn't tell
+ * a quote still under review from one that had been priced.
+ */
+function QuoteStatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; color: string; icon: typeof Clock }> = {
+    open: { label: 'Under review', color: 'bg-amber-100 text-amber-700', icon: Clock },
+    invoice_sent: { label: 'Quote ready', color: 'bg-blue-100 text-blue-700', icon: FileText },
+    completed: { label: 'Converted to order', color: 'bg-green-100 text-green-700', icon: CheckCircle },
+  };
+  const config = map[status] ?? {
+    label: status ? status.replace(/_/g, ' ') : 'Pending',
+    color: 'bg-gray-100 text-gray-600',
+    icon: Clock,
+  };
+  const Icon = config.icon;
+
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${config.color}`}>
+      <Icon size={11} />
+      {config.label}
+    </span>
+  );
 }
 
 export default function QuotesPage() {
@@ -55,7 +81,7 @@ export default function QuotesPage() {
             <ClipboardList size={30} />
           </span>
           <p className="mb-2 font-semibold text-brand-navy">No quotes yet</p>
-          <p className="mb-6 text-sm text-brand-ink/55">Browse our catalog and request a quote</p>
+          <p className="mb-6 text-sm text-brand-ink/70">Browse our catalog and request a quote</p>
           <Link
             href="/collections/all"
             className="bg-brand-gradient-navy inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-md shadow-brand-navy/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
@@ -66,9 +92,6 @@ export default function QuotesPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {quotes.map((quote) => {
-            const quoteNumberMatch = quote.note?.match(/Quote Number: (Q\S+)/);
-            const quoteNumber = quoteNumberMatch?.[1] ?? quote.name;
-
             return (
               <Link
                 key={quote.id}
@@ -80,13 +103,16 @@ export default function QuotesPage() {
                     <ClipboardList size={18} />
                   </div>
                   <div>
-                    <p className="font-semibold text-brand-navy">{quoteNumber}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold text-brand-navy">{quote.name}</p>
+                      <QuoteStatusBadge status={quote.status} />
+                    </div>
                     <div className="mt-0.5 flex items-center gap-3">
-                      <span className="text-sm text-brand-ink/60">
+                      <span className="text-sm text-brand-ink/70">
                         {quote.lineItemsCount} item{quote.lineItemsCount !== 1 ? 's' : ''}
                       </span>
                       <span className="text-brand-line">•</span>
-                      <span className="flex items-center gap-1 text-sm text-brand-ink/60">
+                      <span className="flex items-center gap-1 text-sm text-brand-ink/70">
                         <Clock size={12} />
                         {new Date(quote.createdAt).toLocaleDateString('en-US', {
                           month: 'short', day: 'numeric', year: 'numeric',
@@ -99,7 +125,7 @@ export default function QuotesPage() {
                   <span className="text-sm font-bold text-brand-navy">
                     {formatCalculatedPrice(quote.totalPrice, quote.currencyCode)}
                   </span>
-                  <ChevronRight size={18} className="text-brand-ink/30 transition-all group-hover:translate-x-0.5 group-hover:text-brand-blue" />
+                  <ChevronRight size={18} className="text-brand-ink/60 transition-all group-hover:translate-x-0.5 group-hover:text-brand-blue" />
                 </div>
               </Link>
             );

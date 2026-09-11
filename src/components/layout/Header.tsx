@@ -128,7 +128,7 @@ export default function Header() {
                 <span className="max-w-[140px] truncate text-sm text-brand-ink">{accountName}</span>
                 <ChevronDown
                   size={15}
-                  className={`text-brand-ink/50 transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`}
+                  className={`text-brand-ink/70 transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
@@ -140,7 +140,7 @@ export default function Header() {
                   <div className="border-b border-brand-line/60 bg-brand-surface px-4 py-3">
                     <p className="truncate text-sm font-semibold text-brand-navy">{accountName}</p>
                     {session.user.email && (
-                      <p className="truncate text-xs text-brand-ink/55">{session.user.email}</p>
+                      <p className="truncate text-xs text-brand-ink/70">{session.user.email}</p>
                     )}
                   </div>
 
@@ -164,15 +164,6 @@ export default function Header() {
                           <ClipboardList size={16} className="text-brand-blue" /> Quotes
                         </Link>
                       </>
-                    )}
-
-                    {(process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
-                      .split(',')
-                      .map((e) => e.trim().toLowerCase())
-                      .includes((session.user.email ?? '').toLowerCase()) && (
-                      <Link href="/admin" role="menuitem" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-brand-blue transition-colors hover:bg-brand-mist">
-                        <User size={16} /> Admin
-                      </Link>
                     )}
                   </div>
 

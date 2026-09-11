@@ -180,7 +180,7 @@ export default async function LandingPage() {
                   <Icon size={24} />
                 </div>
                 <h3 className="text-xl font-semibold text-brand-navy">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-brand-ink/68">{description}</p>
+                <p className="mt-3 text-sm leading-6 text-brand-ink/70">{description}</p>
               </article>
             ))}
           </div>

@@ -40,13 +40,13 @@ export default function ProductCard({ product }: Props) {
               className="object-contain p-5 transition-transform duration-500 group-hover:scale-105 [filter:drop-shadow(0_12px_16px_rgba(0,0,0,0.5))]"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
+            <div className="absolute inset-0 flex items-center justify-center text-xs text-white/55">
               No image
             </div>
           )}
           {!product.availableForSale && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-ink/45">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-ink/70">
                 Sold Out
               </span>
             </div>
@@ -77,7 +77,7 @@ export default function ProductCard({ product }: Props) {
                 size="sm"
               />
             ) : (
-              <span className="text-sm font-medium text-brand-ink/55">
+              <span className="text-sm font-medium text-brand-ink/70">
                 Price available upon request
               </span>
             )}

@@ -52,7 +52,7 @@ export default async function RefusedPage() {
           >
             <button
               type="submit"
-              className="w-full py-3 text-[13px] text-brand-ink/50 transition-colors hover:text-brand-navy"
+              className="w-full py-3 text-[13px] text-brand-ink/70 transition-colors hover:text-brand-navy"
             >
               Sign out
             </button>

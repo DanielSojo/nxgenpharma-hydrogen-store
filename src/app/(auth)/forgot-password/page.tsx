@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
 
         <Link
           href="/login"
-          className="mb-6 inline-flex items-center gap-2 text-sm text-brand-ink/55 transition-colors hover:text-brand-navy"
+          className="mb-6 inline-flex items-center gap-2 text-sm text-brand-ink/70 transition-colors hover:text-brand-navy"
         >
           <ArrowLeft size={16} /> Back to Sign In
         </Link>
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
                   <label className="text-[13px] font-medium text-brand-ink">Email</label>
                   <div className="relative">
                     <Mail
-                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/35"
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/70"
                       size={15}
                     />
                     <input
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
                       type="email"
                       placeholder="example@mail.com"
                       autoComplete="email"
-                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
+                      className="w-full rounded-xl border border-brand-line bg-brand-surface py-3 pl-10 pr-4 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/10"
                     />
                   </div>
                   {errors.email && (
@@ -113,7 +113,7 @@ export default function ForgotPasswordPage() {
 
                 <Link
                   href="/login"
-                  className="text-center text-[13px] text-brand-ink/55 transition-colors hover:text-brand-navy"
+                  className="text-center text-[13px] text-brand-ink/70 transition-colors hover:text-brand-navy"
                 >
                   Remember your password? Sign in
                 </Link>

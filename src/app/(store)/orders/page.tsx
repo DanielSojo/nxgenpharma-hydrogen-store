@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ShoppingBag, ArrowRight, ChevronRight, CheckCircle, Clock, Truck } from 'lucide-react';
+import ReorderButton from '@/components/store/ReorderButton';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 import PageHeader from '@/components/layout/PageHeader';
 
@@ -19,10 +20,13 @@ interface Order {
   currentTotalPrice: { amount: string; currencyCode: string };
   lineItems: {
     nodes: Array<{
+      title: string;
       quantity: number;
       variant?: {
+        id?: string | null;
+        availableForSale?: boolean | null;
         price?: { amount: string; currencyCode: string };
-      };
+      } | null;
     }>;
   };
   lineItemsCount: number;
@@ -39,7 +43,13 @@ function StatusBadge({ status }: { status: string }) {
     FULFILLED:   { label: 'Fulfilled',  color: 'bg-blue-100 text-blue-700',   icon: Truck },
     UNFULFILLED: { label: 'Processing', color: 'bg-gray-100 text-gray-600',   icon: Clock },
   };
-  const config = map[status] ?? { label: status, color: 'bg-gray-100 text-gray-600', icon: Clock };
+  const config = map[status] ?? {
+    label: status
+      ? status.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase())
+      : 'Unknown',
+    color: 'bg-gray-100 text-gray-600',
+    icon: Clock,
+  };
   const Icon = config.icon;
   return (
     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${config.color}`}>
@@ -89,7 +99,7 @@ export default function OrdersPage() {
             <ShoppingBag size={30} />
           </span>
           <p className="mb-2 font-semibold text-brand-navy">No orders yet</p>
-          <p className="mb-6 text-sm text-brand-ink/55">Your completed orders will appear here</p>
+          <p className="mb-6 text-sm text-brand-ink/70">Your completed orders will appear here</p>
           <Link
             href="/quotes"
             className="bg-brand-gradient-navy inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-md shadow-brand-navy/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
@@ -113,34 +123,51 @@ export default function OrdersPage() {
             const currency = order.currentTotalPrice?.currencyCode ?? order.currentSubtotalPrice?.currencyCode ?? 'USD';
 
             return (
-              <Link
+              <div
                 key={order.id}
-                href={`/orders/${order.orderNumber}`}
-                className="group flex items-center justify-between rounded-2xl border border-brand-line/70 bg-white px-6 py-5 shadow-[0_1px_8px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/30 hover:shadow-[0_16px_36px_-18px_rgba(23,50,82,0.28)]"
+                className="group flex items-center justify-between gap-3 rounded-2xl border border-brand-line/70 bg-white px-6 py-5 shadow-[0_1px_8px_-4px_rgba(23,50,82,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/30 hover:shadow-[0_16px_36px_-18px_rgba(23,50,82,0.28)]"
               >
-                <div className="flex items-center gap-4">
+                <Link
+                  href={`/orders/${order.orderNumber}`}
+                  className="flex min-w-0 flex-1 items-center gap-4"
+                >
                   <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand-mist text-brand-blue transition-transform duration-200 group-hover:scale-105">
                     <ShoppingBag size={18} />
                   </div>
-                  <div>
-                    <div className="mb-0.5 flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="mb-0.5 flex flex-wrap items-center gap-2">
                       <p className="font-semibold text-brand-navy">Order #{order.orderNumber}</p>
                       <StatusBadge status={order.financialStatus} />
+                      {order.fulfillmentStatus && (
+                        <StatusBadge status={order.fulfillmentStatus} />
+                      )}
                     </div>
-                    <p className="text-sm text-brand-ink/60">
+                    <p className="text-sm text-brand-ink/70">
                       {new Date(order.processedAt).toLocaleDateString('en-US', {
                         month: 'short', day: 'numeric', year: 'numeric',
                       })}
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
+                </Link>
+
+                <div className="flex flex-shrink-0 items-center gap-3">
                   <span className="text-sm font-bold text-brand-navy">
                     {formatPrice(String(displayTotal), currency)}
                   </span>
-                  <ChevronRight size={18} className="text-brand-ink/30 transition-all group-hover:translate-x-0.5 group-hover:text-brand-blue" />
+                  <ReorderButton
+                    lineItems={order.lineItems?.nodes ?? []}
+                    size="compact"
+                    className="hidden sm:inline-flex"
+                  />
+                  <Link
+                    href={`/orders/${order.orderNumber}`}
+                    aria-label={`View order ${order.orderNumber}`}
+                    className="text-brand-ink/70 transition-all hover:text-brand-blue group-hover:translate-x-0.5 group-hover:text-brand-blue"
+                  >
+                    <ChevronRight size={18} />
+                  </Link>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

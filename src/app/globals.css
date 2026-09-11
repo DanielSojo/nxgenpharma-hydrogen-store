@@ -6,7 +6,8 @@
   :root {
     --brand-aqua: #67c8b8;
     --brand-teal: #49c3c8;
-    --brand-blue: #3e97da;
+    --brand-blue: #2d75b2;
+    --brand-blue-light: #3e97da;
     --brand-navy: #1a1d6d;
     --brand-ink: #173252;
     --brand-mist: #edf9f9;
@@ -50,11 +51,20 @@
   }
 
   /* Gradient brand surface (buttons, accents) */
+  /*
+   * Button gradients stay inside the range that keeps white text legible.
+   * Every stop below is >= 4.5:1 against white; the previous teal -> aqua tail
+   * bottomed out at 1.99:1, so label text on the right side of any wide button
+   * was effectively unreadable.
+   *
+   * The aqua and teal still appear throughout the UI — just on decorative
+   * surfaces (.bg-catalog-hero, .auth-aurora, accent dots) that carry no text.
+   */
   .bg-brand-gradient {
-    background-image: linear-gradient(120deg, #1a1d6d 0%, #3e97da 38%, #49c3c8 72%, #67c8b8 100%);
+    background-image: linear-gradient(120deg, #1a1d6d 0%, #1f4fa8 55%, #2563ac 100%);
   }
   .bg-brand-gradient-navy {
-    background-image: linear-gradient(120deg, #1a1d6d 0%, #243ca8 55%, #3e97da 100%);
+    background-image: linear-gradient(120deg, #1a1d6d 0%, #243ca8 55%, #2a6fb8 100%);
   }
 
   /* Catalog-cover backdrop: deep navy vignette with a centered teal/blue spotlight */

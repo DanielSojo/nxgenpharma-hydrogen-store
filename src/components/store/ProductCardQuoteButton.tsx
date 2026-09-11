@@ -43,7 +43,7 @@ export default function ProductCardQuoteButton({ product, variant, quantity = 1 
       disabled={!variant.availableForSale}
       className={`flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition-colors ${
         !variant.availableForSale
-          ? 'cursor-not-allowed bg-brand-mist text-brand-ink/45'
+          ? 'cursor-not-allowed bg-brand-mist text-brand-ink/70'
           : added
             ? 'bg-green-600 text-white'
             : 'bg-brand-navy text-white hover:bg-brand-blue'

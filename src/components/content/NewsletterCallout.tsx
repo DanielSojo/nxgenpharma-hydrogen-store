@@ -21,13 +21,13 @@ export default function NewsletterCallout() {
           aria-label="Your Name"
           placeholder="Your Name"
           readOnly
-          className="rounded-2xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/45"
+          className="rounded-2xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/55"
         />
         <input
           aria-label="Your Email Address"
           placeholder="Your Email Address"
           readOnly
-          className="rounded-2xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/45"
+          className="rounded-2xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/55"
         />
       </div>
 

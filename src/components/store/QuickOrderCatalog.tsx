@@ -1,14 +1,27 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Boxes, CheckCircle2, ChevronDown, LayoutGrid, List, Loader2, Minus, Plus, Search, XCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {
+  Boxes,
+  CheckCircle2,
+  ChevronDown,
+  LayoutGrid,
+  List,
+  Loader2,
+  Minus,
+  Plus,
+  Search,
+  X,
+  XCircle,
+} from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { ShopifyProduct, ShopifyProductVariant } from '@/types';
 import { useCartStore } from '@/store/cart';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
 import PageHeader from '@/components/layout/PageHeader';
+import CatalogLoading from '@/components/feedback/CatalogLoading';
 
 interface CollectionOption {
   id: string;
@@ -27,6 +40,13 @@ interface Props {
 
 type StockFilter = 'all' | 'in-stock' | 'out-of-stock';
 type SortOption = 'alpha-az' | 'alpha-za' | 'price-low' | 'price-high';
+type ViewOption = 'grid' | 'list';
+
+const STOCK_FILTERS: StockFilter[] = ['all', 'in-stock', 'out-of-stock'];
+const SORT_OPTIONS: SortOption[] = ['alpha-az', 'alpha-za', 'price-low', 'price-high'];
+
+/** Largest quantity a single add-to-cart click may submit. */
+const MAX_QUANTITY = 9999;
 
 function variantLabel(product: ShopifyProduct, variant: ShopifyProductVariant) {
   if (variant.title && variant.title !== 'Default Title') return variant.title;
@@ -98,12 +118,45 @@ function getPreferredVariant(
   );
 }
 
+/**
+ * Quantity that can be typed as well as stepped. Wholesale buyers order in
+ * dozens — reaching 50 with the +/- buttons alone took 49 clicks.
+ *
+ * The raw string is kept alongside the number so the field can be briefly empty
+ * while the buyer retypes it, without snapping back to 1 mid-keystroke.
+ */
+function useQuantity() {
+  const [quantity, setQuantity] = useState(1);
+  const [draft, setDraft] = useState('1');
+
+  const commit = useCallback((next: number) => {
+    const clamped = Math.min(MAX_QUANTITY, Math.max(1, Math.round(next) || 1));
+    setQuantity(clamped);
+    setDraft(String(clamped));
+  }, []);
+
+  const onChange = useCallback((raw: string) => {
+    const digitsOnly = raw.replace(/\D/g, '');
+    setDraft(digitsOnly);
+    const parsed = Number.parseInt(digitsOnly, 10);
+    if (Number.isFinite(parsed) && parsed >= 1) {
+      setQuantity(Math.min(MAX_QUANTITY, parsed));
+    }
+  }, []);
+
+  // An empty or zero field on blur falls back to 1 rather than blocking the add.
+  const onBlur = useCallback(() => commit(quantity), [commit, quantity]);
+
+  return { quantity, draft, commit, onChange, onBlur, reset: () => commit(1) };
+}
+
 function useProductOrder(product: ShopifyProduct, vialFilter: string) {
   const variants = product.variants.nodes;
-  const cart = useCartStore();
+  const addItem = useCartStore((state) => state.addItem);
+  const pending = useCartStore((state) => state.pending);
   const { formatCalculatedPrice } = useCustomerPricing();
   const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id ?? '');
-  const [quantity, setQuantity] = useState(1);
+  const quantityControl = useQuantity();
 
   const variant = useMemo(
     () => getPreferredVariant(product, selectedVariantId, vialFilter),
@@ -121,6 +174,17 @@ function useProductOrder(product: ShopifyProduct, vialFilter: string) {
       ? Math.round(((compareAtPrice - currentPrice) / compareAtPrice) * 100)
       : null;
 
+  // Only this row spins — `pending` is keyed by variant id, so adding one
+  // product no longer puts every other button in the catalog into a loader.
+  const isAdding = Boolean(variant && pending[variant.id]);
+
+  const handleAdd = useCallback(async () => {
+    if (!variant) return;
+    const added = await addItem(variant.id, quantityControl.quantity, { label: product.title });
+    // Reset so the next product starts at 1 instead of inheriting a bulk count.
+    if (added) quantityControl.reset();
+  }, [addItem, product.title, quantityControl, variant]);
+
   return {
     variants,
     variant,
@@ -128,13 +192,82 @@ function useProductOrder(product: ShopifyProduct, vialFilter: string) {
     hasVariantOptions,
     available,
     discountPercent,
-    quantity,
-    setQuantity,
+    quantityControl,
     setSelectedVariantId,
-    addItem: cart.addItem,
-    isLoading: cart.isLoading,
+    handleAdd,
+    isAdding,
     formatCalculatedPrice,
   };
+}
+
+/** Shared stepper: minus, a typable field, plus. */
+function QuantityStepper({
+  control,
+  label,
+  size = 'lg',
+  disabled = false,
+}: {
+  control: ReturnType<typeof useQuantity>;
+  label: string;
+  size?: 'lg' | 'sm';
+  disabled?: boolean;
+}) {
+  const isLarge = size === 'lg';
+
+  return (
+    <div
+      className={`grid items-center rounded-full border border-brand-line/70 bg-brand-surface text-brand-ink ${
+        isLarge
+          ? 'h-12 grid-cols-[44px_1fr_44px]'
+          : 'h-10 w-[104px] shrink-0 grid-cols-[34px_1fr_34px]'
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => control.commit(control.quantity - 1)}
+        disabled={disabled || control.quantity <= 1}
+        className={`flex items-center justify-center rounded-l-full font-semibold transition-colors hover:bg-brand-line/60 hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-35 ${
+          isLarge ? 'h-12' : 'h-10'
+        }`}
+        aria-label={`Decrease quantity for ${label}`}
+      >
+        <Minus size={isLarge ? 16 : 14} />
+      </button>
+
+      {/*
+        `size={1}` matters: a bare text input reports a 20-character intrinsic
+        width, and that is what the grid track sizes against — it blew the
+        compact stepper out to ~208px and pushed Add off the edge of the card.
+      */}
+      <input
+        type="text"
+        inputMode="numeric"
+        autoComplete="off"
+        size={1}
+        value={control.draft}
+        onChange={(event) => control.onChange(event.target.value)}
+        onBlur={control.onBlur}
+        onFocus={(event) => event.target.select()}
+        disabled={disabled}
+        aria-label={`Quantity for ${label}`}
+        className={`w-full min-w-0 bg-transparent text-center font-semibold tabular-nums outline-none focus:text-brand-blue disabled:cursor-not-allowed ${
+          isLarge ? 'text-sm' : 'text-xs'
+        }`}
+      />
+
+      <button
+        type="button"
+        onClick={() => control.commit(control.quantity + 1)}
+        disabled={disabled || control.quantity >= MAX_QUANTITY}
+        className={`flex items-center justify-center rounded-r-full font-semibold transition-colors hover:bg-brand-line/60 hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-35 ${
+          isLarge ? 'h-12' : 'h-10'
+        }`}
+        aria-label={`Increase quantity for ${label}`}
+      >
+        <Plus size={isLarge ? 16 : 14} />
+      </button>
+    </div>
+  );
 }
 
 function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialFilter: string }) {
@@ -145,11 +278,10 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
     hasVariantOptions,
     available,
     discountPercent,
-    quantity,
-    setQuantity,
+    quantityControl,
     setSelectedVariantId,
-    addItem,
-    isLoading,
+    handleAdd,
+    isAdding,
     formatCalculatedPrice,
   } = useProductOrder(product, vialFilter);
 
@@ -171,7 +303,7 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
                 sizes="56px"
               />
             ) : (
-              <span className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
+              <span className="absolute inset-0 flex items-center justify-center text-xs text-white/55">
                 No image
               </span>
             )}
@@ -202,7 +334,7 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
                 {available ? 'In stock' : 'Out of Stock'}
               </span>
               {discountPercent ? (
-                <p className="mt-1 text-sm font-medium text-brand-ink/65">
+                <p className="mt-1 text-sm font-medium text-brand-ink/70">
                   Was{' '}
                   {formatCalculatedPrice(
                     variant.compareAtPrice!.amount,
@@ -213,7 +345,7 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
               ) : null}
             </>
           ) : (
-            <p className="text-sm font-medium text-brand-ink/55">Price available upon request</p>
+            <p className="text-sm font-medium text-brand-ink/70">Price available upon request</p>
           )}
         </div>
 
@@ -224,7 +356,7 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
               disabled={!hasVariantOptions}
               value={variant?.id ?? ''}
               onChange={(event) => setSelectedVariantId(event.target.value)}
-              className="h-12 w-full appearance-none rounded-full border border-brand-line/70 bg-brand-surface px-4 pr-10 text-sm font-semibold text-brand-ink outline-none transition-all hover:border-brand-blue/40 focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/10 disabled:cursor-not-allowed disabled:text-brand-ink/50"
+              className="h-12 w-full appearance-none rounded-full border border-brand-line/70 bg-brand-surface px-4 pr-10 text-sm font-semibold text-brand-ink outline-none transition-all hover:border-brand-blue/40 focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/10 disabled:cursor-not-allowed disabled:text-brand-ink/70"
             >
               {variants.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -239,26 +371,11 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
           </label>
 
           {available ? (
-            <div className="grid h-12 grid-cols-[44px_1fr_44px] items-center rounded-full border border-brand-line/70 bg-brand-surface text-brand-ink">
-              <button
-                type="button"
-                onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-                disabled={quantity <= 1}
-                className="flex h-12 items-center justify-center rounded-l-full font-semibold transition-colors hover:bg-brand-line/60 hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-35"
-                aria-label={`Decrease quantity for ${product.title}`}
-              >
-                <Minus size={16} />
-              </button>
-              <span className="text-center text-sm font-semibold tabular-nums">{quantity}</span>
-              <button
-                type="button"
-                onClick={() => setQuantity((current) => current + 1)}
-                className="flex h-12 items-center justify-center rounded-r-full font-semibold transition-colors hover:bg-brand-line/60 hover:text-brand-blue"
-                aria-label={`Increase quantity for ${product.title}`}
-              >
-                <Plus size={16} />
-              </button>
-            </div>
+            <QuantityStepper
+              control={quantityControl}
+              label={product.title}
+              disabled={isAdding}
+            />
           ) : (
             <div className="flex h-12 items-center justify-center rounded-full border border-brand-line/70 bg-brand-surface px-4 text-center text-sm font-semibold text-brand-ink/75">
               Restocking soon
@@ -267,16 +384,16 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
 
           <button
             type="button"
-            onClick={() => variant && addItem(variant.id, quantity)}
-            disabled={!available || isLoading}
+            onClick={handleAdd}
+            disabled={!available || isAdding}
             className="bg-brand-gradient flex h-12 items-center justify-center rounded-full px-5 text-sm font-bold uppercase tracking-wide text-white shadow-md shadow-brand-blue/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-blue/30 active:translate-y-0 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70 disabled:shadow-none"
           >
-            {isLoading && available ? (
+            {isAdding ? (
               <Loader2 className="animate-spin" size={17} />
             ) : available ? (
               'Add to Cart'
             ) : (
-              'Notify Me'
+              'Out of Stock'
             )}
           </button>
         </div>
@@ -293,11 +410,10 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
     hasVariantOptions,
     available,
     discountPercent,
-    quantity,
-    setQuantity,
+    quantityControl,
     setSelectedVariantId,
-    addItem,
-    isLoading,
+    handleAdd,
+    isAdding,
     formatCalculatedPrice,
   } = useProductOrder(product, vialFilter);
 
@@ -317,7 +433,7 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
             sizes="(max-width: 640px) 50vw, (max-width: 1280px) 25vw, 20vw"
           />
         ) : (
-          <span className="absolute inset-0 flex items-center justify-center text-xs text-white/40">
+          <span className="absolute inset-0 flex items-center justify-center text-xs text-white/55">
             No image
           </span>
         )}
@@ -355,7 +471,7 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
                 {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
               </span>
               {discountPercent ? (
-                <span className="text-xs text-brand-ink/45 line-through">
+                <span className="text-xs text-brand-ink/70 line-through">
                   {formatCalculatedPrice(
                     variant.compareAtPrice!.amount,
                     variant.compareAtPrice!.currencyCode
@@ -364,7 +480,7 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
               ) : null}
             </>
           ) : (
-            <span className="text-xs font-medium text-brand-ink/55">Price upon request</span>
+            <span className="text-xs font-medium text-brand-ink/70">Price upon request</span>
           )}
         </div>
 
@@ -390,42 +506,33 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
             </label>
           ) : null}
 
-          <div className="flex items-center gap-2">
+          {/*
+            Wraps rather than overflows: in the 2-column grid on a small phone
+            the card is only ~133px wide, which can't fit the stepper and the
+            button side by side. There, Add drops to its own full-width row.
+          */}
+          <div className="flex flex-wrap items-center gap-2">
             {available ? (
-              <div className="grid h-10 shrink-0 grid-cols-[34px_1fr_34px] items-center rounded-full border border-brand-line/70 bg-brand-surface text-brand-ink">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-                  disabled={quantity <= 1}
-                  className="flex h-10 items-center justify-center rounded-l-full transition-colors hover:bg-brand-line/60 hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-35"
-                  aria-label={`Decrease quantity for ${product.title}`}
-                >
-                  <Minus size={14} />
-                </button>
-                <span className="text-center text-xs font-semibold tabular-nums">{quantity}</span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((current) => current + 1)}
-                  className="flex h-10 items-center justify-center rounded-r-full transition-colors hover:bg-brand-line/60 hover:text-brand-blue"
-                  aria-label={`Increase quantity for ${product.title}`}
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
+              <QuantityStepper
+                control={quantityControl}
+                label={product.title}
+                size="sm"
+                disabled={isAdding}
+              />
             ) : null}
 
             <button
               type="button"
-              onClick={() => variant && addItem(variant.id, quantity)}
-              disabled={!available || isLoading}
-              className="bg-brand-gradient flex h-10 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-bold uppercase tracking-wide text-white shadow-md shadow-brand-blue/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70 disabled:shadow-none"
+              onClick={handleAdd}
+              disabled={!available || isAdding}
+              className="bg-brand-gradient flex h-10 min-w-[72px] flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-bold uppercase tracking-wide text-white shadow-md shadow-brand-blue/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70 disabled:shadow-none"
             >
-              {isLoading && available ? (
+              {isAdding ? (
                 <Loader2 className="animate-spin" size={15} />
               ) : available ? (
                 'Add'
               ) : (
-                'Notify Me'
+                'Out of Stock'
               )}
             </button>
           </div>
@@ -435,7 +542,7 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
   );
 }
 
-export default function QuickOrderCatalog({
+function QuickOrderCatalogInner({
   products,
   collections,
   activeHandle,
@@ -444,13 +551,98 @@ export default function QuickOrderCatalog({
   description,
 }: Props) {
   const router = useRouter();
-  const [search, setSearch] = useState('');
-  const [stockFilter, setStockFilter] = useState<StockFilter>('all');
-  const [vialFilter, setVialFilter] = useState('all');
-  const [sort, setSort] = useState<SortOption>('alpha-az');
-  const [view, setView] = useState<'grid' | 'list'>('list');
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const vialOptions = useMemo(() => getVialValues(products), [products]);
+
+  // The URL is the source of truth for filters, so returning from a product
+  // page (or sharing the link) restores exactly what the buyer was looking at.
+  const readParams = useCallback(() => {
+    const rawStock = searchParams.get('stock') as StockFilter | null;
+    const rawSort = searchParams.get('sort') as SortOption | null;
+    const rawView = searchParams.get('view');
+
+    return {
+      search: searchParams.get('q') ?? '',
+      stockFilter: rawStock && STOCK_FILTERS.includes(rawStock) ? rawStock : ('all' as StockFilter),
+      vialFilter: searchParams.get('vial') ?? 'all',
+      sort: rawSort && SORT_OPTIONS.includes(rawSort) ? rawSort : ('alpha-az' as SortOption),
+      view: (rawView === 'grid' ? 'grid' : 'list') as ViewOption,
+    };
+  }, [searchParams]);
+
+  // Seeded from the URL once; the controls are the source of truth from there.
+  const [initial] = useState(readParams);
+  const [search, setSearch] = useState(initial.search);
+  const [stockFilter, setStockFilter] = useState<StockFilter>(initial.stockFilter);
+  const [vialFilter, setVialFilter] = useState(initial.vialFilter);
+  const [sort, setSort] = useState<SortOption>(initial.sort);
+  const [view, setView] = useState<ViewOption>(initial.view);
+
+  const applyParams = useCallback((next: ReturnType<typeof readParams>) => {
+    setSearch(next.search);
+    setStockFilter(next.stockFilter);
+    setVialFilter(next.vialFilter);
+    setSort(next.sort);
+    setView(next.view);
+  }, []);
+
+  // Mirror the controls into the query string with the native History API.
+  //
+  // `router.replace` would re-run this route's server component on every
+  // keystroke — and these pages fetch the entire catalog from Shopify — so the
+  // URL is updated without asking Next to navigate. Typing is debounced on top
+  // of that to keep the history entry from thrashing.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (search.trim()) params.set('q', search.trim());
+    if (stockFilter !== 'all') params.set('stock', stockFilter);
+    if (vialFilter !== 'all') params.set('vial', vialFilter);
+    if (sort !== 'alpha-az') params.set('sort', sort);
+    if (view !== 'list') params.set('view', view);
+
+    const nextQuery = params.toString();
+    const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
+
+    const timeout = setTimeout(() => {
+      if (`${window.location.pathname}${window.location.search}` === nextUrl) return;
+      window.history.replaceState(null, '', nextUrl);
+    }, 250);
+
+    return () => clearTimeout(timeout);
+  }, [search, stockFilter, vialFilter, sort, view, pathname]);
+
+  // Back/forward can land on this page with a different query string without
+  // remounting it — re-read the URL when that happens.
+  useEffect(() => {
+    const onPopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const rawStock = params.get('stock') as StockFilter | null;
+      const rawSort = params.get('sort') as SortOption | null;
+
+      applyParams({
+        search: params.get('q') ?? '',
+        stockFilter: rawStock && STOCK_FILTERS.includes(rawStock) ? rawStock : 'all',
+        vialFilter: params.get('vial') ?? 'all',
+        sort: rawSort && SORT_OPTIONS.includes(rawSort) ? rawSort : 'alpha-az',
+        view: params.get('view') === 'grid' ? 'grid' : 'list',
+      });
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [applyParams]);
+
+  const hasActiveFilters =
+    search.trim() !== '' || stockFilter !== 'all' || vialFilter !== 'all' || sort !== 'alpha-az';
+
+  const clearFilters = () => {
+    setSearch('');
+    setStockFilter('all');
+    setVialFilter('all');
+    setSort('alpha-az');
+  };
 
   const visibleProducts = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -508,12 +700,24 @@ export default function QuickOrderCatalog({
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search products..."
-              className="h-12 w-full rounded-full border border-white/20 bg-white/95 px-5 pr-11 text-base text-brand-ink outline-none backdrop-blur-sm transition-all placeholder:text-brand-ink/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/20"
+              type="search"
+              className="h-12 w-full rounded-full border border-white/20 bg-white/95 px-5 pr-11 text-base text-brand-ink outline-none backdrop-blur-sm transition-all placeholder:text-brand-ink/60 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/20"
             />
-            <Search
-              className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-brand-ink/55"
-              size={20}
-            />
+            {search ? (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-brand-ink/70 transition-colors hover:bg-brand-mist hover:text-brand-navy"
+              >
+                <X size={16} />
+              </button>
+            ) : (
+              <Search
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-brand-ink/60"
+                size={20}
+              />
+            )}
           </label>
         }
       />
@@ -583,6 +787,16 @@ export default function QuickOrderCatalog({
               />
             </label>
           ) : null}
+
+          {hasActiveFilters ? (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="inline-flex h-11 items-center gap-1.5 rounded-full border border-brand-line px-4 text-sm font-semibold text-brand-ink/70 transition-all hover:border-brand-blue/40 hover:text-brand-navy"
+            >
+              <X size={15} /> Clear filters
+            </button>
+          ) : null}
         </div>
 
         <div className="flex flex-wrap items-center gap-4 sm:justify-end">
@@ -595,7 +809,7 @@ export default function QuickOrderCatalog({
               className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
                 view === 'grid'
                   ? 'bg-brand-gradient text-white shadow-sm'
-                  : 'text-brand-ink/55 hover:text-brand-blue'
+                  : 'text-brand-ink/70 hover:text-brand-blue'
               }`}
             >
               <LayoutGrid size={16} />
@@ -608,7 +822,7 @@ export default function QuickOrderCatalog({
               className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
                 view === 'list'
                   ? 'bg-brand-gradient text-white shadow-sm'
-                  : 'text-brand-ink/55 hover:text-brand-blue'
+                  : 'text-brand-ink/70 hover:text-brand-blue'
               }`}
             >
               <List size={16} />
@@ -632,7 +846,7 @@ export default function QuickOrderCatalog({
               size={18}
             />
           </label>
-          <span className="text-base font-semibold text-brand-ink/50">
+          <span className="text-base font-semibold text-brand-ink/70" aria-live="polite">
             {visibleProducts.length} product{visibleProducts.length === 1 ? '' : 's'}
           </span>
         </div>
@@ -658,9 +872,44 @@ export default function QuickOrderCatalog({
             <Search size={24} />
           </div>
           <p className="text-lg font-semibold text-brand-navy">No products found</p>
-          <p className="mt-2 text-sm text-brand-ink/55">Adjust the filters or search terms to keep browsing.</p>
+          <p className="mt-2 text-sm text-brand-ink/70">
+            {hasActiveFilters
+              ? 'No products match the filters you applied.'
+              : 'There are no products to show in this collection yet.'}
+          </p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            {hasActiveFilters ? (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="bg-brand-gradient inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-md shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+              >
+                <X size={16} /> Clear filters
+              </button>
+            ) : null}
+            {activeHandle !== 'all' ? (
+              <Link
+                href="/collections/all"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-line px-6 py-3 text-sm font-semibold text-brand-navy transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-sm"
+              >
+                <Boxes size={16} /> Browse full catalog
+              </Link>
+            ) : null}
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * `useSearchParams` needs a Suspense boundary so the catalog routes can still
+ * be prerendered.
+ */
+export default function QuickOrderCatalog(props: Props) {
+  return (
+    <Suspense fallback={<CatalogLoading />}>
+      <QuickOrderCatalogInner {...props} />
+    </Suspense>
   );
 }

@@ -18,7 +18,7 @@ export default function AddToQuoteButton({ product, selectedVariant }: Props) {
     return (
       <button
         disabled
-        className="mt-4 w-full cursor-not-allowed rounded-full border border-brand-line bg-brand-mist py-4 text-sm font-semibold text-brand-ink/50"
+        className="mt-4 w-full cursor-not-allowed rounded-full border border-brand-line bg-brand-mist py-4 text-sm font-semibold text-brand-ink/70"
       >
         Out of Stock
       </button>

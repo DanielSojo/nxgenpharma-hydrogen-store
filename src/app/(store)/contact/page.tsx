@@ -73,7 +73,7 @@ export default function ContactPage() {
                 >
                   support@nxgenpharma.com
                 </a>
-                <p className="mt-0.5 text-xs text-brand-ink/50">Business inquiries only</p>
+                <p className="mt-0.5 text-xs text-brand-ink/70">Business inquiries only</p>
               </div>
             </div>
 
@@ -102,7 +102,7 @@ export default function ContactPage() {
                 </p>
                 <p className="text-sm text-brand-ink/72">Mon – Fri: 9AM – 5PM EST</p>
                 <p className="text-sm text-brand-ink/72">Saturday: Delivery available</p>
-                <p className="text-sm text-brand-ink/50">Closed on holidays</p>
+                <p className="text-sm text-brand-ink/70">Closed on holidays</p>
               </div>
             </div>
 
@@ -158,7 +158,7 @@ export default function ContactPage() {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-5 rounded-2xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.16)]"
             >
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-brand-ink">
                     Full Name <span className="text-red-500">*</span>
@@ -166,7 +166,7 @@ export default function ContactPage() {
                   <input
                     {...register('name')}
                     placeholder="John Doe"
-                    className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+                    className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                   />
                   {errors.name && (
                     <p className="text-xs text-red-500">{errors.name.message}</p>
@@ -178,7 +178,7 @@ export default function ContactPage() {
                   <input
                     {...register('company')}
                     placeholder="Acme Corp (optional)"
-                    className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+                    className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function ContactPage() {
                   {...register('email')}
                   type="email"
                   placeholder="you@company.com"
-                  className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+                  className="w-full rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 />
                 {errors.email && (
                   <p className="text-xs text-red-500">{errors.email.message}</p>
@@ -229,7 +229,7 @@ export default function ContactPage() {
                   {...register('message')}
                   placeholder="Tell us how we can help you..."
                   rows={5}
-                  className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/35 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+                  className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
                 />
                 {errors.message && (
                   <p className="text-xs text-red-500">{errors.message.message}</p>

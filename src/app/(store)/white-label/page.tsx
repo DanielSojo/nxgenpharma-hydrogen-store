@@ -181,7 +181,7 @@ export default function WhiteLabelPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 text-sm text-brand-ink/60">
+          <p className="mt-6 text-sm text-brand-ink/70">
             White-label availability may vary depending on product type, packaging requirements, and
             order size.
           </p>
@@ -236,7 +236,7 @@ export default function WhiteLabelPage() {
             <div className="rounded-3xl border border-brand-line/70 bg-white p-8 shadow-[0_2px_12px_-6px_rgba(23,50,82,0.14)]">
               <p className="text-sm font-semibold text-brand-ink/70">Standard Setup</p>
               <p className="mt-3 text-4xl font-bold text-brand-navy">$850</p>
-              <p className="mt-1 text-sm text-brand-ink/60">One-time setup fee</p>
+              <p className="mt-1 text-sm text-brand-ink/70">One-time setup fee</p>
               <p className="mt-4 text-sm leading-relaxed text-brand-ink/76">
                 Designed for clinics and businesses looking to launch a white-label program with a
                 streamlined setup process.
@@ -249,7 +249,7 @@ export default function WhiteLabelPage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-7 text-xs text-brand-ink/55">
+              <p className="mt-7 text-xs text-brand-ink/70">
                 $850 setup fee payment is required before artwork begins.
               </p>
             </div>

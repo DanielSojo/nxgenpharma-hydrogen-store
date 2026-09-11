@@ -79,7 +79,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="relative mx-auto mt-10 max-w-6xl border-t border-white/10 pt-8 text-center text-sm text-white/45">
+      <div className="relative mx-auto mt-10 max-w-6xl border-t border-white/10 pt-8 text-center text-sm text-white/55">
         © {new Date().getFullYear()} {siteConfig.shortName}. All rights reserved.
       </div>
     </footer>

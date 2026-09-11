@@ -126,16 +126,16 @@ export function SellerDashboard({ alwaysShow = false }: { alwaysShow?: boolean }
               <Building2 size={18} className="text-brand-blue" />
               <div>
                 <p className="text-[15px] font-bold text-brand-navy">{clinic.name}</p>
-                {clinic.email && <p className="text-xs text-brand-ink/55">{clinic.email}</p>}
+                {clinic.email && <p className="text-xs text-brand-ink/70">{clinic.email}</p>}
               </div>
             </div>
             <div className="flex items-center gap-4 text-right">
               <div>
-                <p className="text-[11px] uppercase tracking-wide text-brand-ink/50">Markup</p>
+                <p className="text-[11px] uppercase tracking-wide text-brand-ink/70">Markup</p>
                 <p className="text-sm font-semibold text-brand-ink">{clinic.markup}%</p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-wide text-brand-ink/50">Profit</p>
+                <p className="text-[11px] uppercase tracking-wide text-brand-ink/70">Profit</p>
                 <p className="text-sm font-semibold text-brand-blue">
                   {money(clinic.totalProfit, currency)}
                 </p>
@@ -144,14 +144,14 @@ export function SellerDashboard({ alwaysShow = false }: { alwaysShow?: boolean }
           </div>
 
           {clinic.orders.length === 0 ? (
-            <div className="flex items-center gap-2 px-6 py-8 text-sm text-brand-ink/55">
+            <div className="flex items-center gap-2 px-6 py-8 text-sm text-brand-ink/70">
               <ShoppingBag size={16} /> No orders yet.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-brand-line text-left text-[11px] uppercase tracking-wide text-brand-ink/50">
+                  <tr className="border-b border-brand-line text-left text-[11px] uppercase tracking-wide text-brand-ink/70">
                     <th className="px-6 py-3 font-semibold">Order</th>
                     <th className="px-6 py-3 font-semibold">Date</th>
                     <th className="px-6 py-3 font-semibold">Status</th>
