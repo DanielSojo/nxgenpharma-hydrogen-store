@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import type { UseFormRegisterReturn } from 'react-hook-form';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, ArrowLeft, CheckCircle, ChevronDown } from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle, ChevronDown, Lock, Eye, EyeOff, Check } from 'lucide-react';
 import Image from 'next/image';
 
 const applicationSchema = z.object({
@@ -26,7 +27,21 @@ const applicationSchema = z.object({
   referralSource: z.string().min(1, 'Required'),
   referralSourceOther: z.string().optional(),
   message: z.string().optional(),
+  // Length over composition rules, per current NIST guidance. Shopify's own
+  // floor is 5; we ask for 8 and reject padded whitespace, which Shopify
+  // rejects server-side anyway.
+  password: z
+    .string()
+    .min(8, 'Use at least 8 characters')
+    .max(72, 'Use 72 characters or fewer')
+    .refine((value) => value.trim() === value, {
+      message: 'Cannot start or end with a space',
+    }),
+  confirmPassword: z.string().min(1, 'Please re-enter your password'),
 }).refine(
+  (data) => data.password === data.confirmPassword,
+  { path: ['confirmPassword'], message: 'Passwords do not match' },
+).refine(
   (data) => data.referralSource !== 'Other' || (data.referralSourceOther?.trim().length ?? 0) > 0,
   { path: ['referralSourceOther'], message: 'Please tell us how you heard about us' },
 );
@@ -86,15 +101,70 @@ const Select = ({
   </div>
 );
 
+const PasswordInput = ({
+  label,
+  error,
+  hint,
+  registration,
+  autoComplete,
+  placeholder,
+}: {
+  label: string;
+  error?: string;
+  hint?: string;
+  registration: UseFormRegisterReturn;
+  autoComplete: string;
+  placeholder?: string;
+}) => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[13px] font-medium text-brand-ink">
+        {label} <span className="text-red-500">*</span>
+      </label>
+      <div className="group relative">
+        <Lock
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60 transition-colors group-focus-within:text-brand-blue"
+          size={15}
+        />
+        <input
+          {...registration}
+          type={visible ? 'text' : 'password'}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          className="w-full rounded-xl border border-brand-line bg-white/70 py-3 pl-10 pr-11 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
+        />
+        <button
+          type="button"
+          onClick={() => setVisible((current) => !current)}
+          aria-label={visible ? 'Hide password' : 'Show password'}
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-ink/60 transition-colors hover:text-brand-blue"
+        >
+          {visible ? <EyeOff size={15} /> : <Eye size={15} />}
+        </button>
+      </div>
+      {error ? (
+        <p className="text-xs text-red-500">{error}</p>
+      ) : hint ? (
+        <p className="text-xs text-brand-ink/70">{hint}</p>
+      ) : null}
+    </div>
+  );
+};
+
 export default function ApplyPage() {
   const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [existingAccount, setExistingAccount] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     watch,
+    setError,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<ApplicationForm>({
     resolver: zodResolver(applicationSchema),
@@ -103,10 +173,18 @@ export default function ApplyPage() {
 
   const showReferralOther = watch('referralSource') === 'Other';
 
+  const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
+  const passwordsMatch =
+    Boolean(password) && password.length >= 8 && password === confirmPassword;
+
   const onSubmit = async (data: ApplicationForm) => {
     setServerError('');
+    setExistingAccount(null);
+    // The confirmation never leaves the browser — it exists only to catch typos.
+    const { confirmPassword: _confirmPassword, ...submitted } = data;
     const payload = {
-      ...data,
+      ...submitted,
       phone: `+1${data.phone.replace(/\D/g, '')}`,
       referralSource:
         data.referralSource === 'Other' && data.referralSourceOther?.trim()
@@ -121,10 +199,35 @@ export default function ApplyPage() {
 
     if (res.ok) {
       setSubmitted(true);
-    } else {
-      const json = await res.json();
-      setServerError(json.error ?? 'Something went wrong. Please try again.');
+      return;
     }
+
+    const json = await res.json();
+    const message = json.error ?? 'Something went wrong. Please try again.';
+
+    // Shopify reports which input it rejected; mirror that instead of assuming.
+    // Anything outside this list is not a field the applicant can edit here.
+    const serverField = (
+      ['email', 'phone', 'password', 'firstName', 'lastName'] as const
+    ).find((name) => name === json.field);
+
+    if (serverField) {
+      setError(serverField, { type: 'server', message });
+
+      // A taken email is the one conflict the applicant can't resolve by
+      // editing the form, so that case also gets a banner with somewhere to go.
+      // A taken phone number they can simply correct in place.
+      if (res.status === 409 && serverField === 'email') {
+        setExistingAccount(message);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setFocus(serverField);
+      }
+      return;
+    }
+
+    setServerError(message);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (submitted) {
@@ -136,7 +239,9 @@ export default function ApplyPage() {
           </div>
           <h1 className="mb-3 text-2xl font-bold text-brand-navy">Application Received!</h1>
           <p className="mb-8 text-[15px] leading-relaxed text-brand-ink/70">
-            Thank you for applying. We'll review your application and respond within 24 hours to the email you provided.
+            Thank you for applying. We&apos;ll review your application and respond within 24 hours
+            to the email you provided. Once you&apos;re approved, sign in with the email and
+            password you just chose — no activation link needed.
           </p>
           <Link
             href="/login"
@@ -175,6 +280,26 @@ export default function ApplyPage() {
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 rounded-3xl border border-white/70 bg-white/70 p-8 shadow-[0_24px_70px_-20px_rgba(23,50,82,0.3)] ring-1 ring-white/40 backdrop-blur-xl sm:p-10">
 
+          {existingAccount && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p className="text-sm text-amber-900">{existingAccount}</p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <Link
+                  href="/login"
+                  className="bg-brand-gradient-navy inline-flex items-center rounded-full px-5 py-2 text-[13px] font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/forgot-password"
+                  className="inline-flex items-center rounded-full border border-amber-300 px-5 py-2 text-[13px] font-semibold text-amber-900 transition-colors hover:bg-amber-100"
+                >
+                  Reset my password
+                </Link>
+              </div>
+            </div>
+          )}
+
           {serverError && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">
               {serverError}
@@ -208,6 +333,39 @@ export default function ApplyPage() {
                   </div>
                   {errors.phone?.message && <p className="text-xs text-red-500">{errors.phone.message}</p>}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Account Security */}
+          <div>
+            <h2 className="mb-4 border-b border-brand-line pb-2 text-[15px] font-bold text-brand-navy">
+              Account Security
+            </h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <PasswordInput
+                  label="Password"
+                  autoComplete="new-password"
+                  placeholder="At least 8 characters"
+                  hint="You'll use this to sign in once your account is approved."
+                  error={errors.password?.message}
+                  registration={register('password')}
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <PasswordInput
+                  label="Confirm Password"
+                  autoComplete="new-password"
+                  placeholder="Re-enter your password"
+                  error={errors.confirmPassword?.message}
+                  registration={register('confirmPassword')}
+                />
+                {passwordsMatch && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-green-700">
+                    <Check size={13} /> Passwords match
+                  </p>
+                )}
               </div>
             </div>
           </div>

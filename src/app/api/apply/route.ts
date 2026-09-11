@@ -19,14 +19,17 @@ const applicationSchema = z.object({
   website: z.string().optional(),
   referralSource: z.string().min(1),
   message: z.string().optional(),
+  // Shopify's own floor is 5 characters; 8 is the minimum we accept. Shopify
+  // also rejects passwords padded with whitespace, so catch that here and give
+  // a useful message instead of letting customerCreate fail opaquely.
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(8, 'Password must be at least 8 characters')
+    .max(72, 'Password must be 72 characters or fewer')
+    .refine((value) => value.trim() === value, {
+      message: 'Password cannot start or end with a space',
+    }),
 });
-
-function generateTempPassword(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
-  return Array.from({ length: 20 }, () =>
-    chars.charAt(Math.floor(Math.random() * chars.length))
-  ).join('');
-}
 
 // Step 1: Create customer
 const CREATE_CUSTOMER = `
@@ -74,9 +77,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const data = applicationSchema.parse(body);
 
-    const tempPassword = generateTempPassword();
-
     // ── Step 1: Create customer ──────────────────────────────────────────────
+    // The applicant sets this password themselves, so once an admin approves
+    // the account they can sign in directly — no invite or reset mail needed.
     const { data: createResult, errors: createErrors } = await shopifyClient.request(
       CREATE_CUSTOMER,
       {
@@ -86,7 +89,7 @@ export async function POST(req: NextRequest) {
             lastName: data.lastName,
             email: data.email,
             phone: data.phone,
-            password: tempPassword,
+            password: data.password,
             acceptsMarketing: false,
           },
         },
@@ -101,13 +104,81 @@ export async function POST(req: NextRequest) {
     const customerErrors = createResult?.customerCreate?.customerUserErrors ?? [];
     if (customerErrors.length > 0) {
       const err = customerErrors[0];
-      if (err.code === 'TAKEN' || err.code === 'CUSTOMER_DISABLED') {
+
+      // Codes and field paths only — never the submitted values. Without this
+      // the route collapsed every Shopify rejection into a generic message and
+      // there was no way to tell a duplicate email from a store-configuration
+      // problem.
+      console.warn(
+        '[Apply] customerCreate rejected:',
+        customerErrors.map((e: any) => `${e.code} @ ${JSON.stringify(e.field)}: ${e.message}`).join(' | ')
+      );
+      // `field` arrives as a path, e.g. ['input', 'password'].
+      const field: string = Array.isArray(err.field) ? err.field[err.field.length - 1] : '';
+
+      if (field === 'password') {
+        const passwordMessages: Record<string, string> = {
+          TOO_SHORT: 'Password is too short. Use at least 8 characters.',
+          TOO_LONG: 'Password is too long. Use 72 characters or fewer.',
+          PASSWORD_STARTS_OR_ENDS_WITH_WHITESPACE:
+            'Password cannot start or end with a space.',
+          CONTAINS_HTML_TAGS: 'Password cannot contain HTML tags.',
+          CONTAINS_URL: 'Password cannot contain a web address.',
+          INVALID: 'That password is not accepted. Please choose a different one.',
+        };
         return NextResponse.json(
-          { error: 'An account with this email already exists. Please sign in.' },
+          { error: passwordMessages[err.code] ?? err.message, field: 'password' },
+          { status: 400 }
+        );
+      }
+
+      // Shopify enforces uniqueness on phone as well as email, and reports which
+      // one in `field`. Assuming TAKEN always meant "email" made a duplicate
+      // phone number surface as an error on the email input.
+      if (err.code === 'TAKEN') {
+        if (field === 'phone') {
+          return NextResponse.json(
+            {
+              error:
+                'This phone number is already registered to another account. Use a different number, or sign in if the account is yours.',
+              field: 'phone',
+              code: 'TAKEN',
+            },
+            { status: 409 }
+          );
+        }
+
+        if (field === 'email') {
+          return NextResponse.json(
+            {
+              error:
+                'An account with this email already exists. Sign in with your password, or use "Forgot your password?" if you don\'t have it.',
+              field: 'email',
+              code: 'TAKEN',
+            },
+            { status: 409 }
+          );
+        }
+
+        return NextResponse.json(
+          { error: err.message, field: field || undefined, code: 'TAKEN' },
           { status: 409 }
         );
       }
-      return NextResponse.json({ error: err.message }, { status: 400 });
+
+      if (err.code === 'CUSTOMER_DISABLED') {
+        return NextResponse.json(
+          {
+            error:
+              'An account with this email exists but is not active yet. Reset your password to activate it, or contact us and we\'ll help.',
+            field: 'email',
+            code: 'CUSTOMER_DISABLED',
+          },
+          { status: 409 }
+        );
+      }
+
+      return NextResponse.json({ error: err.message, field: field || undefined }, { status: 400 });
     }
 
     const customerId = createResult?.customerCreate?.customer?.id;
@@ -115,7 +186,7 @@ export async function POST(req: NextRequest) {
     // ── Step 2: Login to get access token ────────────────────────────────────
     const { data: tokenResult } = await shopifyClient.request(GET_ACCESS_TOKEN, {
       variables: {
-        input: { email: data.email, password: tempPassword },
+        input: { email: data.email, password: data.password },
       },
     });
 
@@ -211,10 +282,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
+    console.log({ error })
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
-    console.error('Application submission error:', error);
+    // Deliberately narrow: this request carries a password, so only the error's
+    // own message and stack are logged — never the thrown object, which could
+    // grow a reference to the request payload in a future client version.
+    console.error(
+      'Application submission error:',
+      error instanceof Error ? `${error.name}: ${error.message}` : 'Unknown error',
+      error instanceof Error ? error.stack : undefined
+    );
     return NextResponse.json(
       { error: 'Failed to submit application. Please try again.' },
       { status: 500 }

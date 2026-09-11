@@ -42,8 +42,8 @@ export default async function PendingPage() {
           <ol className="flex flex-col gap-2.5">
             {[
               'Our team reviews your application',
-              'You receive an approval email with account access',
-              'Set your password and start ordering',
+              'You receive an approval email confirming your access',
+              'Sign in with the password you chose and start ordering',
             ].map((step, i) => (
               <li key={i} className="flex items-start gap-3 text-[13.5px] text-brand-ink/72">
                 <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand-blue text-[11px] font-bold text-white">

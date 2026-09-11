@@ -92,10 +92,15 @@ npm run dev
 
 1. **Visitor hits any page** → middleware redirects to `/login`
 2. **No account?** → Click "Apply for an account" → `/apply`
-3. **Application submitted** → Customer created in Shopify with tag `b2b-pending`
+3. **Application submitted** → Customer created in Shopify with tag `b2b-pending`,
+   using the password the applicant chose on the form
 4. **You review** in Shopify Admin → Customers → find them → add tag `b2b-approved`
-5. **Customer logs in** → middleware checks for `b2b-approved` tag → grants access
+5. **Customer logs in** with the email and password from their application →
+   middleware checks for `b2b-approved` tag → grants access
 6. **Not yet approved** → redirected to `/pending` page
+
+Applicants set their own password during the application, so there is no
+activation link to send. `/forgot-password` remains available if they forget it.
 
 ### Approving customers (Shopify Admin)
 
@@ -103,7 +108,8 @@ npm run dev
 2. Find the applicant (they'll have the `b2b-pending` tag)
 3. Add tag: `b2b-approved`
 4. Remove tag: `b2b-pending`
-5. Send them a password reset / account invite email
+5. Let them know they're approved — they sign in with the password they set
+   when applying, so no reset or invite email is required
 
 ### Optional: Approve via API
 
