@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findCoaByLot } from '@/lib/coa';
+import { findCoasByLot } from '@/lib/coa';
 
-// GET /api/coa?lot=Nexg24060117 — look up a Certificate of Analysis (PDF) by
-// lot number, sourced from Shopify Files.
+// GET /api/coa?lot=Nexg24060117 — look up the Certificates of Analysis (PDFs)
+// published under a lot number, sourced from Shopify Files. A lot that covers
+// several doses returns one entry per dose.
 export async function GET(req: NextRequest) {
   const lot = req.nextUrl.searchParams.get('lot')?.trim() ?? '';
 
@@ -11,8 +12,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const result = await findCoaByLot(lot);
-    return NextResponse.json({ result });
+    const results = await findCoasByLot(lot);
+    return NextResponse.json({ results });
   } catch (error) {
     console.error('COA lookup error:', error);
     return NextResponse.json(

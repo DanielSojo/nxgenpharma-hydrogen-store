@@ -7,7 +7,7 @@ import type { CoaRecord } from '@/lib/coa';
 type SearchState =
   | { status: 'idle' }
   | { status: 'loading' }
-  | { status: 'found'; record: CoaRecord; lot: string }
+  | { status: 'found'; records: CoaRecord[]; lot: string }
   | { status: 'not-found'; lot: string }
   | { status: 'error'; message: string };
 
@@ -28,9 +28,10 @@ export default function CoaSearch() {
         setState({ status: 'error', message: json.error ?? 'Something went wrong. Please try again.' });
         return;
       }
-      const json = (await res.json()) as { result: CoaRecord | null };
-      if (json.result) {
-        setState({ status: 'found', record: json.result, lot: query });
+      const json = (await res.json()) as { results: CoaRecord[] };
+      const records = json.results ?? [];
+      if (records.length > 0) {
+        setState({ status: 'found', records, lot: query });
       } else {
         setState({ status: 'not-found', lot: query });
       }
@@ -85,7 +86,7 @@ export default function CoaSearch() {
       </form>
 
       {/* Result */}
-      {state.status === 'found' && <CoaResult record={state.record} />}
+      {state.status === 'found' && <CoaResults records={state.records} lot={state.lot} />}
 
       {state.status === 'not-found' && (
         <div className="flex items-start gap-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-6">
@@ -110,31 +111,57 @@ export default function CoaSearch() {
   );
 }
 
-function CoaResult({ record }: { record: CoaRecord }) {
+function CoaResults({ records, lot }: { records: CoaRecord[]; lot: string }) {
+  const multiple = records.length > 1;
+
   return (
     <div className="animate-fade-up overflow-hidden rounded-2xl border border-brand-line/70 bg-white shadow-[0_2px_12px_-6px_rgba(23,50,82,0.16)]">
-      <div className="flex flex-col gap-5 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-mist text-brand-blue">
-            <FileCheck2 size={22} />
-          </span>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-ink/70">
-              Certificate found
+      <div className="flex items-start gap-3 border-b border-brand-line/70 px-6 py-5">
+        <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-mist text-brand-blue">
+          <FileCheck2 size={22} />
+        </span>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-ink/70">
+            {multiple ? `${records.length} certificates found` : 'Certificate found'}
+          </p>
+          <h3 className="mt-1 text-lg font-bold text-brand-navy">Lot {lot}</h3>
+          {multiple && (
+            <p className="mt-1 text-[14px] leading-relaxed text-brand-ink/70">
+              This lot covers more than one dose. Download the certificate that matches
+              the product on your label.
             </p>
-            <h3 className="mt-1 text-lg font-bold text-brand-navy">Lot {record.lotNumber}</h3>
-          </div>
+          )}
         </div>
-
-        <a
-          href={record.pdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-navy px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-ink hover:shadow-lg"
-        >
-          <Download size={16} /> Download certificate (PDF)
-        </a>
       </div>
+
+      <ul className="divide-y divide-brand-line/60">
+        {records.map((record) => (
+          <li
+            key={record.pdfUrl}
+            className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="min-w-0">
+              <p className="font-semibold text-brand-navy">
+                {record.variantLabel || `Lot ${record.lotNumber}`}
+              </p>
+              <p className="mt-0.5 truncate text-xs text-brand-ink/70">{record.fileName}.pdf</p>
+            </div>
+
+            <a
+              href={record.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-navy px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-ink hover:shadow-lg"
+            >
+              <Download size={16} />
+              <span className="sm:hidden">Download certificate (PDF)</span>
+              <span className="hidden sm:inline">
+                {multiple ? 'Download PDF' : 'Download certificate (PDF)'}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
