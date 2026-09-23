@@ -12,6 +12,8 @@ const PUBLIC_PATHS = [
   '/account/reset',
   '/api/auth',
   '/api/apply',
+  '/contact',
+  '/api/contact',
 ];
 
 export default auth((req) => {
