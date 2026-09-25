@@ -23,22 +23,19 @@ export const PENDING_CHECKOUT_KEY = 'pendingCheckout';
 export const CART_ID_KEY = 'cartId';
 
 /**
- * Shopify checkout is being piloted with a single account while the rest of the
- * store stays on the quote flow. Override with a comma-separated
- * NEXT_PUBLIC_CHECKOUT_EMAILS to widen the pilot without a code change.
+ * Shopify checkout is a limited pilot; everyone else stays on the quote flow.
+ * The allowlist lives in NEXT_PUBLIC_CHECKOUT_EMAILS (comma-separated) rather
+ * than in code, so collaborators' emails are never committed to the repo.
+ *
+ * Fails closed: unset or empty disables checkout for everyone.
  */
-const DEFAULT_CHECKOUT_EMAILS = ['support@nxgenpharma.com'];
-
-/** Whether this buyer may use Shopify checkout. Enforced on both client and server. */
 export function canUseCheckout(email?: string | null): boolean {
   if (!email) return false;
 
-  const configured = (process.env.NEXT_PUBLIC_CHECKOUT_EMAILS ?? '')
+  const allowed = (process.env.NEXT_PUBLIC_CHECKOUT_EMAILS ?? '')
     .split(',')
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
-
-  const allowed = configured.length > 0 ? configured : DEFAULT_CHECKOUT_EMAILS;
 
   return allowed.includes(email.trim().toLowerCase());
 }
