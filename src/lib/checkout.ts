@@ -22,24 +22,6 @@ export const PENDING_CHECKOUT_KEY = 'pendingCheckout';
 /** localStorage key holding the Shopify cart id. Pre-existing convention. */
 export const CART_ID_KEY = 'cartId';
 
-/**
- * Shopify checkout is a limited pilot; everyone else stays on the quote flow.
- * The allowlist lives in NEXT_PUBLIC_CHECKOUT_EMAILS (comma-separated) rather
- * than in code, so collaborators' emails are never committed to the repo.
- *
- * Fails closed: unset or empty disables checkout for everyone.
- */
-export function canUseCheckout(email?: string | null): boolean {
-  if (!email) return false;
-
-  const allowed = (process.env.NEXT_PUBLIC_CHECKOUT_EMAILS ?? '')
-    .split(',')
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean);
-
-  return allowed.includes(email.trim().toLowerCase());
-}
-
 export function createCheckoutRef(): string {
   const random = Math.random().toString(36).slice(2, 10);
   return `nxg-${Date.now().toString(36)}-${random}`;

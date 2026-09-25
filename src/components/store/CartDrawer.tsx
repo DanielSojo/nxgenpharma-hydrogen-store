@@ -6,20 +6,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
-import { canUseCheckout } from '@/lib/checkout';
 
 export default function CartDrawer() {
   const { cart, isOpen, closeCart, clearCart, updateItem, removeItem, hydrate, startCheckout, pending } =
     useCartStore();
   const { formatCalculatedPrice } = useCustomerPricing();
-  const { data: session } = useSession();
   const router = useRouter();
 
-  // Shopify checkout is limited to the pilot allowlist; everyone else keeps the
-  // quote flow as the only path out of the cart.
-  const checkoutEnabled = canUseCheckout(session?.user?.email);
   const [submitting, setSubmitting] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState('');
@@ -32,7 +26,7 @@ export default function CartDrawer() {
   }, [hydrate]);
 
   const goToCheckout = async () => {
-    if (!checkoutEnabled || checkingOut || submitting || lines.length === 0) return;
+    if (checkingOut || submitting || lines.length === 0) return;
     setCheckingOut(true);
     setError('');
     try {
@@ -215,9 +209,7 @@ export default function CartDrawer() {
               </span>
             </div>
             <p className="-mt-2 text-[12px] text-brand-ink/70">
-              {checkoutEnabled
-                ? 'Taxes and shipping calculated at checkout'
-                : 'Final pricing and shipping confirmed on your quote'}
+              Taxes and shipping calculated at checkout
             </p>
             <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
               <BadgePercent size={15} className="flex-shrink-0 text-emerald-600" />
@@ -230,31 +222,25 @@ export default function CartDrawer() {
                 {error}
               </p>
             )}
-            {checkoutEnabled && (
-              <button
-                onClick={goToCheckout}
-                disabled={checkingOut || submitting}
-                className="bg-brand-gradient flex w-full items-center justify-center gap-2 rounded-full py-4 text-center text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70"
-              >
-                {checkingOut ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" /> Redirecting to checkout...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard size={16} /> Checkout
-                  </>
-                )}
-              </button>
-            )}
+            <button
+              onClick={goToCheckout}
+              disabled={checkingOut || submitting}
+              className="bg-brand-gradient flex w-full items-center justify-center gap-2 rounded-full py-4 text-center text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70"
+            >
+              {checkingOut ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" /> Redirecting to checkout...
+                </>
+              ) : (
+                <>
+                  <CreditCard size={16} /> Checkout
+                </>
+              )}
+            </button>
             <button
               onClick={requestQuote}
               disabled={submitting || checkingOut}
-              className={
-                checkoutEnabled
-                  ? '-mt-1 flex w-full items-center justify-center gap-2 rounded-full border border-brand-line bg-white py-3.5 text-center text-sm font-semibold text-brand-navy transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-sm disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70'
-                  : 'bg-brand-gradient flex w-full items-center justify-center gap-2 rounded-full py-4 text-center text-sm font-bold text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70'
-              }
+              className="-mt-1 flex w-full items-center justify-center gap-2 rounded-full border border-brand-line bg-white py-3.5 text-center text-sm font-semibold text-brand-navy transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-blue/40 hover:shadow-sm disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-70"
             >
               {submitting ? (
                 <>
@@ -262,8 +248,7 @@ export default function CartDrawer() {
                 </>
               ) : (
                 <>
-                  <ClipboardList size={16} />
-                  {checkoutEnabled ? 'Request Quote Instead' : 'Request Quote'}
+                  <ClipboardList size={16} /> Request Quote Instead
                 </>
               )}
             </button>

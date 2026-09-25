@@ -5,7 +5,6 @@ import {
   CHECKOUT_REF_ATTRIBUTE,
   RETURN_URL_ATTRIBUTE,
   buildReturnUrl,
-  canUseCheckout,
   createCheckoutRef,
 } from '@/lib/checkout';
 
@@ -53,15 +52,6 @@ export async function POST(req: NextRequest) {
   // Checkout is gated behind B2B approval, same as the rest of the store.
   if (user.approved !== true) {
     return NextResponse.json({ error: 'Your account is not approved for ordering yet.' }, { status: 403 });
-  }
-
-  // Pilot allowlist. The drawer hides the button for everyone else, but the
-  // endpoint has to enforce it too — hiding a button is not access control.
-  if (!canUseCheckout(user.email)) {
-    return NextResponse.json(
-      { error: 'Checkout is not enabled for your account. Please request a quote instead.' },
-      { status: 403 }
-    );
   }
 
   let cartId: string | undefined;

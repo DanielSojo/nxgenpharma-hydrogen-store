@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader2, RotateCcw } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
-import { canUseCheckout } from '@/lib/checkout';
-import { useSession } from 'next-auth/react';
 
 export interface ReorderLineItem {
   title: string;
@@ -35,7 +33,6 @@ interface Props {
 export default function ReorderButton({ lineItems, size = 'default', className = '' }: Props) {
   const addItem = useCartStore((state) => state.addItem);
   const openCart = useCartStore((state) => state.openCart);
-  const { data: session } = useSession();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
@@ -68,8 +65,7 @@ export default function ReorderButton({ lineItems, size = 'default', className =
         return;
       }
 
-      const cartLabel = canUseCheckout(session?.user?.email) ? 'cart' : 'cart for a quote';
-      toast.success(`${added} item${added === 1 ? '' : 's'} added to your ${cartLabel}`, {
+      toast.success(`${added} item${added === 1 ? '' : 's'} added to your cart`, {
         description:
           skipped.length > 0
             ? `Unavailable and skipped: ${skipped.join(', ')}`
