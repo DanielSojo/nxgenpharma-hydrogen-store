@@ -6,6 +6,10 @@ import { ArrowLeft } from 'lucide-react';
 import ProductVariantDetails from '@/components/store/ProductVariantDetails';
 import SimilarProducts from '@/components/store/SimilarProducts';
 
+// Re-fetch from Shopify at most once a minute so product/image edits show up
+// without a redeploy (otherwise the page is frozen at build time).
+export const revalidate = 60;
+
 interface Props {
   params: Promise<{ handle: string }>;
 }

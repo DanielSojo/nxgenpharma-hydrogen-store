@@ -5,6 +5,10 @@ import type { Metadata } from 'next';
 
 const PAGE_SIZE = 250;
 
+// Re-fetch from Shopify at most once a minute so product/image edits show up
+// without a redeploy (otherwise the page is frozen at build time).
+export const revalidate = 60;
+
 interface Props {
   params: Promise<{ handle: string }>;
 }
