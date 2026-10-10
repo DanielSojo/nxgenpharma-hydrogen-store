@@ -9,6 +9,7 @@ const GET_CUSTOMER_PROFILE = `
       lastName
       email
       phone
+      acceptsMarketing
       defaultAddress {
         company
         address1
@@ -31,6 +32,7 @@ const UPDATE_CUSTOMER = `
         lastName
         email
         phone
+        acceptsMarketing
         defaultAddress {
           company
           address1
@@ -122,6 +124,7 @@ export async function GET(req: NextRequest) {
         lastName: customer.lastName ?? '',
         email: customer.email ?? '',
         phone: customer.phone ?? '',
+        acceptsMarketing: customer.acceptsMarketing ?? false,
         company: customer.defaultAddress?.company ?? '',
         address1: customer.defaultAddress?.address1 ?? '',
         address2: customer.defaultAddress?.address2 ?? '',
@@ -150,13 +153,13 @@ export async function PUT(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { firstName, lastName, email, phone, company, address1, address2, city, state, zip, country } = body;
+  const { firstName, lastName, email, phone, acceptsMarketing, company, address1, address2, city, state, zip, country } = body;
 
   try {
     // Step 1: Update customer basic info
     const { data, errors } = await storefrontRequest(UPDATE_CUSTOMER, {
       customerAccessToken: accessToken,
-      customer: { firstName, lastName, email, phone },
+      customer: { firstName, lastName, email, phone, acceptsMarketing: Boolean(acceptsMarketing) },
     });
 
     if (errors?.length) {
@@ -214,6 +217,7 @@ export async function PUT(req: NextRequest) {
         lastName: lastName ?? '',
         email: email ?? '',
         phone: phone ?? '',
+        acceptsMarketing: customer?.acceptsMarketing ?? Boolean(acceptsMarketing),
         company: company ?? '',
         address1: address1 ?? '',
         address2: address2 ?? '',

@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Loader2, MapPin, Save, UserCircle2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Mail, MapPin, Save, UserCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import PageHeader from '@/components/layout/PageHeader';
 
@@ -15,6 +15,7 @@ const profileSchema = z.object({
   lastName: z.string().min(1, 'Required'),
   email: z.string().email('Enter a valid email'),
   phone: z.string().min(7, 'Enter a valid phone number'),
+  acceptsMarketing: z.boolean(),
   company: z.string().optional(),
   address1: z.string().min(1, 'Required'),
   address2: z.string().optional(),
@@ -36,6 +37,7 @@ const emptyProfile: ProfileForm = {
   lastName: '',
   email: '',
   phone: '',
+  acceptsMarketing: false,
   company: '',
   address1: '',
   address2: '',
@@ -246,6 +248,21 @@ export default function ProfilePage() {
             <Input label="ZIP / Postal Code" required error={errors.zip?.message} {...register('zip')} />
             <Input label="Country" required error={errors.country?.message} {...register('country')} />
           </div>
+        </div>
+
+        <div>
+          <div className="mb-4 flex items-center gap-2">
+            <Mail size={16} className="text-brand-blue" />
+            <h2 className="text-[15px] font-bold text-brand-navy">Email Preferences</h2>
+          </div>
+          <label className="flex cursor-pointer items-start gap-3 text-sm text-brand-ink">
+            <input
+              type="checkbox"
+              {...register('acceptsMarketing')}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-brand-line accent-brand-blue"
+            />
+            <span>Email me about my application status, wholesale pricing updates, and exclusive B2B offers.</span>
+          </label>
         </div>
 
         <div className="rounded-2xl bg-brand-mist px-4 py-3 text-sm text-brand-ink/70">

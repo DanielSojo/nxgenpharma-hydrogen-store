@@ -27,6 +27,7 @@ const applicationSchema = z.object({
   referralSource: z.string().min(1, 'Required'),
   referralSourceOther: z.string().optional(),
   message: z.string().optional(),
+  acceptsMarketing: z.boolean(),
   // Length over composition rules, per current NIST guidance. Shopify's own
   // floor is 5; we ask for 8 and reject padded whitespace, which Shopify
   // rejects server-side anyway.
@@ -168,7 +169,7 @@ export default function ApplyPage() {
     formState: { errors, isSubmitting },
   } = useForm<ApplicationForm>({
     resolver: zodResolver(applicationSchema),
-    defaultValues: { country: 'US' },
+    defaultValues: { country: 'US', acceptsMarketing: false },
   });
 
   const showReferralOther = watch('referralSource') === 'Other';
@@ -454,6 +455,15 @@ export default function ApplyPage() {
               className="w-full resize-none rounded-xl border border-brand-line bg-white/70 px-4 py-3 text-sm text-brand-ink outline-none transition-all placeholder:text-brand-ink/60 hover:border-brand-blue/40 focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/10"
             />
           </div>
+
+          <label className="flex cursor-pointer items-start gap-3 text-sm text-brand-ink">
+            <input
+              type="checkbox"
+              {...register('acceptsMarketing')}
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-brand-line accent-brand-blue"
+            />
+            <span>Email me about my application status, wholesale pricing updates, and exclusive B2B offers.</span>
+          </label>
 
           <button
             type="submit"

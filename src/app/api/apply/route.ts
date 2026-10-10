@@ -19,6 +19,7 @@ const applicationSchema = z.object({
   website: z.string().optional(),
   referralSource: z.string().min(1),
   message: z.string().optional(),
+  acceptsMarketing: z.boolean().optional().default(false),
   // Shopify's own floor is 5 characters; 8 is the minimum we accept. Shopify
   // also rejects passwords padded with whitespace, so catch that here and give
   // a useful message instead of letting customerCreate fail opaquely.
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
             email: data.email,
             phone: data.phone,
             password: data.password,
-            acceptsMarketing: false,
+            acceptsMarketing: data.acceptsMarketing,
           },
         },
       }
