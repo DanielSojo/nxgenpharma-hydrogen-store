@@ -1,0 +1,19 @@
+{
+  "name": "nxgen-shopify-app",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "workspaces": [
+    "extensions/*"
+  ],
+  "scripts": {
+    "shopify": "shopify",
+    "config:link": "shopify app config link",
+    "build": "shopify app build",
+    "deploy": "shopify app deploy",
+    "test": "npm --workspace b2b-checkout-guard run test -- run"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^4.9.0"
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "name": "B2B checkout guard",
+  "description": "Blocks checkout unless the buyer is signed in to an approved B2B account"
+}

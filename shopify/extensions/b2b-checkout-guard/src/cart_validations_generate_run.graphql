@@ -1,0 +1,16 @@
+query CartValidationsGenerateRunInput {
+  buyerJourney {
+    step
+  }
+  cart {
+    buyerIdentity {
+      customer {
+        id
+        # Same metafield the Next.js app reads at sign-in (src/lib/shopify/index.ts).
+        b2bStatus: metafield(namespace: "custom", key: "b2b_status") {
+          value
+        }
+      }
+    }
+  }
+}
