@@ -6,6 +6,18 @@ import {
   updateCartLines,
   removeCartLines,
 } from '@/lib/shopify';
+import type { ShopifyCart } from '@/types';
+
+/**
+ * The checkout URL only leaves through /api/shopify/checkout, which binds the
+ * cart to the signed-in customer first. Handing it out here would let a buyer
+ * skip that step and pay as a guest.
+ */
+function withoutCheckoutUrl(cart: ShopifyCart | null | undefined) {
+  if (!cart) return cart;
+  const { checkoutUrl: _checkoutUrl, ...rest } = cart;
+  return rest;
+}
 
 export async function GET(req: NextRequest) {
   const cartId = req.nextUrl.searchParams.get('cartId');
@@ -13,7 +25,7 @@ export async function GET(req: NextRequest) {
 
   const cart = await getCart(cartId);
   if (!cart) return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
-  return NextResponse.json(cart);
+  return NextResponse.json(withoutCheckoutUrl(cart));
 }
 
 export async function POST(req: NextRequest) {
@@ -41,7 +53,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    return NextResponse.json(cart);
+    return NextResponse.json(withoutCheckoutUrl(cart));
   } catch (error) {
     console.error('Cart API error:', error);
     return NextResponse.json({ error: 'Cart operation failed' }, { status: 500 });

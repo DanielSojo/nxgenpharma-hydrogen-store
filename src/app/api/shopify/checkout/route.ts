@@ -42,7 +42,7 @@ function isSelfHosted(checkoutUrl: string, req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await auth();
   const user = session?.user as
-    | { email?: string | null; accessToken?: string; approved?: boolean }
+    | { id?: string; email?: string | null; accessToken?: string; approved?: boolean }
     | undefined;
 
   if (!user) {
@@ -52,6 +52,15 @@ export async function POST(req: NextRequest) {
   // Checkout is gated behind B2B approval, same as the rest of the store.
   if (user.approved !== true) {
     return NextResponse.json({ error: 'Your account is not approved for ordering yet.' }, { status: 403 });
+  }
+
+  // Without a customer token the cart can't be tied to this account, and the
+  // checkout would open as a guest checkout anyone could complete.
+  if (!user.accessToken || !user.id) {
+    return NextResponse.json(
+      { error: 'Your session has expired. Please sign in again.' },
+      { status: 401 }
+    );
   }
 
   let cartId: string | undefined;
@@ -76,6 +85,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Your cart is empty' }, { status: 400 });
     }
 
+    // A cart already bound to another customer isn't this buyer's to check out.
+    const boundCustomerId = cart.buyerIdentity?.customer?.id;
+    if (boundCustomerId && boundCustomerId !== user.id) {
+      console.warn(`[Checkout] Cart ${cartId} belongs to ${boundCustomerId}, requested by ${user.id}`);
+      return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
+    }
+
     const ref = createCheckoutRef();
 
     // Keep any attributes already on the cart, replacing only the ones we own.
@@ -87,14 +103,15 @@ export async function POST(req: NextRequest) {
       { key: CHECKOUT_REF_ATTRIBUTE, value: ref },
       // Rides through to the order so Shopify's thank-you page can link the
       // buyer straight back here (see README → "Returning from checkout").
-      { key: RETURN_URL_ATTRIBUTE, value: buildReturnUrl(ref) },
+      { key: RETURN_URL_ATTRIBUTE, value: buildReturnUrl(ref, req.nextUrl.origin) },
     ];
 
     await updateCartAttributes(cartId, attributes);
 
-    // Buyer identity is best-effort: an expired Shopify customer token should
-    // still let the buyer check out as a guest rather than blocking the sale.
-    let updatedCart = cart;
+    // Buyer identity is mandatory: a cart that isn't bound to this approved
+    // customer opens as a guest checkout, and the order lands on whatever email
+    // the buyer types there — that is how unapproved customers got orders in.
+    let updatedCart;
     try {
       updatedCart = await updateCartBuyerIdentity(cartId, {
         email: user.email ?? undefined,
@@ -102,8 +119,19 @@ export async function POST(req: NextRequest) {
       });
     } catch (error) {
       console.warn('[Checkout] Could not attach buyer identity:', error);
-      updatedCart = (await getCart(cartId)) ?? cart;
     }
+
+    if (updatedCart?.buyerIdentity?.customer?.id !== user.id) {
+      console.warn(`[Checkout] Refused ref=${ref} for ${user.email} (${user.id}): buyer identity not attached`);
+      return NextResponse.json(
+        { error: 'Your session has expired. Please sign in again.' },
+        { status: 401 }
+      );
+    }
+
+    // Shopify orders carry the ref but not who started the checkout; this line
+    // is the only record tying the two together.
+    console.info(`[Checkout] Started ref=${ref} cart=${cartId} customer=${user.id} email=${user.email}`);
 
     const { checkoutUrl } = updatedCart;
 

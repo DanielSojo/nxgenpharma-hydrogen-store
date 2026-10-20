@@ -59,8 +59,15 @@ export function clearPendingCheckout() {
  * Where Shopify should send the buyer once payment is done. Shopify's hosted
  * thank-you page can't redirect off-domain on its own, so this URL is what the
  * merchant points the order-status "Continue shopping" button at (see README).
+ *
+ * Must be absolute — Shopify serves the thank-you page from its own domain, so a
+ * relative path lands nowhere. `fallbackOrigin` covers deployments that forgot
+ * NEXT_PUBLIC_SITE_URL, which previously produced bare `/checkout/success` links.
  */
-export function buildReturnUrl(ref: string): string {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? '';
+export function buildReturnUrl(ref: string, fallbackOrigin?: string): string {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || fallbackOrigin;
+  if (!base) {
+    throw new Error('NEXT_PUBLIC_SITE_URL is not set');
+  }
   return `${base.replace(/\/+$/, '')}/checkout/success?ref=${encodeURIComponent(ref)}`;
 }

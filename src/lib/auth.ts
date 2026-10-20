@@ -118,6 +118,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.approvedCheckedAt = Date.now();
       }
 
+      // Once the Shopify customer token expires it can't be attached to a cart,
+      // so checkout can't be tied to this account. End the session and make the
+      // buyer sign in again rather than keep a session that can't check out.
+      const expiresAt = Date.parse((token.expiresAt as string) ?? '');
+      if (!Number.isNaN(expiresAt) && Date.now() >= expiresAt) {
+        return null;
+      }
+
       // Re-check approval + markup every 5 minutes
       const checkedAt = (token.approvedCheckedAt as number) ?? 0;
       if (token.accessToken && Date.now() - checkedAt > 5 * 60 * 1000) {
@@ -146,6 +154,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       (session.user as any).firstName = token.firstName;
       (session.user as any).lastName = token.lastName;
       (session.user as any).approved = token.approved;
+      // Middleware reads this to route refused applicants to /refused.
+      (session.user as any).b2bStatus = token.b2bStatus ?? null;
       (session.user as any).role = token.role ?? null;
       (session.user as any).markup = token.markup ?? 0;
       // accessToken for server-side API routes only
