@@ -37,6 +37,8 @@ export const PRODUCT_CARD_FRAGMENT = `
         compareAtPrice { ...PriceFragment }
         selectedOptions { name value }
         image { ...ImageFragment }
+        # Quick-order catalog shows the tier price for the chosen quantity.
+        volumePricing: metafield(namespace: "custom", key: "volume_pricing") { value }
       }
     }
   }

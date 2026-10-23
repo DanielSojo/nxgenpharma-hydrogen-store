@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   formatTierRange,
   getActiveTier,
+  getNextTier,
   getTierPrice,
   getTierRanges,
   isLineDiscounted,
@@ -76,6 +77,22 @@ describe('getTierPrice', () => {
 
   test('getActiveTier returns the whole tier', () => {
     expect(getActiveTier(15, TIERS)).toEqual({ min: 11, price: 90 });
+  });
+});
+
+describe('getNextTier', () => {
+  test.each([
+    [1, 11],
+    [10, 11],
+    [11, 21],
+    [20, 21],
+  ])('quantity %i → next tier at %i', (quantity, min) => {
+    expect(getNextTier(quantity, TIERS)?.min).toBe(min);
+  });
+
+  test('is undefined once the top tier is reached', () => {
+    expect(getNextTier(21, TIERS)).toBeUndefined();
+    expect(getNextTier(1, [])).toBeUndefined();
   });
 });
 

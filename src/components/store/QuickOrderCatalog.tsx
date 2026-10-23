@@ -20,6 +20,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { ShopifyProduct, ShopifyProductVariant } from '@/types';
 import { useCartStore } from '@/store/cart';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import { getNextTier, getTierPrice, parseVolumeTiers, type VolumeTier } from '@/lib/volume-pricing';
 import PageHeader from '@/components/layout/PageHeader';
 import CatalogLoading from '@/components/feedback/CatalogLoading';
 
@@ -174,6 +175,16 @@ function useProductOrder(product: ShopifyProduct, vialFilter: string) {
       ? Math.round(((compareAtPrice - currentPrice) / compareAtPrice) * 100)
       : null;
 
+  // Volume tiers follow the quantity in the stepper. Display only: Shopify
+  // applies the real price in the cart (shopify/extensions/volume-pricing).
+  const volumeTiers = useMemo(
+    () => parseVolumeTiers(variant?.volumePricing?.value),
+    [variant?.volumePricing?.value]
+  );
+  const tierPrice = getTierPrice(quantityControl.quantity, volumeTiers);
+  const volumePrice = tierPrice !== undefined && tierPrice < currentPrice ? tierPrice : null;
+  const nextTier = getNextTier(quantityControl.quantity, volumeTiers);
+
   // Only this row spins — `pending` is keyed by variant id, so adding one
   // product no longer puts every other button in the catalog into a loader.
   const isAdding = Boolean(variant && pending[variant.id]);
@@ -192,6 +203,8 @@ function useProductOrder(product: ShopifyProduct, vialFilter: string) {
     hasVariantOptions,
     available,
     discountPercent,
+    volumePrice,
+    nextTier,
     quantityControl,
     setSelectedVariantId,
     handleAdd,
@@ -270,6 +283,29 @@ function QuantityStepper({
   );
 }
 
+/** "Volume price" when a tier applies, otherwise how many units unlock the next one. */
+function VolumePriceHint({
+  volumePrice,
+  nextTier,
+  currencyCode,
+  format,
+}: {
+  volumePrice: number | null;
+  nextTier: VolumeTier | undefined;
+  currencyCode: string;
+  format: (amount: string | number, currencyCode?: string) => string;
+}) {
+  if (volumePrice === null && !nextTier) return null;
+
+  return (
+    <p className="mt-1 text-xs font-medium text-brand-ink/70">
+      {volumePrice !== null && <span className="text-green-600">Volume price</span>}
+      {volumePrice !== null && nextTier && ' · '}
+      {nextTier && `Buy ${nextTier.min}+ for ${format(nextTier.price, currencyCode)} each`}
+    </p>
+  );
+}
+
 function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialFilter: string }) {
   const {
     variants,
@@ -278,6 +314,8 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
     hasVariantOptions,
     available,
     discountPercent,
+    volumePrice,
+    nextTier,
     quantityControl,
     setSelectedVariantId,
     handleAdd,
@@ -320,9 +358,20 @@ function QuickOrderRow({ product, vialFilter }: { product: ShopifyProduct; vialF
         <div>
           {variant ? (
             <>
-              <p className="text-xl font-semibold text-brand-ink">
-                {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
+              <p className="flex items-baseline gap-2 text-xl font-semibold text-brand-ink">
+                {formatCalculatedPrice(volumePrice ?? variant.price.amount, variant.price.currencyCode)}
+                {volumePrice !== null && (
+                  <span className="text-sm font-medium text-brand-ink/70 line-through">
+                    {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
+                  </span>
+                )}
               </p>
+              <VolumePriceHint
+                volumePrice={volumePrice}
+                nextTier={nextTier}
+                currencyCode={variant.price.currencyCode}
+                format={formatCalculatedPrice}
+              />
               <span
                 className={`mt-1.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
                   available
@@ -410,6 +459,8 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
     hasVariantOptions,
     available,
     discountPercent,
+    volumePrice,
+    nextTier,
     quantityControl,
     setSelectedVariantId,
     handleAdd,
@@ -468,9 +519,13 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
           {variant ? (
             <>
               <span className="text-lg font-extrabold tracking-tight text-brand-navy">
-                {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
+                {formatCalculatedPrice(volumePrice ?? variant.price.amount, variant.price.currencyCode)}
               </span>
-              {discountPercent ? (
+              {volumePrice !== null ? (
+                <span className="text-xs text-brand-ink/70 line-through">
+                  {formatCalculatedPrice(variant.price.amount, variant.price.currencyCode)}
+                </span>
+              ) : discountPercent ? (
                 <span className="text-xs text-brand-ink/70 line-through">
                   {formatCalculatedPrice(
                     variant.compareAtPrice!.amount,
@@ -483,6 +538,14 @@ function QuickOrderCard({ product, vialFilter }: { product: ShopifyProduct; vial
             <span className="text-xs font-medium text-brand-ink/70">Price upon request</span>
           )}
         </div>
+        {variant && (
+          <VolumePriceHint
+            volumePrice={volumePrice}
+            nextTier={nextTier}
+            currencyCode={variant.price.currencyCode}
+            format={formatCalculatedPrice}
+          />
+        )}
 
         <div className="mt-auto flex flex-col gap-2 pt-3">
           {hasVariantOptions ? (

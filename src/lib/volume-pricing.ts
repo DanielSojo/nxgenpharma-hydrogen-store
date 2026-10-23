@@ -53,6 +53,11 @@ export function getTierPrice(quantity: number, tiers: VolumeTier[]): number | un
   return getActiveTier(quantity, tiers)?.price;
 }
 
+/** The first tier above the one the quantity reaches, to nudge toward it. */
+export function getNextTier(quantity: number, tiers: VolumeTier[]): VolumeTier | undefined {
+  return tiers.find((tier) => tier.min > quantity);
+}
+
 /** Each tier runs up to one before the next tier's `min`. */
 export function getTierRanges(tiers: VolumeTier[]): VolumeTierRange[] {
   return tiers.map((tier, index) => {
