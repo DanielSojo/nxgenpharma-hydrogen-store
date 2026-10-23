@@ -3,6 +3,8 @@ export const siteConfig = {
   shortName: 'NexGen Pharma',
   domain: 'nxgenpharma.com',
   supportEmail: 'support@nxgenpharma.com',
+  phone: '(954) 280-4275',
+  phoneHref: 'tel:+19542804275',
   slogan: 'Advancing the Next Generation of Science',
 };
 

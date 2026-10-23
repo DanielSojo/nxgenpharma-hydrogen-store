@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Phone } from 'lucide-react';
 import { siteConfig } from '@/lib/site-content';
 
 const footerLinks = {
@@ -68,11 +69,20 @@ export default function Footer() {
           <h4 className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-aqua">
             Contact
           </h4>
-          <p className="text-sm leading-relaxed text-white/65">
-            {siteConfig.domain}
-            <br />
-            {siteConfig.shortName}
-          </p>
+          <div className="flex flex-col gap-2 text-sm text-white/65">
+            <a
+              href={siteConfig.phoneHref}
+              className="inline-flex items-center gap-2 transition-colors hover:text-white"
+            >
+              <Phone size={15} className="flex-shrink-0 text-brand-aqua" />
+              {siteConfig.phone}
+            </a>
+            <p className="leading-relaxed">
+              {siteConfig.domain}
+              <br />
+              {siteConfig.shortName}
+            </p>
+          </div>
           <p className="mt-3 text-sm leading-relaxed text-white/65">
             Questions, feedback, or support requests are welcome anytime.
           </p>

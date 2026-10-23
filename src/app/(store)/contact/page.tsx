@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Phone, Clock, MapPin, Loader2, CheckCircle } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
+import { siteConfig } from '@/lib/site-content';
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -84,10 +85,10 @@ export default function ContactPage() {
               <div>
                 <p className="mb-1 text-[13px] font-bold uppercase tracking-wider text-brand-ink">Phone</p>
                 <a
-                  href="tel:+17863036129"
+                  href={siteConfig.phoneHref}
                   className="text-sm text-brand-blue transition-opacity hover:opacity-70"
                 >
-                  +1 (786) 303-6129
+                  {siteConfig.phone}
                 </a>
               </div>
             </div>
