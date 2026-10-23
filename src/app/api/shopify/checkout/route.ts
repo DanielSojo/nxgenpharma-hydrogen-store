@@ -89,7 +89,9 @@ export async function POST(req: NextRequest) {
     const boundCustomerId = cart.buyerIdentity?.customer?.id;
     if (boundCustomerId && boundCustomerId !== user.id) {
       console.warn(`[Checkout] Cart ${cartId} belongs to ${boundCustomerId}, requested by ${user.id}`);
-      return NextResponse.json({ error: 'Cart not found' }, { status: 404 });
+      // Still a 404 so the response doesn't confirm the cart exists; the code
+      // lets the client drop the stale id instead of retrying it forever.
+      return NextResponse.json({ error: 'Cart not found', code: 'CART_NOT_OWNED' }, { status: 404 });
     }
 
     const ref = createCheckoutRef();

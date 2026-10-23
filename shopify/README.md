@@ -1,7 +1,7 @@
 # NxGen Shopify app
 
-Holds the Shopify Function that guards checkout. It is separate from the
-Next.js app: it is deployed to Shopify with the Shopify CLI, not to Vercel.
+Holds the Shopify Functions for the store: the checkout guard and volume
+pricing. It is separate from the Next.js app: it is deployed to Shopify with the Shopify CLI, not to Vercel.
 
 ## b2b-checkout-guard
 
@@ -39,7 +39,50 @@ the customer only when checkout starts.
 
 The rule can be turned off from Checkout rules at any time without a redeploy.
 
+## volume-pricing
+
+An automatic product discount (title **Volume pricing**). It lowers a cart
+line's unit price to the tier its quantity reaches, read from the **variant's**
+`custom.volume_pricing` metafield (per variant, since each one has its own
+price):
+
+```json
+[{"min":1,"price":100},{"min":11,"price":90},{"min":21,"price":70}]
+```
+
+The variant's regular price must equal the first tier. Variants without the
+metafield, or with one that doesn't parse, get no discount. Quantity counts per
+line (variant); set `GROUP_BY_PRODUCT` in the function to count all variants of
+a product together (each variant still uses its own tiers). Tier prices are in
+the store currency.
+
+The Next.js product page reads the same metafield for its tier table
+(`src/lib/volume-pricing.ts`), but the price is Shopify's: the cart shows the
+totals the Storefront API returns.
+
+### Setup (once)
+
+1. Shopify Admin → **Settings → Custom data → Variants** → add definition
+   `custom.volume_pricing`, type **JSON**, with **Storefront API access** on.
+2. Fill the metafield on each variant with volume pricing.
+3. `npm run deploy`.
+4. Create the automatic discount. It has to be created by this app (the one
+   that owns the function), so `npm run discount:create` signs in as the app
+   with the client credentials grant and runs `discountAutomaticAppCreate`.
+   It needs `shopify/.env` (gitignored):
+
+   ```
+   SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
+   FUNCTION_APP_CLIENT_SECRET=...   # Dev Dashboard → this app → Settings
+   ```
+
+   Running it again is safe: it stops if the discount already exists.
+   (`shopify app dev` + GraphiQL also works, but only on development stores.)
+
+   It then shows under **Discounts** in the Admin, where it can be paused.
+
 ## Tests
 
-`npm test` builds the function to Wasm and runs it against
-`extensions/b2b-checkout-guard/tests/fixtures/*.json`.
+`npm test` runs every extension's tests: each function is built to Wasm and
+run against its `tests/fixtures/*.json`. `volume-pricing` also has unit tests
+for its logic (`tests/logic.test.js`).

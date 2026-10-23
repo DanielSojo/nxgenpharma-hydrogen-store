@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import AddToQuoteButton from '@/components/store/AddToQuoteButton';
 import ProductPrice from '@/components/store/ProductPrice';
+import VolumePricingTable from '@/components/store/VolumePricingTable';
+import { parseVolumeTiers } from '@/lib/volume-pricing';
 import type { ShopifyProduct } from '@/types';
 
 interface Props {
@@ -37,6 +39,11 @@ export default function ProductVariantDetails({ product }: Props) {
       ) ?? product.variants.nodes[0]
     );
   }, [product.variants.nodes, selectedOptions]);
+
+  const volumeTiers = useMemo(
+    () => parseVolumeTiers(selectedVariant?.volumePricing?.value),
+    [selectedVariant?.volumePricing?.value]
+  );
 
   const activeImage = selectedVariant?.image ?? product.featuredImage;
   const galleryImages = [
@@ -131,6 +138,13 @@ export default function ProductVariantDetails({ product }: Props) {
             </span>
           )}
         </div>
+
+        {selectedVariant && (
+          <VolumePricingTable
+            tiers={volumeTiers}
+            currencyCode={selectedVariant.price.currencyCode}
+          />
+        )}
 
         {product.options.map((option) =>
           option.values.length > 1 ? (

@@ -11,13 +11,20 @@ import Image from 'next/image';
 export default function Header() {
   const { data: session } = useSession();
   const { openQuote, totalItems } = useQuoteStore();
-  const { cart, openCart } = useCartStore();
+  const { cart, openCart, clearCart } = useCartStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const itemCount = totalItems();
   const cartCount = cart?.totalQuantity ?? 0;
   const isSeller = ((session?.user as any)?.role ?? '').toLowerCase() === 'seller';
+
+  // The cart id lives in localStorage and gets bound to this customer at
+  // checkout; left behind, the next account to sign in here can't use it.
+  const handleSignOut = () => {
+    clearCart();
+    signOut({ callbackUrl: '/' });
+  };
 
   // Close the account dropdown on outside click or Escape.
   useEffect(() => {
@@ -167,7 +174,7 @@ export default function Header() {
                     <button
                       onClick={() => {
                         setMenuOpen(false);
-                        signOut({ callbackUrl: '/' });
+                        handleSignOut();
                       }}
                       role="menuitem"
                       className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50"
@@ -219,7 +226,7 @@ export default function Header() {
             </>
           )}
           <button
-            onClick={() => signOut({ callbackUrl: '/' })}
+            onClick={handleSignOut}
             className="text-left text-sm text-red-500"
           >
             Sign out

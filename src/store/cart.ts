@@ -94,6 +94,17 @@ export const useCartStore = create<CartState>((set, get) => ({
       });
       const json = await res.json();
 
+      // Usually a cart left in this browser by another account that signed in
+      // here before. It can't be checked out by this one, so start over.
+      if (json.code === 'CART_NOT_OWNED') {
+        localStorage.removeItem(CART_ID_KEY);
+        clearPendingCheckout();
+        set({ cart: null });
+        const message = 'That cart belonged to another account, so it was cleared. Please add your items again.';
+        toast.error(message);
+        throw new Error(message);
+      }
+
       if (!res.ok) throw new Error(json.error ?? 'Could not start checkout');
 
       // Remember the in-flight checkout so the success page can reconcile it

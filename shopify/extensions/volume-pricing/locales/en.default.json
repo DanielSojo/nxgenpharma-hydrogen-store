@@ -1,0 +1,4 @@
+{
+  "name": "Volume pricing",
+  "description": "Lowers the unit price of a cart line by quantity, using the variant's custom.volume_pricing tiers"
+}

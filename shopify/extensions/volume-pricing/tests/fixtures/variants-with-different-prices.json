@@ -1,0 +1,153 @@
+{
+  "payload": {
+    "export": "cart-lines-discounts-generate-run",
+    "target": "cart.lines.discounts.generate.run",
+    "input": {
+      "cart": {
+        "lines": [
+          {
+            "id": "gid://shopify/CartLine/1",
+            "quantity": 11,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "95.0"
+              }
+            },
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "volumePricing": {
+                "jsonValue": [
+                  {
+                    "min": 1,
+                    "price": 95
+                  },
+                  {
+                    "min": 11,
+                    "price": 85
+                  },
+                  {
+                    "min": 21,
+                    "price": 75
+                  }
+                ]
+              },
+              "product": {
+                "id": "gid://shopify/Product/1"
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/2",
+            "quantity": 1,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "130.0"
+              }
+            },
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "volumePricing": {
+                "jsonValue": [
+                  {
+                    "min": 1,
+                    "price": 130
+                  },
+                  {
+                    "min": 11,
+                    "price": 120
+                  },
+                  {
+                    "min": 21,
+                    "price": 110
+                  }
+                ]
+              },
+              "product": {
+                "id": "gid://shopify/Product/1"
+              }
+            }
+          },
+          {
+            "id": "gid://shopify/CartLine/3",
+            "quantity": 21,
+            "cost": {
+              "amountPerQuantity": {
+                "amount": "155.0"
+              }
+            },
+            "merchandise": {
+              "__typename": "ProductVariant",
+              "volumePricing": {
+                "jsonValue": [
+                  {
+                    "min": 1,
+                    "price": 155
+                  },
+                  {
+                    "min": 11,
+                    "price": 145
+                  },
+                  {
+                    "min": 21,
+                    "price": 135
+                  }
+                ]
+              },
+              "product": {
+                "id": "gid://shopify/Product/1"
+              }
+            }
+          }
+        ]
+      },
+      "discount": {
+        "discountClasses": [
+          "PRODUCT"
+        ]
+      }
+    },
+    "output": {
+      "operations": [
+        {
+          "productDiscountsAdd": {
+            "candidates": [
+              {
+                "message": "Volume price: $85 each",
+                "targets": [
+                  {
+                    "cartLine": {
+                      "id": "gid://shopify/CartLine/1"
+                    }
+                  }
+                ],
+                "value": {
+                  "fixedAmount": {
+                    "amount": "10.00",
+                    "appliesToEachItem": true
+                  }
+                }
+              },
+              {
+                "message": "Volume price: $135 each",
+                "targets": [
+                  {
+                    "cartLine": {
+                      "id": "gid://shopify/CartLine/3"
+                    }
+                  }
+                ],
+                "value": {
+                  "fixedAmount": {
+                    "amount": "20.00",
+                    "appliesToEachItem": true
+                  }
+                }
+              }
+            ],
+            "selectionStrategy": "ALL"
+          }
+        }
+      ]
+    }
+  }
+}

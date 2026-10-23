@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useCustomerPricing } from '@/hooks/useCustomerPricing.hook';
+import { isLineDiscounted } from '@/lib/volume-pricing';
 
 export default function CartDrawer() {
   const { cart, isOpen, closeCart, clearCart, updateItem, removeItem, hydrate, startCheckout, pending } =
@@ -146,10 +147,19 @@ export default function CartDrawer() {
                   {line.merchandise.title !== 'Default Title' && (
                     <p className="text-xs text-brand-ink/70">{line.merchandise.title}</p>
                   )}
-                  <p className="text-sm font-bold text-brand-navy">
+                  {/* Both amounts come from Shopify, after discounts like volume pricing. */}
+                  <p className="flex items-baseline gap-2 text-sm font-bold text-brand-navy">
                     {formatCalculatedPrice(
                       line.cost.totalAmount.amount,
                       line.cost.totalAmount.currencyCode
+                    )}
+                    {isLineDiscounted(line) && (
+                      <span className="text-xs font-normal text-brand-ink/70 line-through">
+                        {formatCalculatedPrice(
+                          line.cost.subtotalAmount.amount,
+                          line.cost.subtotalAmount.currencyCode
+                        )}
+                      </span>
                     )}
                   </p>
 
@@ -200,11 +210,12 @@ export default function CartDrawer() {
         {lines.length > 0 && cart && (
           <div className="flex flex-col gap-4 border-t border-brand-line/70 bg-brand-surface px-6 py-5">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-brand-ink/70">Subtotal</span>
+              <span className="text-sm text-brand-ink/70">Total</span>
+              {/* Shopify's own total, so it matches what checkout charges. */}
               <span className="text-lg font-bold text-brand-navy">
                 {formatCalculatedPrice(
-                  cart.cost.subtotalAmount.amount,
-                  cart.cost.subtotalAmount.currencyCode
+                  cart.cost.totalAmount.amount,
+                  cart.cost.totalAmount.currencyCode
                 )}
               </span>
             </div>

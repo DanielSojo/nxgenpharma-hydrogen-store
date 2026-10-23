@@ -20,6 +20,8 @@ export interface ShopifyProductVariant {
   compareAtPrice: ShopifyPrice | null;
   selectedOptions: { name: string; value: string }[];
   image: ShopifyImage | null;
+  /** `custom.volume_pricing` JSON; only fetched on the product page. */
+  volumePricing?: { value: string } | null;
 }
 
 export interface ShopifyProduct {
@@ -70,8 +72,12 @@ export interface ShopifyCartLine {
     };
   };
   cost: {
+    /** Before line-level discounts. */
+    subtotalAmount: ShopifyPrice;
+    /** After line-level discounts — what checkout charges for the line. */
     totalAmount: ShopifyPrice;
   };
+  discountAllocations: { discountedAmount: ShopifyPrice }[];
 }
 
 export interface ShopifyCartAttribute {

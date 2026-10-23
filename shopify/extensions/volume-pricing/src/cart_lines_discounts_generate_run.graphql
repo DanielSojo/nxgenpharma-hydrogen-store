@@ -1,0 +1,29 @@
+query CartLinesDiscountsGenerateRunInput {
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          # On the variant, not the product: each variant has its own price.
+          # Same metafield the Next.js product page reads (src/lib/shopify/queries.ts).
+          volumePricing: metafield(namespace: "custom", key: "volume_pricing") {
+            jsonValue
+          }
+          product {
+            id
+          }
+        }
+      }
+    }
+  }
+  discount {
+    discountClasses
+  }
+}

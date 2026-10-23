@@ -83,6 +83,10 @@ export const GET_PRODUCT_BY_HANDLE = `
           compareAtPrice { ...PriceFragment }
           selectedOptions { name value }
           image { ...ImageFragment }
+          # Tiers for the volume pricing table, per variant since each has its
+          # own price. Shopify applies the price itself
+          # (shopify/extensions/volume-pricing); this is display only.
+          volumePricing: metafield(namespace: "custom", key: "volume_pricing") { value }
         }
       }
     }
@@ -163,8 +167,14 @@ export const CART_FRAGMENT = `
             }
           }
         }
+        # subtotalAmount is before line discounts (e.g. volume pricing),
+        # totalAmount after. Never recompute these locally.
         cost {
+          subtotalAmount { ...PriceFragment }
           totalAmount { ...PriceFragment }
+        }
+        discountAllocations {
+          discountedAmount { ...PriceFragment }
         }
       }
     }
